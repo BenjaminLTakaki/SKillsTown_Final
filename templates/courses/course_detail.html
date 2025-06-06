@@ -1,0 +1,854 @@
+{% extends "base.html" %}
+
+{% block title %}{{ course.course_name }} - Course Details{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <!-- Course Header -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h4 class="mb-0">
+                                <i class="fas fa-book me-2"></i>{{ course.course_name }}
+                            </h4>
+                            <small class="opacity-75">
+                                <i class="fas fa-tag me-1"></i>{{ course.category }}
+                            </small>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <span class="badge {% if course.status == 'completed' %}bg-success{% elif course.status == 'in_progress' %}bg-warning{% else %}bg-info{% endif %} fs-6">
+                                <i class="fas {% if course.status == 'completed' %}fa-check-circle{% elif course.status == 'in_progress' %}fa-play-circle{% else %}fa-clock{% endif %} me-1"></i>
+                                {{ course.status|title }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if course_details.description %}
+                    <p class="card-text">{{ course_details.description }}</p>
+                    {% endif %}
+                    
+                    <!-- Progress Bar -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Course Progress</label>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-success" role="progressbar"
+                                 style="--width: {{ course_details.progress_percentage or 0 }}%;"
+                                 aria-valuenow="{{ course_details.progress_percentage or 0 }}"
+                                 aria-valuemin="0"
+                                 aria-valuemax="100">
+                            </div>
+                        </div>
+                        <small class="text-muted">{{ course_details.progress_percentage or 0 }}% Complete</small>
+                    </div>
+                    
+                    <!-- Course Info -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-calendar me-2"></i>Enrollment Info</h6>
+                            <ul class="list-unstyled small">
+                                <li><strong>Enrolled:</strong> {{ course.created_at.strftime('%B %d, %Y') }}</li>
+                                {% if course_details.completed_at %}
+                                <li><strong>Completed:</strong> {{ course_details.completed_at.strftime('%B %d, %Y') }}</li>
+                                {% endif %}
+                                <li><strong>Status:</strong> {{ course.status|title }}</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-info-circle me-2"></i>Course Details</h6>
+                            <ul class="list-unstyled small">
+                                <li><strong>Category:</strong> {{ course.category }}</li>
+                                <li><strong>Materials:</strong> {{ materials.materials|length }} sections</li>
+                                <li><strong>Course ID:</strong> #{{ course.id }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Quiz Generator Section -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-brain me-2"></i>AI Knowledge Assessment
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h6 class="fw-bold">Test Your Understanding</h6>
+                            <p class="text-muted">Generate a personalized quiz based on this course content to test your knowledge and get tailored recommendations.</p>
+                            <ul class="small text-muted mb-3">
+                                <li>AI-generated questions based on course materials</li>
+                                <li>Instant feedback and explanations</li>
+                                <li>Personalized course recommendations based on performance</li>
+                                <li>Track your learning progress and identify weak areas</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="quiz-status" id="quizStatus">
+                                <button id="generateQuizBtn" class="btn btn-info btn-lg w-100" onclick="generateQuiz('{{ course.id }}')">
+                                    <i class="fas fa-question-circle me-2"></i>Generate Quiz
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Progress indicator -->
+                    <div id="quizProgress" class="mt-3" style="display: none;">
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" role="progressbar" style="width: 100%">
+                                Generating quiz questions... This may take a moment
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quiz message area -->
+                    <div id="quizMessage" class="mt-3"></div>
+                    
+                    <!-- Quiz Interface -->
+                    <div id="quizInterface" class="mt-4" style="display: none;">
+                        <!-- Quiz details will be loaded here -->
+                        <div id="quizDetails" class="mb-4"></div>
+                        
+                        <!-- Quiz questions will be loaded here -->
+                        <div id="quizQuestions"></div>
+                        
+                        <!-- Quiz navigation -->
+                        <div id="quizNavigation" class="mt-4 text-center" style="display: none;">
+                            <button id="submitQuizBtn" class="btn btn-success btn-lg" onclick="submitQuiz()">
+                                <i class="fas fa-check me-2"></i>Submit Quiz
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Quiz Results -->
+                    <div id="quizResults" class="mt-4" style="display: none;">
+                        <div class="card border-success">
+                            <div class="card-header bg-success text-white">
+                                <h6 class="mb-0"><i class="fas fa-trophy me-2"></i>Quiz Results</h6>
+                            </div>
+                            <div class="card-body" id="resultsContent">
+                                <!-- Results will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz History & Recommendations -->
+            <div id="quizHistorySection" class="card shadow-sm mb-4" style="display: none;">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history me-2"></i>Quiz History & Recommendations
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="quizHistoryContent">
+                        <!-- Quiz history will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Local Podcast Generation Section -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="fas fa-podcast me-2"></i>AI Podcast Generator
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h6 class="fw-bold">Generate Course Podcast</h6>
+                            <p class="text-muted">Create an AI-generated podcast specifically for this course using advanced text-to-speech technology.</p>
+                            <ul class="small text-muted mb-3">
+                                <li>Personalized content based on course materials</li>
+                                <li>Professional podcast format with host and guest dialogue</li>
+                                <li>Download as audio file for offline listening</li>
+                                <li>Generated using local AI services</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="podcast-status" id="podcastStatus">
+                                <button id="generatePodcastBtn" class="btn btn-warning btn-lg w-100" onclick="generatePodcast('{{ course.id }}')">
+                                    <i class="fas fa-magic me-2"></i>Generate Podcast
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Progress indicator -->
+                    <div id="podcastProgress" class="mt-3" style="display: none;">
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%">
+                                Generating podcast... This may take a few minutes
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Error/Success messages -->
+                    <div id="podcastMessage" class="mt-3"></div>
+                    <!-- Audio player (shown after generation) -->
+                    <div id="audioPlayer" class="mt-3" style="display: none;">
+                        <div class="audio-container">
+                            <audio controls class="w-100" preload="none">
+                                <source id="audioSource" src="" type="audio/wav">
+                                Your browser does not support the audio element.
+                            </audio>
+                            <small class="text-muted d-block mt-1">
+                                <i class="fas fa-info-circle me-1"></i>
+                                If the audio doesn't play, try using the download button below.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course Materials -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"> <i class="fas fa-book-open me-2"></i>Course Materials </h5>
+                </div>
+                <div class="card-body">
+                    {% if materials.materials %}
+                    <div class="course-materials">
+                        {% for material in materials.materials %}
+                        <div class="material-item mb-4">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h6 class="fw-bold">
+                                    <span class="badge bg-secondary me-2">{{ loop.index }}</span>{{ material.title }}<span class="badge bg-success ms-1">{{ material.type|title }}</span>
+                                </h6>
+                                {% if material.duration %}<small class="text-muted"><i class="fas fa-clock me-1"></i>{{ material.duration }}</small>{% endif %}
+                            </div>
+                            <div class="content-preview p-3 bg-light rounded">
+                                {% if material.topics %}
+                                <div class="topics"><strong>Topics covered:</strong>
+                                    <ul class="list-inline mt-1">
+                                        {% for topic in material.topics %}
+                                        <li class="list-inline-item"><span class="badge bg-outline-secondary">{{ topic }}</span></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                {% endif %}
+                                {% if material.description %}<p class="mb-0 small">{{ material.description }}</p>{% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
+                        <h6>No Course Materials</h6>
+                        <p class="text-muted">Course materials are being prepared. Check back soon!</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Course Actions -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div><h6>Course Actions</h6><small class="text-muted">Update your progress or manage this course</small></div>
+                        <div class="btn-group">
+                            {% if course.status == 'enrolled' %}
+                            <form method="POST" action="{{ get_url_for('update_course_status', course_id=course.id) }}" class="d-inline">
+                                <input type="hidden" name="status" value="in_progress">
+                                <button type="submit" class="btn btn-warning"><i class="fas fa-play me-1"></i>Start Course</button>
+                            </form>
+                            {% elif course.status == 'in_progress' %}
+                            <form method="POST" action="{{ get_url_for('update_course_status', course_id=course.id) }}" class="d-inline">
+                                <input type="hidden" name="status" value="completed">
+                                <button type="submit" class="btn btn-success"><i class="fas fa-check me-1"></i>Mark Complete</button>
+                            </form>
+                            {% elif course.status == 'completed' %}
+                            <span class="badge bg-success fs-6 px-3 py-2"><i class="fas fa-trophy me-1"></i>Course Completed!</span>
+                            {% endif %}
+                            <a href="{{ get_url_for('my_courses') }}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back to My Courses</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.material-item { border-left: 4px solid #007bff; padding-left: 15px; }
+.content-preview { border-left: 3px solid #28a745; }
+.topics .badge { background-color: #f8f9fa !important; color: #495057 !important; border: 1px solid #dee2e6; }
+
+/* Quiz specific styles */
+.quiz-question {
+    background: #f8f9fa;
+    border-left: 4px solid #17a2b8;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+.quiz-question h6 {
+    color: #17a2b8;
+    font-weight: bold;
+}
+
+.quiz-option {
+    background: white;
+    border: 2px solid #e9ecef;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.quiz-option:hover {
+    border-color: #007bff;
+    background-color: #f0f8ff;
+}
+
+.quiz-option.selected {
+    border-color: #007bff;
+    background-color: #e3f2fd;
+}
+
+.quiz-option input[type="radio"] {
+    margin-right: 10px;
+}
+
+.quiz-results-card {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 8px;
+    padding: 20px;
+    border-left: 4px solid #28a745;
+}
+
+.score-display {
+    font-size: 3rem;
+    font-weight: bold;
+    margin: 20px 0;
+}
+
+.recommendation-card {
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.recommendation-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 768px) {
+    .quiz-option {
+        padding: 10px;
+    }
+    
+    .score-display {
+        font-size: 2rem;
+    }
+}
+</style>
+
+<script>
+// Global variables for quiz functionality
+let currentQuiz = null;
+let currentAttempt = null;
+let userAnswers = [];
+
+const userUuid = "{{ current_user.get_quiz_uuid() }}";  // proxy endpoint parameter
+
+// Quiz generation functionality
+async function generateQuiz(courseId) {
+    const btn = document.getElementById('generateQuizBtn');
+    const progress = document.getElementById('quizProgress');
+    const message = document.getElementById('quizMessage');
+    
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generating...';
+    progress.style.display = 'block';
+    message.innerHTML = '';
+    
+    try {
+        const response = await fetch(`/course/${courseId}/generate-quiz`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok && data.success) {
+            message.innerHTML = `<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>Quiz generated successfully! "${data.title}" with ${data.questions_count} questions.</div>`;
+            
+            // Load the quiz for taking
+            setTimeout(() => {
+                loadQuizForTaking(data.quiz_id);
+            }, 1000);
+            
+        } else {
+            throw new Error(data.error || 'Failed to generate quiz');
+        }
+        
+    } catch (error) {
+        console.error('Quiz generation error:', error);
+        message.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Failed to generate quiz: ${error.message}</div>`;
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-question-circle me-2"></i>Generate Quiz';
+        progress.style.display = 'none';
+    }
+}
+
+// Load quiz for taking
+async function loadQuizForTaking(quizId) {
+    try {
+        // Get quiz details
+        const response = await fetch(`/quiz/${quizId}/details`);
+        const quiz = await response.json();
+        
+        if (response.ok) {
+            currentQuiz = quiz;
+            displayQuiz(quiz);
+            
+            // Start a quiz attempt
+            const attemptResponse = await fetch(`/quiz/${quizId}/start`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            
+            const attemptData = await attemptResponse.json();
+            if (attemptResponse.ok) {
+                currentAttempt = attemptData;
+                console.log('Quiz attempt started:', attemptData.attemptId);
+            }
+        } else {
+            throw new Error('Failed to load quiz details');
+        }
+        
+    } catch (error) {
+        console.error('Error loading quiz:', error);
+        document.getElementById('quizMessage').innerHTML = 
+            `<div class="alert alert-danger">Error loading quiz: ${error.message}</div>`;
+    }
+}
+
+// Display quiz interface
+function displayQuiz(quiz) {
+    const quizInterface = document.getElementById('quizInterface');
+    const quizDetails = document.getElementById('quizDetails');
+    const quizQuestions = document.getElementById('quizQuestions');
+    const quizNavigation = document.getElementById('quizNavigation');
+    
+    // Show quiz details
+    quizDetails.innerHTML = `
+        <div class="quiz-header p-3 bg-info text-white rounded">
+            <h5 class="mb-1">${quiz.quiz.title}</h5>
+            <p class="mb-0">${quiz.quiz.description}</p>
+            <small><i class="fas fa-question-circle me-1"></i>${quiz.quiz.questions.length} Questions</small>
+        </div>
+    `;
+    
+    // Initialize user answers array
+    userAnswers = new Array(quiz.quiz.questions.length).fill(null);
+    
+    // Display questions
+    let questionsHtml = '';
+    quiz.quiz.questions.forEach((question, index) => {
+        questionsHtml += `
+            <div class="quiz-question" data-question="${index}">
+                <h6>Question ${index + 1}:</h6>
+                <p>${question.question}</p>
+                <div class="quiz-options">
+        `;
+        
+        question.options.forEach((option, optionIndex) => {
+            questionsHtml += `
+                <div class="quiz-option" onclick="selectOption(${index}, ${optionIndex})">
+                    <input type="radio" name="question_${index}" value="${optionIndex}" id="q${index}_opt${optionIndex}">
+                    <label for="q${index}_opt${optionIndex}">${option}</label>
+                </div>
+            `;
+        });
+        
+        questionsHtml += `
+                </div>
+            </div>
+        `;
+    });
+    
+    quizQuestions.innerHTML = questionsHtml;
+    quizInterface.style.display = 'block';
+    quizNavigation.style.display = 'block';
+    
+    // Scroll to quiz
+    quizInterface.scrollIntoView({ behavior: 'smooth' });
+}
+
+// Handle option selection
+function selectOption(questionIndex, optionIndex) {
+    // Update user answers
+    userAnswers[questionIndex] = optionIndex;
+    
+    // Update UI
+    const questionDiv = document.querySelector(`[data-question="${questionIndex}"]`);
+    const options = questionDiv.querySelectorAll('.quiz-option');
+    const radioInputs = questionDiv.querySelectorAll('input[type="radio"]');
+    
+    // Remove selected class from all options
+    options.forEach(opt => opt.classList.remove('selected'));
+    
+    // Add selected class to chosen option
+    options[optionIndex].classList.add('selected');
+    
+    // Update radio button
+    radioInputs[optionIndex].checked = true;
+    
+    // Check if all questions are answered
+    updateSubmitButton();
+}
+
+// Update submit button state
+function updateSubmitButton() {
+    const submitBtn = document.getElementById('submitQuizBtn');
+    const allAnswered = userAnswers.every(answer => answer !== null);
+    
+    if (allAnswered) {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('btn-secondary');
+        submitBtn.classList.add('btn-success');
+        submitBtn.innerHTML = '<i class="fas fa-check me-2"></i>Submit Quiz';
+    } else {
+        submitBtn.disabled = true;
+        submitBtn.classList.remove('btn-success');
+        submitBtn.classList.add('btn-secondary');
+        const answered = userAnswers.filter(answer => answer !== null).length;
+        submitBtn.innerHTML = `<i class="fas fa-clock me-2"></i>Answer All Questions (${answered}/${userAnswers.length})`;
+    }
+}
+
+// Submit quiz
+async function submitQuiz() {
+    if (!currentAttempt) {
+        alert('No active quiz attempt found');
+        return;
+    }
+    
+    const submitBtn = document.getElementById('submitQuizBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Submitting...';
+    
+    try {
+        const response = await fetch(`/quiz/attempt/${currentAttempt.attemptId}/complete`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(userAnswers)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            displayQuizResults(result);
+            loadQuizHistory(); // Refresh quiz history
+        } else {
+            throw new Error(result.error || 'Failed to submit quiz');
+        }
+        
+    } catch (error) {
+        console.error('Error submitting quiz:', error);
+        alert('Error submitting quiz: ' + error.message);
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-check me-2"></i>Submit Quiz';
+    }
+}
+
+// Display quiz results
+function displayQuizResults(result) {
+    const quizInterface = document.getElementById('quizInterface');
+    const quizResults = document.getElementById('quizResults');
+    const resultsContent = document.getElementById('resultsContent');
+    
+    if (result.results) {
+        const { score, totalQuestions, correct, strengths, improvements } = result.results;
+        
+        let scoreColor = 'success';
+        let scoreIcon = 'trophy';
+        if (score < 60) {
+            scoreColor = 'danger';
+            scoreIcon = 'exclamation-triangle';
+        } else if (score < 80) {
+            scoreColor = 'warning';
+            scoreIcon = 'star-half-alt';
+        }
+        
+        resultsContent.innerHTML = `
+            <div class="text-center mb-4">
+                <div class="score-display text-${scoreColor}">
+                    <i class="fas fa-${scoreIcon} me-2"></i>${score}%
+                </div>
+                <h5>Quiz Completed!</h5>
+                <p class="text-muted">You got ${correct} out of ${totalQuestions} questions correct.</p>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card border-success mb-3">
+                        <div class="card-header bg-success text-white">
+                            <h6 class="mb-0"><i class="fas fa-thumbs-up me-2"></i>Strengths</h6>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">${strengths || 'Great effort on this quiz!'}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-warning mb-3">
+                        <div class="card-header bg-warning text-dark">
+                            <h6 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Areas for Improvement</h6>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">${improvements || 'Keep practicing to improve your skills!'}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <button class="btn btn-primary me-2" onclick="generateQuiz('{{ course.id }}')">
+                    <i class="fas fa-redo me-1"></i>Take Another Quiz
+                </button>
+                <button class="btn btn-outline-info" onclick="loadQuizHistory()">
+                    <i class="fas fa-history me-1"></i>View Quiz History
+                </button>
+            </div>
+        `;
+    }
+    
+    // Hide quiz interface and show results
+    quizInterface.style.display = 'none';
+    quizResults.style.display = 'block';
+    
+    // Scroll to results
+    quizResults.scrollIntoView({ behavior: 'smooth' });
+}
+
+// Load quiz history and recommendations
+async function loadQuizHistory() {
+    try {
+        // Get quiz attempts via proxy
+        const attemptsResponse = await fetch(`${quiz_proxy_url}/user/${userUuid}/quiz-attempts-from-course`, {
+            headers: { 'Content-Type': 'application/json' }
+        });
+        const attemptsData = await attemptsResponse.json();
+
+         // Get recommendations
+         const recommendationsResponse = await fetch(`${quiz_proxy_url}/course/${courseId}/quiz-recommendations`, {
+             headers: { 'Authorization': `Bearer ${quiz_api_access_token}` }
+         });
+          const recommendationsData = await recommendationsResponse.json();
+         
+         if (attemptsResponse.ok) {
+             displayQuizHistory(attemptsData.attempts, recommendationsData);
+         }
+        
+    } catch (error) {
+        console.error('Error loading quiz history:', error);
+    }
+}
+
+// Display quiz history
+function displayQuizHistory(attempts, recommendations) {
+    const historySection = document.getElementById('quizHistorySection');
+    const historyContent = document.getElementById('quizHistoryContent');
+    
+    if (attempts.length === 0) {
+        return; // Don't show if no attempts
+    }
+    
+    let historyHtml = `
+        <div class="row">
+            <div class="col-md-6">
+                <h6><i class="fas fa-list me-2"></i>Recent Quiz Attempts</h6>
+                <div class="quiz-attempts-list">
+    `;
+    
+    attempts.slice(0, 5).forEach((attempt, index) => {
+        const scoreColor = attempt.score >= 80 ? 'success' : attempt.score >= 60 ? 'warning' : 'danger';
+        historyHtml += `
+            <div class="d-flex justify-content-between align-items-center p-2 mb-2 bg-light rounded">
+                <div>
+                    <strong>Attempt ${index + 1}</strong>
+                    <br><small class="text-muted">${new Date(attempt.completed_at).toLocaleDateString()}</small>
+                </div>
+                <span class="badge bg-${scoreColor} fs-6">${attempt.score}%</span>
+            </div>
+        `;
+    });
+    
+    historyHtml += `
+                </div>
+            </div>
+            <div class="col-md-6">
+    `;
+    
+    // Add recommendations if available
+    if (recommendations && recommendations.recommendations) {
+        const recs = recommendations.recommendations;
+        historyHtml += `
+                <h6><i class="fas fa-graduation-cap me-2"></i>Recommended Next Steps</h6>
+                <p class="small text-info">${recs.specific_advice || ''}</p>
+        `;
+        
+        // Show different recommendation types
+        ['remedial_courses', 'next_courses', 'advanced_courses'].forEach(type => {
+            if (recs[type] && recs[type].length > 0) {
+                const typeNames = {
+                    'remedial_courses': 'Foundation Building',
+                    'next_courses': 'Next Steps', 
+                    'advanced_courses': 'Advanced Challenges'
+                };
+                
+                historyHtml += `
+                    <div class="recommendation-section mb-3">
+                        <h6 class="small fw-bold">${typeNames[type]}:</h6>
+                `;
+                
+                recs[type].slice(0, 2).forEach(course => {
+                    historyHtml += `
+                        <div class="recommendation-card p-2 bg-white border rounded mb-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong class="small">${course.name}</strong>
+                                    <br><small class="text-muted">${course.reason}</small>
+                                </div>
+                                <button class="btn btn-sm btn-outline-primary enroll-btn" 
+                                        data-category="${course.category}" 
+                                        data-course="${course.name}">
+                                    Enroll
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                historyHtml += `</div>`;
+            }
+        });
+    }
+    
+    historyHtml += `
+            </div>
+        </div>
+    `;
+    
+    historyContent.innerHTML = historyHtml;
+    historySection.style.display = 'block';
+    
+    // Add enrollment functionality
+    addEnrollmentListeners();
+}
+
+// Add enrollment functionality for recommended courses
+function addEnrollmentListeners() {
+    document.querySelectorAll('.enroll-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const category = this.dataset.category;
+            const course = this.dataset.course;
+            
+            fetch('/enroll', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `category=${encodeURIComponent(category)}&course=${encodeURIComponent(course)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    this.innerHTML = '<i class="fas fa-check me-1"></i>Enrolled';
+                    this.classList.remove('btn-outline-primary');
+                    this.classList.add('btn-success');
+                    this.disabled = true;
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Enrollment error:', error);
+                alert('Error enrolling in course');
+            });
+        });
+    });
+}
+
+// Podcast generation logic (keeping existing functionality)
+async function generatePodcast(courseId) {
+    const btn = document.getElementById('generatePodcastBtn');
+    const progress = document.getElementById('podcastProgress');
+    const message = document.getElementById('podcastMessage');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const audioSource = document.getElementById('audioSource');
+    
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generating...';
+    progress.style.display = 'block';
+    message.innerHTML = '';
+    audioPlayer.style.display = 'none';
+    
+    try {
+        const response = await fetch(`/course/${courseId}/generate-podcast`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (response.ok) {
+            const audioBlob = await response.blob();
+            const audioUrl = URL.createObjectURL(audioBlob);
+            
+            message.innerHTML = `<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>Podcast generated successfully! You can now listen or download it.</div>`;
+            audioSource.src = audioUrl;
+            audioPlayer.style.display = 'block';
+            
+            const audioElement = audioPlayer.querySelector('audio');
+            audioElement.load();
+        } else {
+            throw new Error(`HTTP ${response.status}`);
+        }
+    } catch (error) {
+        console.error('Podcast generation error:', error);
+        message.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Failed to generate podcast. Please try again.<br><small>Error: ${error.message}</small></div>`;
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-magic me-2"></i>Generate Podcast';
+        progress.style.display = 'none';
+    }
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    // Load quiz history on page load
+    loadQuizHistory();
+    
+    // Smooth scrolling for materials
+    document.querySelectorAll('.material-item').forEach((item, i) => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            item.style.transition = 'all 0.5s ease';
+            item.style.opacity = '1';
+            item.style.transform = 'translateY(0)';
+        }, 100 * i);
+    });
+});
+</script>
+
+{% endblock %}

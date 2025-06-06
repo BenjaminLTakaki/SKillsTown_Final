@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}Upload CV - SkillsTown{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-lg-10 mx-auto">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0"><i class="fas fa-file-upload me-2"></i>Upload Your CV & Job Description</h4>
+        </div>
+        <div class="card-body">
+          <form method="POST" enctype="multipart/form-data">
+            <div class="row mb-4">
+              <!-- CV Upload Section -->
+              <div class="col-md-6">
+                <div class="cv-upload-section">
+                  <label for="cv_file" class="form-label">
+                    <i class="fas fa-file-pdf me-2"></i>Select CV File (PDF only)
+                  </label>
+                  <input type="file" class="form-control" id="cv_file" name="cv_file" accept=".pdf" required>
+                  <div class="form-text">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Please upload your CV in PDF format. Maximum file size: 10MB
+                  </div>
+                </div>
+              </div>
+
+              <!-- Job Description Section -->
+              <div class="col-md-6">
+                <div class="job-description-section">
+                  <label for="job_description" class="form-label">
+                    <i class="fas fa-briefcase me-2"></i>Job Description (Optional)
+                  </label>
+                  <textarea class="form-control" id="job_description" name="job_description" rows="8" placeholder="Paste the job description here to get targeted learning recommendations... Example: - Required: Python, SQL, Machine Learning - Preferred: AWS, Docker, React - Experience with data analysis and visualization - Strong communication skills">{{ request.form.get('job_description', '') }}</textarea>
+                  <div class="form-text">
+                    <i class="fas fa-lightbulb me-1"></i>
+                    Adding a job description helps us identify skill gaps and recommend specific courses to help you land that role!
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Enhanced Analysis Info -->
+            <div class="analysis-info mb-4">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="info-card">
+                    <h6><i class="fas fa-user-check me-2 text-success"></i>CV Only Analysis</h6>
+                    <ul class="small">
+                      <li>Extract your current skills</li>
+                      <li>Categorize technical abilities</li>
+                      <li>Suggest general learning paths</li>
+                      <li>Identify experience level</li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="info-card enhanced">
+                    <h6><i class="fas fa-target me-2 text-primary"></i>CV + Job Description Analysis</h6>
+                    <ul class="small">
+                      <li><strong>Identify skill gaps</strong> for target role</li>
+                      <li><strong>Match existing skills</strong> to requirements</li>
+                      <li><strong>Prioritized learning plan</strong></li>
+                      <li><strong>Career transition advice</strong></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-upload me-2"></i>Upload & Analyze
+              </button>
+              <a href="{{ url_for('assessment') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Back to Assessment
+              </a>
+            </div>
+          </form>
+
+          <hr class="my-4">
+
+          <div class="tips-section">
+            <h6><i class="fas fa-lightbulb me-2"></i>Tips for better analysis:</h6>
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="text-success">CV Tips:</h6>
+                <ul class="list-unstyled">
+                  <li><i class="fas fa-check text-success me-2"></i>Include a detailed skills section</li>
+                  <li><i class="fas fa-check text-success me-2"></i>List programming languages and technologies</li>
+                  <li><i class="fas fa-check text-success me-2"></i>Mention frameworks and tools you've used</li>
+                  <li><i class="fas fa-check text-success me-2"></i>Include certifications and courses completed</li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-primary">Job Description Tips:</h6>
+                <ul class="list-unstyled">
+                  <li><i class="fas fa-check text-primary me-2"></i>Copy the full job posting text</li>
+                  <li><i class="fas fa-check text-primary me-2"></i>Include both required and preferred skills</li>
+                  <li><i class="fas fa-check text-primary me-2"></i>Keep responsibilities and requirements</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert alert-warning mt-3">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Privacy Note:</strong> The uploaded file will be processed and then deleted from our servers. Only the extracted skills and analysis will be saved to your profile. Job descriptions are also processed securely and not stored permanently.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .cv-upload-section, .job-description-section {
+    height: 100%; padding: 20px;
+    background: #f8f9fa; border-radius: 8px;
+    border: 2px dashed #dee2e6; transition: all 0.3s ease;
+  }
+  .cv-upload-section:hover, .job-description-section:hover {
+    border-color: #007bff; background: #e3f2fd;
+  }
+  .analysis-info { background: #f8f9fa; padding: 20px; border-radius: 8px; }
+  .info-card { background: white; padding: 15px; border-radius: 6px; border-left: 4px solid #28a745; }
+  .info-card.enhanced { border-left-color: #007bff; background: linear-gradient(45deg,#ffffff,#f0f8ff); }
+  .info-card h6 { margin-bottom: 10px; font-weight: bold; }
+  .info-card ul { margin-bottom: 0; padding-left: 0; }
+  .info-card li { margin-bottom: 5px; padding-left: 15px; position: relative; }
+  textarea#job_description { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.4; resize: vertical; }
+  textarea#job_description::placeholder { color: #6c757d; font-style: italic; }
+  .tips-section { background: #fff3cd; padding: 20px; border-radius: 8px; border: 1px solid #ffeaa7; }
+  .tips-section h6 { color: #856404; margin-bottom: 15px; }
+  .tips-section ul li { margin-bottom: 8px; color: #495057; }
+  #cv_file { padding: 12px; border: 2px dashed #007bff; border-radius: 8px; background: white; transition: all 0.3s ease; }
+  #cv_file:hover { border-color: #0056b3; background: #f0f8ff; }
+  @media (max-width: 768px) {
+    .analysis-info .row { margin: 0; }
+    .analysis-info .col-md-6 { padding: 0; margin-bottom: 20px; }
+    .info-card { margin-bottom: 15px; }
+  }
+</style>
+
+<script>
+  document.getElementById('cv_file').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.type !== 'application/pdf') {
+        alert('Please select a PDF file only.'); this.value = ''; return;
+      }
+      if (file.size > 10 * 1024 * 1024) { alert('File size must be less than 10MB.'); this.value = ''; return; }
+      this.style.borderColor = '#28a745'; this.style.background = '#d4edda';
+    }
+  });
+
+  const jobDescTextarea = document.getElementById('job_description');
+  const maxChars = 5000;
+  jobDescTextarea.addEventListener('input', function() {
+    const remaining = maxChars - this.value.length;
+    const formText = this.nextElementSibling;
+    if (remaining < 500) {
+      formText.innerHTML = `<i class="fas fa-exclamation-triangle me-1 text-warning"></i>${remaining} characters remaining. Consider shortening for optimal analysis.`;
+      formText.className = 'form-text text-warning';
+    } else {
+      formText.innerHTML = `<i class="fas fa-lightbulb me-1"></i>Adding a job description helps us identify skill gaps and recommend specific courses to help you land that role!`;
+      formText.className = 'form-text';
+    }
+  });
+
+  document.querySelector('form').addEventListener('submit', function() {
+    const btn = this.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    const hasDesc = document.getElementById('job_description').value.trim();
+    btn.innerHTML = hasDesc ? '<i class="fas fa-spinner fa-spin me-2"></i>Analyzing CV & Job Match...' : '<i class="fas fa-spinner fa-spin me-2"></i>Analyzing CV...';
+  });
+</script>
+{% endblock %}

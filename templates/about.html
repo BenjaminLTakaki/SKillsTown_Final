@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}About - SkillsTown Course Recommender{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container text-center">
+        <h1>About SkillsTown CV Analyzer</h1>
+    </div>
+</section>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-info-circle me-2"></i>About This Tool
+                </div>
+                <div class="card-body">
+                    <h4>What is the SkillsTown CV Analyzer?</h4>
+                    <p>
+                        The SkillsTown CV Analyzer is an AI-powered tool designed to help professionals find the most relevant courses for their career development by analyzing your CV.
+                    </p>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-4 text-center mb-3">
+                            <div class="rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; background-color: var(--light-blue);">
+                                <i class="fas fa-upload fa-2x" style="color: var(--skillstown-blue);"></i>
+                            </div>
+                            <h5>CV Upload</h5>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <div class="rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; background-color: var(--light-blue);">
+                                <i class="fas fa-brain fa-2x" style="color: var(--skillstown-blue);"></i>
+                            </div>
+                            <h5>AI Analysis</h5>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <div class="rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; background-color: var(--light-blue);">
+                                <i class="fas fa-graduation-cap fa-2x" style="color: var(--skillstown-blue);"></i>
+                            </div>
+                            <h5>Course Matching</h5>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <a href="/" class="btn btn-primary">
+                            <i class="fas fa-arrow-right me-2"></i>Try the CV Analyzer
+                        </a>
+                        <a href="https://www.skillstown.nl" class="btn btn-outline-primary ms-2" target="_blank">
+                            <i class="fas fa-external-link-alt me-2"></i>Visit SkillsTown
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

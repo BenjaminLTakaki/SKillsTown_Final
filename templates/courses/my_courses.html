@@ -1,0 +1,345 @@
+{% extends "base.html" %}
+
+{% block title %}My Courses - SkillsTown{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-book me-2"></i>My Courses</h2>
+                <a href="{{ get_url_for('search') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>Find More Courses
+                </a>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body text-center">
+                            <h3>{{ stats.total }}</h3>
+                            <p class="mb-0">Total Courses</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body text-center">
+                            <h3>{{ stats.enrolled }}</h3>
+                            <p class="mb-0">Enrolled</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body text-center">
+                            <h3>{{ stats.in_progress }}</h3>
+                            <p class="mb-0">In Progress</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body text-center">
+                            <h3>{{ stats.completed }}</h3>
+                            <p class="mb-0">Completed</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            {% if stats.total > 0 %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h6>Overall Progress</h6>
+                    <div class="progress">
+                        <div class="progress-bar bg-success" role="progressbar" 
+                             style="--width: {{ stats.completion_percentage }}%" 
+                             aria-valuenow="{{ stats.completion_percentage }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                            {{ "%.1f"|format(stats.completion_percentage) }}%
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Course List -->
+            {% if courses %}
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Enrolled Courses</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Course Name</th>
+                                    <th>Category</th>
+                                    <th>Status</th>
+                                    <th>Enrolled Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for course in courses %}
+                                <tr>
+                                    <td>
+                                        <div class="course-name-cell">
+                                            <strong>
+                                                <a href="{{ get_url_for('course_detail', course_id=course.id) }}" 
+                                                   class="text-decoration-none course-link">
+                                                    {{ course.course_name }}
+                                                </a>
+                                            </strong>
+                                            <br>
+                                            <small class="text-muted">Click to view course materials and tools</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">{{ course.category }}</span>
+                                    </td>
+                                    <td>
+                                        {% if course.status == 'enrolled' %}
+                                        <span class="badge bg-info">
+                                            <i class="fas fa-clock me-1"></i>Enrolled
+                                        </span>
+                                        {% elif course.status == 'in_progress' %}
+                                        <span class="badge bg-warning">
+                                            <i class="fas fa-play me-1"></i>In Progress
+                                        </span>
+                                        {% elif course.status == 'completed' %}
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check-circle me-1"></i>Completed
+                                        </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ course.created_at.strftime('%Y-%m-%d') }}</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <!-- View Course Button -->
+                                            <a href="{{ get_url_for('course_detail', course_id=course.id) }}" 
+                                               class="btn btn-sm btn-outline-primary" 
+                                               title="View course details and materials">
+                                                <i class="fas fa-eye me-1"></i>View
+                                            </a>
+                                            
+                                            <!-- Quick Action Buttons -->
+                                            {% if course.status == 'enrolled' %}
+                                            <form method="POST" action="{{ get_url_for('update_course_status', course_id=course.id) }}" class="d-inline">
+                                                <input type="hidden" name="status" value="in_progress">
+                                                <button type="submit" class="btn btn-sm btn-warning" title="Start this course">
+                                                    <i class="fas fa-play me-1"></i>Start
+                                                </button>
+                                            </form>
+                                            {% elif course.status == 'in_progress' %}
+                                            <form method="POST" action="{{ get_url_for('update_course_status', course_id=course.id) }}" class="d-inline">
+                                                <input type="hidden" name="status" value="completed">
+                                                <button type="submit" class="btn btn-sm btn-success" title="Mark as completed">
+                                                    <i class="fas fa-check me-1"></i>Complete
+                                                </button>
+                                            </form>
+                                            {% endif %}
+                                            
+                                            <!-- Quick Access to Podcast/Quiz -->
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" 
+                                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="fas fa-tools me-1"></i>Tools
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li>
+                                                        <a class="dropdown-item" 
+                                                           href="https://skillstown.com/?course_id={{ course.id }}&course_name={{ course.course_name|urlencode }}&action=podcast" 
+                                                           target="_blank">
+                                                            <i class="fas fa-podcast me-2 text-primary"></i>Generate Podcast
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item" 
+                                                           href="https://skillstown.com/?course_id={{ course.id }}&course_name={{ course.course_name|urlencode }}&action=quiz" 
+                                                           target="_blank">
+                                                            <i class="fas fa-question-circle me-2 text-warning"></i>Take Quiz
+                                                        </a>
+                                                    </li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li>
+                                                        <a class="dropdown-item" href="{{ get_url_for('course_detail', course_id=course.id) }}">
+                                                            <i class="fas fa-info-circle me-2 text-info"></i>Course Details
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="fas fa-book fa-3x text-muted mb-3"></i>
+                    <h5>No Courses Yet</h5>
+                    <p class="text-muted">You haven't enrolled in any courses yet. Start by searching for courses that match your interests!</p>
+                    <a href="{{ get_url_for('search') }}" class="btn btn-primary">
+                        <i class="fas fa-search me-1"></i>Search Courses
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Quick Actions Card -->
+            {% if courses %}
+            <div class="card mt-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">
+                        <i class="fas fa-lightning-bolt me-2"></i>Quick Actions
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-2">
+                            <a href="{{ get_url_for('assessment') }}" class="btn btn-outline-success w-100">
+                                <i class="fas fa-file-upload me-2"></i>Upload New CV
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <a href="{{ get_url_for('search') }}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-search me-2"></i>Find More Courses
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <a href="{{ get_url_for('skillstown_user_profile') }}" class="btn btn-outline-info w-100">
+                                <i class="fas fa-user me-2"></i>View Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.course-link {
+    color: #007bff;
+    transition: color 0.3s ease;
+}
+
+.course-link:hover {
+    color: #0056b3;
+    text-decoration: underline !important;
+}
+
+.course-name-cell {
+    max-width: 300px;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.btn-group .btn {
+    margin-right: 2px;
+}
+
+.btn-group .btn:last-child {
+    margin-right: 0;
+}
+
+@media (max-width: 768px) {
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .course-name-cell {
+        max-width: 200px;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn-group .btn {
+        margin-bottom: 2px;
+        margin-right: 0;
+    }
+}
+
+/* Hover effects for course rows */
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+/* Improved dropdown styling */
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.dropdown-item {
+    padding: 8px 16px;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+/* Status badge improvements */
+.badge {
+    font-size: 0.8em;
+    padding: 4px 8px;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add smooth animations to course cards
+    const courseRows = document.querySelectorAll('tbody tr');
+    courseRows.forEach((row, index) => {
+        row.style.opacity = '0';
+        row.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            row.style.transition = 'all 0.5s ease';
+            row.style.opacity = '1';
+            row.style.transform = 'translateY(0)';
+        }, 50 * index);
+    });
+    
+    // Add click tracking for external tools
+    const toolLinks = document.querySelectorAll('a[href*="skillstown.com"]');
+    toolLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            const action = this.href.includes('action=podcast') ? 'podcast' : 'quiz';
+            const courseName = new URLSearchParams(this.href.split('?')[1]).get('course_name');
+            console.log(`User accessed ${action} for course: ${courseName}`);
+        });
+    });
+    
+    // Confirm before marking course as complete
+    const completeButtons = document.querySelectorAll('button[title*="completed"]');
+    completeButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            if (!confirm('Are you sure you want to mark this course as completed?')) {
+                e.preventDefault();
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

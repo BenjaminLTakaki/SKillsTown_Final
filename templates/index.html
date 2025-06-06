@@ -1,0 +1,400 @@
+{% extends "base.html" %}
+
+{% block title %}SkillsTown CV Analyzer - AI-Powered Career Development{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold">Unlock Your Career Potential</h1>
+        <p class="lead mb-4">Get AI-powered course recommendations tailored to your CV and career goals. Bridge skill gaps and accelerate your professional growth.</p>
+        
+        <div class="hero-buttons mb-4">
+            {% if current_user and current_user.is_authenticated %}
+                <a href="{{ get_url_for('assessment') }}" class="btn btn-light btn-lg me-3">
+                    <i class="fas fa-upload me-2"></i>Analyze Your CV
+                </a>
+                <a href="{{ get_url_for('search') }}" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-search me-2"></i>Browse Courses
+                </a>
+            {% else %}
+                <a href="{{ get_url_for('register') }}" class="btn btn-light btn-lg me-3">
+                    <i class="fas fa-user-plus me-2"></i>Get Started Free
+                </a>
+                <a href="{{ get_url_for('login') }}" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                </a>
+            {% endif %}
+        </div>
+        
+        <div class="hero-stats">
+            <div class="row justify-content-center">
+                <div class="col-auto">
+                    <div class="stat-item">
+                        <h3 class="fw-bold">500+</h3>
+                        <p class="mb-0">Courses Available</p>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <div class="stat-item">
+                        <h3 class="fw-bold">AI-Powered</h3>
+                        <p class="mb-0">Analysis Engine</p>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <div class="stat-item">
+                        <h3 class="fw-bold">Personalized</h3>
+                        <p class="mb-0">Recommendations</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">How SkillsTown Works</h2>
+            <p class="lead text-muted">Transform your career in three simple steps</p>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <div class="card h-100 text-center border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-file-upload fa-3x text-primary"></i>
+                        </div>
+                        <h4 class="fw-bold">1. Upload Your CV</h4>
+                        <p class="text-muted">Upload your CV in PDF format. Our AI will extract and analyze your skills, experience, and qualifications automatically.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 mb-4">
+                <div class="card h-100 text-center border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-brain fa-3x text-primary"></i>
+                        </div>
+                        <h4 class="fw-bold">2. AI Analysis</h4>
+                        <p class="text-muted">Our advanced AI analyzes your skills, identifies your experience level, and optionally compares against job requirements.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 mb-4">
+                <div class="card h-100 text-center border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-graduation-cap fa-3x text-primary"></i>
+                        </div>
+                        <h4 class="fw-bold">3. Get Recommendations</h4>
+                        <p class="text-muted">Receive personalized course recommendations, skill gap analysis, and a tailored learning roadmap for your career goals.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Powerful Features</h2>
+            <p class="lead text-muted">Everything you need to advance your career</p>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <div class="feature-item d-flex">
+                    <div class="feature-icon me-3">
+                        <i class="fas fa-target fa-2x text-primary"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold">Job-Specific Analysis</h5>
+                        <p class="text-muted mb-0">Add a job description to get targeted recommendations and see how your skills match specific roles.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6 mb-4">
+                <div class="feature-item d-flex">
+                    <div class="feature-icon me-3">
+                        <i class="fas fa-chart-line fa-2x text-primary"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold">Skill Gap Identification</h5>
+                        <p class="text-muted mb-0">Discover which skills you need to develop to reach your career goals and land your dream job.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6 mb-4">
+                <div class="feature-item d-flex">
+                    <div class="feature-icon me-3">
+                        <i class="fas fa-route fa-2x text-primary"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold">Career Path Guidance</h5>
+                        <p class="text-muted mb-0">Get insights into potential career paths based on your current skills and experience level.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6 mb-4">
+                <div class="feature-item d-flex">
+                    <div class="feature-icon me-3">
+                        <i class="fas fa-book fa-2x text-primary"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold">Course Tracking</h5>
+                        <p class="text-muted mb-0">Enroll in recommended courses and track your learning progress with our course management system.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Course Categories Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Popular Course Categories</h2>
+            <p class="lead text-muted">Explore courses across different domains</p>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="category-card text-center">
+                    <div class="category-icon mb-3">
+                        <i class="fas fa-code fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold">Programming</h5>
+                    <p class="text-muted">Python, JavaScript, Java, C++, and more</p>
+                    <a href="{{ get_url_for('search') }}?query=programming" class="btn btn-outline-primary btn-sm">Explore</a>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="category-card text-center">
+                    <div class="category-icon mb-3">
+                        <i class="fas fa-chart-bar fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold">Data Science</h5>
+                    <p class="text-muted">Machine Learning, Analytics, Visualization</p>
+                    <a href="{{ get_url_for('search') }}?query=data science" class="btn btn-outline-primary btn-sm">Explore</a>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="category-card text-center">
+                    <div class="category-icon mb-3">
+                        <i class="fas fa-globe fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold">Web Development</h5>
+                    <p class="text-muted">React, Angular, Node.js, Full-Stack</p>
+                    <a href="{{ get_url_for('search') }}?query=web development" class="btn btn-outline-primary btn-sm">Explore</a>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="category-card text-center">
+                    <div class="category-icon mb-3">
+                        <i class="fas fa-cloud fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold">Cloud & DevOps</h5>
+                    <p class="text-muted">AWS, Azure, Docker, Kubernetes</p>
+                    <a href="{{ get_url_for('search') }}?query=cloud devops" class="btn btn-outline-primary btn-sm">Explore</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-primary text-white">
+    <div class="container text-center">
+        <h2 class="fw-bold mb-3">Ready to Accelerate Your Career?</h2>
+        <p class="lead mb-4">Join thousands of professionals who have transformed their careers with SkillsTown</p>
+        
+        {% if current_user and current_user.is_authenticated %}
+            <a href="{{ get_url_for('assessment') }}" class="btn btn-light btn-lg">
+                <i class="fas fa-upload me-2"></i>Start CV Analysis
+            </a>
+        {% else %}
+            <div class="cta-buttons">
+                <a href="{{ get_url_for('register') }}" class="btn btn-light btn-lg me-3">
+                    <i class="fas fa-user-plus me-2"></i>Sign Up Free
+                </a>
+                <a href="{{ get_url_for('about') }}" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-info-circle me-2"></i>Learn More
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Frequently Asked Questions</h2>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq1">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
+                                How does the CV analysis work?
+                            </button>
+                        </h2>
+                        <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Our AI-powered system extracts and analyzes skills, experience, and qualifications from your CV. It identifies your current skill set, experience level, and provides personalized course recommendations based on your profile.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq2">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
+                                What file formats are supported?
+                            </button>
+                        </h2>
+                        <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Currently, we support PDF files for CV analysis. Make sure your PDF is text-readable (not just an image) for the best analysis results.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq3">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
+                                How does job-specific analysis work?
+                            </button>
+                        </h2>
+                        <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                When you provide a job description along with your CV, our system compares your skills against the job requirements, identifies skill gaps, shows matching skills, and provides targeted recommendations to help you qualify for that specific role.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq4">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4">
+                                Is my data secure?
+                            </button>
+                        </h2>
+                        <div id="collapse4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Yes, we take data security seriously. Your uploaded CV is processed and then deleted from our servers. Only the extracted skills and analysis results are stored in your profile to provide recommendations.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.hero-section {
+    background: linear-gradient(135deg, var(--skillstown-blue), var(--dark-blue));
+    color: white;
+    padding: 80px 0;
+}
+
+.hero-stats .stat-item {
+    padding: 0 20px;
+    border-right: 1px solid rgba(255,255,255,0.3);
+}
+
+.hero-stats .stat-item:last-child {
+    border-right: none;
+}
+
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    background: var(--light-blue);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.feature-item {
+    padding: 20px;
+    border-radius: 8px;
+    transition: transform 0.3s;
+}
+
+.feature-item:hover {
+    transform: translateY(-5px);
+}
+
+.category-card {
+    padding: 30px 20px;
+    border-radius: 8px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.category-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--light-blue);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: var(--light-blue);
+    color: var(--dark-blue);
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 60px 0;
+    }
+    
+    .hero-stats {
+        margin-top: 30px;
+    }
+    
+    .hero-stats .stat-item {
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.3);
+        padding: 15px 0;
+    }
+    
+    .hero-stats .stat-item:last-child {
+        border-bottom: none;
+    }
+    
+    .cta-buttons .btn {
+        display: block;
+        margin: 10px 0;
+    }
+}
+</style>
+{% endblock %}

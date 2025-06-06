@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Search Courses - SkillsTown{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-search me-2"></i>Search Courses by Keywords</h4>
+                </div>
+                <div class="card-body">
+                    <form method="GET" action="{{ get_url_for('search') }}">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control form-control-lg" name="query" 
+                                   value="{{ query }}" placeholder="Enter skills you want to learn (e.g., Python, Machine Learning, React)">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-search me-1"></i>Search
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="text-muted">
+                        <small><i class="fas fa-lightbulb me-1"></i>
+                        Search for courses to learn new skills, not skills you already have!</small>
+                    </div>
+                </div>
+            </div>
+
+            {% if query %}
+            <div class="mt-4">
+                <h5>Search Results for "{{ query }}" ({{ results|length }} found)</h5>
+                
+                {% if results %}
+                <div class="row">
+                    {% for result in results %}
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h6 class="card-title">{{ result.course }}</h6>
+                                <p class="card-text">{{ result.description[:150] }}...</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="btn-group">
+                                        <a href="#" class="btn btn-sm btn-outline-secondary">View Details</a>
+                                        {% if current_user.is_authenticated %}
+                                            <button class="btn btn-sm btn-outline-primary enroll-btn" 
+                                                    data-category="{{ result.category }}" 
+                                                    data-course="{{ result.course }}">
+                                                <i class="fas fa-plus me-1"></i>Enroll
+                                            </button>
+                                        {% else %}
+                                            <a href="{{ get_url_for('login') }}" class="btn btn-outline-primary btn-sm">
+                                                Login to Enroll
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                    <small class="text-muted">Relevance: {{ result.relevance_score }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>No courses found for "{{ query }}". Try different keywords!
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% if current_user.is_authenticated %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.enroll-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const category = this.dataset.category;
+            const course = this.dataset.course;
+            
+            fetch('{{ get_url_for("enroll_course") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `category=${encodeURIComponent(category)}&course=${encodeURIComponent(course)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    this.innerHTML = '<i class="fas fa-check me-1"></i>Enrolled';
+                    this.classList.remove('btn-success');
+                    this.classList.add('btn-secondary');
+                    this.disabled = true;
+                }
+                alert(data.message);
+            })
+            .catch(error => {
+                alert('Error enrolling in course');
+            });
+        });
+    });
+});
+</script>
+{% endif %}
+{% endblock %}

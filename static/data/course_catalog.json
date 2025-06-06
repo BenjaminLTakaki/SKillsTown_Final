@@ -1,0 +1,449 @@
+{
+    "categories": [
+        {
+            "name": "Programming Languages",
+            "courses": [
+                {
+                    "name": "Python for Beginners",
+                    "description": "Learn Python programming from scratch with hands-on projects and real-world applications. This comprehensive course covers Python fundamentals including variables, data types, control structures, functions, and object-oriented programming. Students will build practical projects including a calculator, web scraper, and data analysis tool. The course includes modules on file handling, exception handling, and working with popular libraries like requests and pandas. Perfect for complete beginners with no programming experience.",
+                    "duration": "8 weeks",
+                    "level": "Beginner",
+                    "skills": ["Python basics", "Object-oriented programming", "File handling", "Web scraping", "Data manipulation", "Error handling", "Library usage"],
+                    "projects": ["Personal calculator", "Weather app", "Web scraper", "Data analysis dashboard", "File organizer tool"],
+                    "career_paths": ["Software Developer", "Data Analyst", "Backend Developer", "Automation Engineer", "Python Developer"]
+                },
+                {
+                    "name": "Advanced Python Development",
+                    "description": "Master advanced Python concepts including decorators, generators, context managers, metaclasses, and async programming. This course dives deep into Python's advanced features and best practices for professional development. Students learn about design patterns, performance optimization, testing strategies with pytest, and building scalable applications. The course covers advanced topics like multiprocessing, threading, memory management, and creating Python packages. Includes practical projects building REST APIs, concurrent applications, and deploying to production.",
+                    "duration": "10 weeks",
+                    "level": "Advanced",
+                    "skills": ["Decorators", "Generators", "Async programming", "Design patterns", "Performance optimization", "Testing with pytest", "Package development", "Concurrency"],
+                    "projects": ["REST API with FastAPI", "Async web scraper", "Performance monitoring tool", "Python package distribution", "Microservice architecture"],
+                    "career_paths": ["Senior Python Developer", "Backend Architect", "DevOps Engineer", "Technical Lead", "Software Architect"]
+                },
+                {
+                    "name": "JavaScript Fundamentals",
+                    "description": "Build interactive web applications with JavaScript, covering ES6+ features and modern practices. This course starts with JavaScript basics and progresses to advanced concepts like closures, prototypes, and asynchronous programming. Students learn DOM manipulation, event handling, AJAX, and modern JavaScript features including arrow functions, destructuring, promises, and async/await. The course includes practical projects building interactive websites, browser games, and connecting to APIs. Also covers debugging techniques, performance optimization, and testing with Jest.",
+                    "duration": "9 weeks",
+                    "level": "Beginner to Intermediate",
+                    "skills": ["JavaScript fundamentals", "DOM manipulation", "ES6+ features", "Async programming", "API integration", "Testing with Jest", "Browser APIs"],
+                    "projects": ["Interactive todo app", "Weather dashboard", "Browser game", "API-driven web app", "Chrome extension"],
+                    "career_paths": ["Frontend Developer", "Full-stack Developer", "Web Developer", "JavaScript Engineer", "UI Developer"]
+                },
+                {
+                    "name": "Java Programming Complete Course",
+                    "description": "Comprehensive Java course covering basics to advanced topics including Spring framework. Starting with Java fundamentals, this course progresses through object-oriented programming, collections, generics, lambda expressions, and stream API. Students learn about multithreading, database connectivity with JDBC, and building enterprise applications with Spring Boot. The course includes modules on testing with JUnit, build tools like Maven, and deployment strategies. Advanced topics cover microservices architecture, Spring Security, and performance tuning.",
+                    "duration": "14 weeks",
+                    "level": "Beginner to Advanced",
+                    "skills": ["Java fundamentals", "Object-oriented programming", "Spring Boot", "Database connectivity", "Microservices", "Testing with JUnit", "Maven/Gradle"],
+                    "projects": ["Banking application", "E-commerce backend", "Microservices system", "Spring Boot REST API", "Enterprise web application"],
+                    "career_paths": ["Java Developer", "Backend Developer", "Enterprise Developer", "Software Architect", "Spring Developer"]
+                },
+                {
+                    "name": "C# and .NET Development",
+                    "description": "Learn C# programming and .NET framework for building Windows and web applications. This comprehensive course covers C# language fundamentals, object-oriented programming, and the .NET ecosystem. Students learn to build desktop applications with WPF, web applications with ASP.NET Core, and APIs with minimal APIs. The course includes modules on Entity Framework for database operations, authentication and authorization, and deploying to Azure. Advanced topics cover async programming, dependency injection, and microservices with .NET.",
+                    "duration": "12 weeks",
+                    "level": "Beginner to Intermediate",
+                    "skills": ["C# programming", "ASP.NET Core", "Entity Framework", "WPF", "Azure deployment", "API development", "LINQ"],
+                    "projects": ["Desktop inventory app", "Web-based CRM", "REST API service", "Cloud-deployed application", "Blazor web app"],
+                    "career_paths": [".NET Developer", "Full-stack Developer", "Enterprise Developer", "Cloud Developer", "C# Developer"]
+                },
+                {
+                    "name": "Go Programming Language",
+                    "description": "Master Go programming for building scalable and efficient backend services. This course teaches Go from the ground up, focusing on its unique features like goroutines, channels, and interfaces. Students learn about Go's type system, error handling patterns, and building concurrent applications. The course covers web development with Go, database integration, testing strategies, and performance optimization. Advanced topics include building microservices, containerization with Docker, and deploying Go applications to production environments.",
+                    "duration": "10 weeks",
+                    "level": "Intermediate",
+                    "skills": ["Go fundamentals", "Concurrency with goroutines", "Web development", "Microservices", "Docker", "Performance optimization", "Testing"],
+                    "projects": ["Concurrent web server", "Microservice API", "Real-time chat application", "Containerized deployment", "CLI tool development"],
+                    "career_paths": ["Backend Developer", "DevOps Engineer", "System Programmer", "Cloud Engineer", "Go Developer"]
+                }
+            ]
+        },
+        {
+            "name": "Web Development",
+            "courses": [
+                {
+                    "name": "React Complete Course",
+                    "description": "Build modern web applications with React, including hooks, context, and state management. This comprehensive course covers React fundamentals including JSX, components, props, and state. Students learn modern React patterns with hooks like useState, useEffect, useContext, and custom hooks. The course includes state management with Redux Toolkit, routing with React Router, and styling with CSS modules and styled-components. Advanced topics cover performance optimization, testing with React Testing Library, and deployment strategies. Students build multiple projects including a social media app and e-commerce platform.",
+                    "duration": "12 weeks",
+                    "level": "Beginner to Intermediate",
+                    "skills": ["React fundamentals", "Hooks", "State management", "Redux Toolkit", "React Router", "Testing", "Performance optimization", "Styled components"],
+                    "projects": ["Personal portfolio", "Todo app with Redux", "Social media dashboard", "E-commerce frontend", "Real-time chat app"],
+                    "career_paths": ["Frontend Developer", "React Developer", "Full-stack Developer", "UI Engineer", "Frontend Architect"]
+                },
+                {
+                    "name": "Vue.js for Beginners",
+                    "description": "Learn Vue.js framework for building interactive and dynamic user interfaces. This course introduces Vue.js 3 with its composition API, reactive data, computed properties, and component communication. Students learn about Vue Router for single-page applications, Vuex/Pinia for state management, and Vue CLI for project setup. The course covers component lifecycle, custom directives, and integrating with APIs. Practical projects include building a blog platform, task management app, and real-time dashboard. The course also covers testing with Vue Test Utils and deployment strategies.",
+                    "duration": "8 weeks",
+                    "level": "Beginner",
+                    "skills": ["Vue.js fundamentals", "Composition API", "Vue Router", "Vuex/Pinia", "Component development", "API integration", "Testing"],
+                    "projects": ["Personal blog", "Task manager", "Weather app", "Real-time dashboard", "Vue.js portfolio"],
+                    "career_paths": ["Frontend Developer", "Vue.js Developer", "Web Developer", "UI Developer", "JavaScript Developer"]
+                },
+                {
+                    "name": "Angular Development",
+                    "description": "Master Angular framework for building enterprise-level single-page applications. This comprehensive course covers Angular fundamentals including TypeScript, components, services, and dependency injection. Students learn about Angular CLI, routing, forms (reactive and template-driven), HTTP client, and state management with NgRx. The course includes testing with Jasmine and Karma, performance optimization, and Progressive Web App development. Advanced topics cover lazy loading, custom directives, pipes, and deploying Angular applications to various platforms.",
+                    "duration": "14 weeks",
+                    "level": "Intermediate to Advanced",
+                    "skills": ["Angular fundamentals", "TypeScript", "Angular CLI", "RxJS", "NgRx", "Testing", "PWA development", "Angular Material"],
+                    "projects": ["Task management system", "E-commerce application", "Progressive web app", "Enterprise dashboard", "Angular mobile app"],
+                    "career_paths": ["Angular Developer", "Frontend Developer", "Full-stack Developer", "Enterprise Developer", "Technical Lead"]
+                },
+                {
+                    "name": "Node.js Backend Development",
+                    "description": "Build scalable backend services with Node.js, Express, and MongoDB. This course covers Node.js fundamentals including modules, npm, and asynchronous programming. Students learn to build REST APIs with Express.js, implement authentication and authorization, and work with databases using MongoDB and Mongoose. The course includes middleware development, error handling, testing with Jest, and API documentation with Swagger. Advanced topics cover microservices architecture, real-time applications with Socket.io, and deploying to cloud platforms.",
+                    "duration": "11 weeks",
+                    "level": "Intermediate",
+                    "skills": ["Node.js fundamentals", "Express.js", "MongoDB", "REST API development", "Authentication", "Testing", "Socket.io", "Microservices"],
+                    "projects": ["REST API service", "Real-time chat backend", "E-commerce API", "Microservices system", "GraphQL API"],
+                    "career_paths": ["Backend Developer", "Node.js Developer", "Full-stack Developer", "API Developer", "DevOps Engineer"]
+                },
+                {
+                    "name": "Full-Stack Web Development",
+                    "description": "Complete full-stack course covering both frontend and backend development. This comprehensive course teaches students to build complete web applications using modern technologies. The frontend covers React or Vue.js, while the backend uses Node.js and Express. Students learn database design with both SQL and NoSQL databases, authentication systems, and deployment strategies. The course includes DevOps practices, version control with Git, and project management methodologies. Students complete multiple full-stack projects from concept to deployment.",
+                    "duration": "16 weeks",
+                    "level": "Beginner to Intermediate",
+                    "skills": ["Frontend frameworks", "Backend development", "Database design", "Authentication", "DevOps", "Git", "Deployment", "Project management"],
+                    "projects": ["Personal blog platform", "Social media application", "E-commerce website", "Project management tool", "SaaS application"],
+                    "career_paths": ["Full-stack Developer", "Web Developer", "Software Engineer", "Startup CTO", "Technical Consultant"]
+                },
+                {
+                    "name": "HTML5 & CSS3 Masterclass",
+                    "description": "Master modern HTML5 and CSS3 techniques including Flexbox and Grid layouts. This course covers semantic HTML5 elements, accessibility best practices, and modern CSS features. Students learn responsive design principles, CSS Grid, Flexbox, animations, and transitions. The course includes CSS preprocessors like Sass, CSS frameworks, and modern layout techniques. Advanced topics cover CSS custom properties, performance optimization, and building component libraries. Students create responsive websites and learn modern web design principles.",
+                    "duration": "6 weeks",
+                    "level": "Beginner to Intermediate",
+                    "skills": ["Semantic HTML5", "CSS Grid", "Flexbox", "Responsive design", "CSS animations", "Sass", "Accessibility", "Performance optimization"],
+                    "projects": ["Responsive portfolio", "Landing page", "CSS component library", "Animated website", "Mobile-first design"],
+                    "career_paths": ["Frontend Developer", "Web Designer", "UI Developer", "Web Developer", "UX Developer"]
+                }
+            ]
+        },
+        {
+            "name": "Data Science & Analytics",
+            "courses": [
+                {
+                    "name": "Data Science with Python",
+                    "description": "Learn data analysis, visualization, and machine learning using Python libraries. This comprehensive course covers the entire data science workflow from data collection to model deployment. Students master essential libraries including NumPy, Pandas, Matplotlib, Seaborn, and Scikit-learn. The course includes statistical analysis, data cleaning techniques, exploratory data analysis, and feature engineering. Advanced topics cover machine learning algorithms, model evaluation, and deploying models with Flask. Students work on real-world datasets and complete a capstone project analyzing business data.",
+                    "duration": "14 weeks",
+                    "level": "Beginner to Intermediate",
+                    "skills": ["Python for data science", "Pandas", "NumPy", "Data visualization", "Machine learning", "Statistical analysis", "Model deployment", "Jupyter notebooks"],
+                    "projects": ["Sales data analysis", "Customer segmentation", "Predictive pricing model", "Business intelligence dashboard", "Machine learning pipeline"],
+                    "career_paths": ["Data Scientist", "Data Analyst", "Business Intelligence Analyst", "Machine Learning Engineer", "Research Analyst"]
+                },
+                {
+                    "name": "Machine Learning Fundamentals",
+                    "description": "Understand machine learning algorithms and implement them using scikit-learn and TensorFlow. This course provides a solid foundation in machine learning theory and practical implementation. Students learn supervised learning (regression, classification), unsupervised learning (clustering, dimensionality reduction), and basic deep learning concepts. The course covers model selection, cross-validation, hyperparameter tuning, and handling real-world data challenges. Advanced topics include ensemble methods, feature selection, and deploying ML models to production.",
+                    "duration": "12 weeks",
+                    "level": "Intermediate",
+                    "skills": ["Machine learning algorithms", "Scikit-learn", "TensorFlow", "Model evaluation", "Feature engineering", "Hyperparameter tuning", "Model deployment"],
+                    "projects": ["House price prediction", "Image classification", "Recommendation system", "Fraud detection model", "Time series forecasting"],
+                    "career_paths": ["Machine Learning Engineer", "Data Scientist", "AI Researcher", "Analytics Consultant", "AI Developer"]
+                },
+                {
+                    "name": "Deep Learning with TensorFlow",
+                    "description": "Build neural networks and deep learning models for image and text analysis. This advanced course covers deep learning fundamentals including neural network architectures, backpropagation, and optimization techniques. Students learn to build convolutional neural networks for computer vision, recurrent neural networks for sequence data, and transformer models for natural language processing. The course includes practical projects using TensorFlow and Keras, model optimization techniques, and deploying deep learning models. Advanced topics cover GANs, transfer learning, and distributed training.",
+                    "duration": "10 weeks",
+                    "level": "Advanced",
+                    "skills": ["Neural networks", "TensorFlow", "Keras", "Computer vision", "Natural language processing", "Transfer learning", "Model optimization"],
+                    "projects": ["Image classification system", "Text sentiment analyzer", "Object detection model", "Language translation system", "Generative AI application"],
+                    "career_paths": ["Deep Learning Engineer", "AI Researcher", "Computer Vision Engineer", "NLP Engineer", "ML Research Scientist"]
+                },
+                {
+                    "name": "Data Visualization with Tableau",
+                    "description": "Create compelling data visualizations and dashboards using Tableau. This course covers data connection, data preparation, and creating various chart types in Tableau. Students learn advanced visualization techniques, calculated fields, parameters, and dashboard design principles. The course includes storytelling with data, interactive dashboards, and sharing visualizations. Advanced topics cover Tableau Server administration, custom SQL, and integrating with other data sources. Students complete projects creating business dashboards and data stories.",
+                    "duration": "6 weeks",
+                    "level": "Beginner to Intermediate",
+                    "skills": ["Tableau Desktop", "Data visualization", "Dashboard design", "Data storytelling", "Calculated fields", "Parameters", "Data connections"],
+                    "projects": ["Sales performance dashboard", "Customer analytics dashboard", "Financial reporting system", "Marketing campaign analysis", "Executive summary dashboard"],
+                    "career_paths": ["Business Intelligence Analyst", "Data Analyst", "Tableau Developer", "Data Visualization Specialist", "Business Analyst"]
+                },
+                {
+                    "name": "SQL for Data Analysis",
+                    "description": "Master SQL queries and database operations for data analysis and reporting. This comprehensive course covers SQL fundamentals including SELECT statements, joins, subqueries, and window functions. Students learn advanced SQL techniques for data analysis, performance optimization, and working with different database systems. The course includes data modeling, stored procedures, and database administration basics. Practical projects involve analyzing real business datasets and creating automated reporting systems.",
+                    "duration": "8 weeks",
+                    "level": "Beginner to Intermediate",
+                    "skills": ["SQL fundamentals", "Advanced queries", "Database design", "Performance optimization", "Data modeling", "Stored procedures", "Reporting"],
+                    "projects": ["Sales analysis system", "Customer database design", "Automated reporting tool", "Data warehouse queries", "Performance optimization project"],
+                    "career_paths": ["Data Analyst", "Database Developer", "Business Intelligence Developer", "Data Engineer", "Database Administrator"]
+                },
+                {
+                    "name": "Big Data Analytics with Spark",
+                    "description": "Process large datasets using Apache Spark and distributed computing. This course covers big data fundamentals, Spark architecture, and distributed computing concepts. Students learn to use Spark SQL, DataFrames, and RDDs for data processing. The course includes machine learning with MLlib, stream processing with Spark Streaming, and deploying Spark applications on cloud platforms. Advanced topics cover performance tuning, cluster management, and integrating with big data ecosystems like Hadoop and Kafka.",
+                    "duration": "10 weeks",
+                    "level": "Advanced",
+                    "skills": ["Apache Spark", "Distributed computing", "Spark SQL", "MLlib", "Stream processing", "Big data architecture", "Cloud deployment"],
+                    "projects": ["Large-scale data processing pipeline", "Real-time analytics system", "Machine learning on big data", "ETL pipeline with Spark", "Distributed data processing"],
+                    "career_paths": ["Big Data Engineer", "Data Engineer", "Spark Developer", "Data Architect", "Platform Engineer"]
+                }
+            ]
+        },
+        {
+            "name": "Cloud Computing",
+            "courses": [
+                {
+                    "name": "AWS Cloud Practitioner",
+                    "description": "Learn Amazon Web Services fundamentals and cloud computing concepts. This course covers AWS core services including EC2, S3, RDS, and Lambda. Students learn cloud architecture principles, security best practices, and cost optimization strategies. The course includes hands-on labs for deploying applications, managing infrastructure, and implementing monitoring solutions. Advanced topics cover auto-scaling, load balancing, and disaster recovery planning. Students prepare for the AWS Cloud Practitioner certification.",
+                    "duration": "8 weeks",
+                    "level": "Beginner",
+                    "skills": ["AWS core services", "Cloud architecture", "Security", "Cost optimization", "Infrastructure management", "Monitoring", "Certification preparation"],
+                    "projects": ["Web application deployment", "Database migration to cloud", "Serverless application", "Disaster recovery plan", "Cost optimization analysis"],
+                    "career_paths": ["Cloud Engineer", "AWS Solutions Architect", "DevOps Engineer", "Cloud Consultant", "Systems Administrator"]
+                },
+                {
+                    "name": "Microsoft Azure Fundamentals",
+                    "description": "Master Microsoft Azure cloud services and deployment strategies. This comprehensive course covers Azure core services including virtual machines, storage, databases, and networking. Students learn Azure Active Directory, security features, and compliance frameworks. The course includes practical exercises for deploying applications, managing resources, and implementing DevOps practices. Advanced topics cover Azure Kubernetes Service, Azure Functions, and hybrid cloud scenarios.",
+                    "duration": "8 weeks",
+                    "level": "Beginner",
+                    "skills": ["Azure services", "Azure Active Directory", "Security", "DevOps", "Kubernetes", "Serverless computing", "Hybrid cloud"],
+                    "projects": ["Azure web app deployment", "Containerized application", "Azure DevOps pipeline", "Identity management system", "Hybrid cloud solution"],
+                    "career_paths": ["Azure Developer", "Cloud Architect", "DevOps Engineer", "Azure Administrator", "Cloud Security Engineer"]
+                },
+                {
+                    "name": "Google Cloud Platform",
+                    "description": "Build and deploy applications on Google Cloud Platform infrastructure. This course covers GCP core services including Compute Engine, Cloud Storage, Cloud SQL, and App Engine. Students learn about Google Kubernetes Engine, BigQuery for analytics, and machine learning services. The course includes practical projects for deploying scalable applications, implementing CI/CD pipelines, and managing cloud resources. Advanced topics cover multi-region deployments, security best practices, and cost management.",
+                    "duration": "8 weeks",
+                    "level": "Beginner to Intermediate",
+                    "skills": ["GCP services", "Kubernetes", "BigQuery", "Machine learning", "CI/CD", "Security", "Cost management"],
+                    "projects": ["Scalable web application", "Data analytics pipeline", "Machine learning deployment", "Kubernetes cluster", "Multi-region architecture"],
+                    "career_paths": ["GCP Developer", "Cloud Architect", "Data Engineer", "DevOps Engineer", "Site Reliability Engineer"]
+                },
+                {
+                    "name": "Docker and Containerization",
+                    "description": "Learn containerization with Docker and orchestration with Kubernetes. This course covers container fundamentals, Docker images, and container networking. Students learn to build, deploy, and manage containerized applications. The course includes Docker Compose for multi-container applications, container security, and best practices. Advanced topics cover Kubernetes architecture, pod management, services, and ingress controllers. Students gain hands-on experience with container orchestration.",
+                    "duration": "9 weeks",
+                    "level": "Intermediate",
+                    "skills": ["Docker fundamentals", "Container orchestration", "Kubernetes", "Container security", "Docker Compose", "CI/CD with containers", "Microservices"],
+                    "projects": ["Containerized web application", "Microservices architecture", "Kubernetes deployment", "Container security implementation", "CI/CD pipeline"],
+                    "career_paths": ["DevOps Engineer", "Container Engineer", "Platform Engineer", "Site Reliability Engineer", "Cloud Engineer"]
+                },
+                {
+                    "name": "Kubernetes Administration",
+                    "description": "Master Kubernetes for container orchestration and cluster management. This advanced course covers Kubernetes architecture, cluster setup, and administration tasks. Students learn about pods, services, deployments, and networking. The course includes security policies, RBAC, monitoring, and troubleshooting. Advanced topics cover custom resources, operators, and multi-cluster management. Students gain practical experience managing production Kubernetes environments.",
+                    "duration": "10 weeks",
+                    "level": "Advanced",
+                    "skills": ["Kubernetes administration", "Cluster management", "Security policies", "Monitoring", "Troubleshooting", "Custom resources", "Multi-cluster"],
+                    "projects": ["Production cluster setup", "Security implementation", "Monitoring system", "Custom operator development", "Multi-cluster federation"],
+                    "career_paths": ["Kubernetes Administrator", "Platform Engineer", "DevOps Engineer", "Site Reliability Engineer", "Cloud Architect"]
+                },
+                {
+                    "name": "Serverless Computing",
+                    "description": "Build serverless applications using AWS Lambda, Azure Functions, and more. This course covers serverless architecture patterns, function development, and event-driven programming. Students learn to build APIs, process data, and integrate with cloud services using serverless technologies. The course includes monitoring, debugging, and performance optimization for serverless applications. Advanced topics cover serverless security, cost optimization, and multi-cloud serverless strategies.",
+                    "duration": "7 weeks",
+                    "level": "Intermediate",
+                    "skills": ["Serverless architecture", "AWS Lambda", "Azure Functions", "Event-driven programming", "API development", "Monitoring", "Cost optimization"],
+                    "projects": ["Serverless API", "Data processing pipeline", "Event-driven application", "Serverless web app", "Multi-cloud function"],
+                    "career_paths": ["Serverless Developer", "Cloud Architect", "Backend Developer", "DevOps Engineer", "Solutions Architect"]
+                }
+            ]
+        },
+        {
+            "name": "DevOps & Tools",
+            "courses": [
+                {
+                    "name": "Git Version Control",
+                    "description": "Master Git for version control and collaborative software development. This course covers Git fundamentals including repositories, commits, branches, and merging. Students learn advanced Git workflows, conflict resolution, and collaboration strategies. The course includes GitHub/GitLab usage, pull requests, and code review processes. Advanced topics cover Git hooks, submodules, and repository management. Students gain practical experience with industry-standard development workflows.",
+                    "duration": "4 weeks",
+                    "level": "Beginner",
+                    "skills": ["Git fundamentals", "Branching strategies", "Collaboration workflows", "GitHub/GitLab", "Code review", "Git hooks", "Repository management"],
+                    "projects": ["Collaborative project", "Open source contribution", "Git workflow implementation", "Automated testing with hooks", "Repository structure design"],
+                    "career_paths": ["Software Developer", "DevOps Engineer", "Technical Lead", "Open Source Contributor", "Project Manager"]
+                },
+                {
+                    "name": "CI/CD Pipeline Development",
+                    "description": "Build automated deployment pipelines using Jenkins, GitHub Actions, and GitLab CI. This course covers continuous integration and deployment concepts, pipeline design, and automation strategies. Students learn to create build pipelines, automated testing, and deployment workflows. The course includes infrastructure as code, monitoring, and rollback strategies. Advanced topics cover pipeline optimization, security scanning, and multi-environment deployments.",
+                    "duration": "9 weeks",
+                    "level": "Intermediate",
+                    "skills": ["CI/CD concepts", "Jenkins", "GitHub Actions", "GitLab CI", "Pipeline design", "Automated testing", "Infrastructure as code"],
+                    "projects": ["Build automation pipeline", "Multi-stage deployment", "Automated testing suite", "Infrastructure pipeline", "Security scanning integration"],
+                    "career_paths": ["DevOps Engineer", "Build Engineer", "Platform Engineer", "Release Manager", "Site Reliability Engineer"]
+                },
+                {
+                    "name": "Infrastructure as Code",
+                    "description": "Manage infrastructure using Terraform, Ansible, and other IaC tools. This course covers infrastructure automation, configuration management, and provisioning strategies. Students learn to create reusable infrastructure templates, manage state, and implement best practices. The course includes cloud provider integration, security considerations, and disaster recovery planning. Advanced topics cover multi-cloud deployments, infrastructure testing, and governance.",
+                    "duration": "8 weeks",
+                    "level": "Intermediate",
+                    "skills": ["Terraform", "Ansible", "Infrastructure automation", "Configuration management", "Cloud provisioning", "State management", "Security"],
+                    "projects": ["Cloud infrastructure automation", "Configuration management system", "Multi-environment setup", "Disaster recovery implementation", "Infrastructure testing"],
+                    "career_paths": ["DevOps Engineer", "Infrastructure Engineer", "Cloud Engineer", "Platform Engineer", "Systems Administrator"]
+                },
+                {
+                    "name": "Monitoring and Logging",
+                    "description": "Implement monitoring solutions using Prometheus, Grafana, and ELK stack. This course covers observability principles, metrics collection, and alerting strategies. Students learn to set up monitoring dashboards, log aggregation, and distributed tracing. The course includes performance monitoring, capacity planning, and incident response. Advanced topics cover custom metrics, automated remediation, and observability for microservices.",
+                    "duration": "7 weeks",
+                    "level": "Intermediate",
+                    "skills": ["Prometheus", "Grafana", "ELK stack", "Observability", "Alerting", "Log analysis", "Performance monitoring"],
+                    "projects": ["Monitoring dashboard", "Log aggregation system", "Alerting configuration", "Performance analysis", "Incident response automation"],
+                    "career_paths": ["Site Reliability Engineer", "DevOps Engineer", "Platform Engineer", "Monitoring Specialist", "Performance Engineer"]
+                },
+                {
+                    "name": "DevOps Best Practices",
+                    "description": "Learn DevOps culture, practices, and tools for improved software delivery. This comprehensive course covers DevOps principles, collaboration strategies, and organizational transformation. Students learn about lean practices, continuous improvement, and measurement strategies. The course includes security integration (DevSecOps), quality assurance, and team dynamics. Advanced topics cover scaling DevOps practices, cultural change management, and business value measurement.",
+                    "duration": "6 weeks",
+                    "level": "Beginner to Intermediate",
+                    "skills": ["DevOps culture", "Collaboration", "Continuous improvement", "DevSecOps", "Quality assurance", "Team dynamics", "Change management"],
+                    "projects": ["DevOps assessment", "Process improvement plan", "Security integration", "Team collaboration tools", "Metrics dashboard"],
+                    "career_paths": ["DevOps Engineer", "Technical Lead", "Platform Manager", "DevOps Consultant", "Transformation Manager"]
+                },
+                {
+                    "name": "Linux System Administration",
+                    "description": "Master Linux command line and system administration for servers and containers. This course covers Linux fundamentals, file systems, process management, and networking. Students learn system configuration, user management, and security hardening. The course includes shell scripting, automation, and troubleshooting techniques. Advanced topics cover performance tuning, cluster management, and container orchestration on Linux systems.",
+                    "duration": "10 weeks",
+                    "level": "Beginner to Intermediate",
+                    "skills": ["Linux fundamentals", "System administration", "Shell scripting", "Networking", "Security", "Performance tuning", "Automation"],
+                    "projects": ["Server configuration", "Automation scripts", "Security hardening", "Monitoring setup", "Backup system"],
+                    "career_paths": ["System Administrator", "DevOps Engineer", "Platform Engineer", "Site Reliability Engineer", "Infrastructure Engineer"]
+                }
+            ]
+        },
+        {
+            "name": "Mobile Development",
+            "courses": [
+                {
+                    "name": "React Native Development",
+                    "description": "Build cross-platform mobile apps using React Native framework. This course covers React Native fundamentals, component development, and navigation. Students learn to integrate with device features, handle user input, and manage state. The course includes API integration, local storage, and publishing to app stores. Advanced topics cover performance optimization, native module development, and testing strategies. Students build complete mobile applications from concept to deployment.",
+                    "duration": "10 weeks",
+                    "level": "Intermediate",
+                    "skills": ["React Native", "Mobile development", "Cross-platform apps", "Navigation", "State management", "API integration", "App store deployment"],
+                    "projects": ["Todo mobile app", "Weather application", "Social media app", "E-commerce mobile app", "Real-time chat application"],
+                    "career_paths": ["Mobile Developer", "React Native Developer", "Full-stack Developer", "App Developer", "Cross-platform Developer"]
+                },
+                {
+                    "name": "Flutter App Development",
+                    "description": "Create beautiful mobile applications using Flutter and Dart programming. This course covers Flutter fundamentals, widget development, and state management. Students learn Dart programming language, UI design principles, and animation techniques. The course includes database integration, API consumption, and platform-specific features. Advanced topics cover custom widgets, performance optimization, and publishing to multiple platforms.",
+                    "duration": "11 weeks",
+                    "level": "Beginner to Intermediate",
+                    "skills": ["Flutter", "Dart programming", "Widget development", "State management", "UI design", "Animations", "Cross-platform development"],
+                    "projects": ["Personal expense tracker", "Recipe sharing app", "Fitness tracking app", "E-learning mobile app", "Location-based service app"],
+                    "career_paths": ["Flutter Developer", "Mobile Developer", "Cross-platform Developer", "UI Developer", "App Developer"]
+                },
+                {
+                    "name": "iOS Development with Swift",
+                    "description": "Build native iOS applications using Swift programming language. This comprehensive course covers Swift fundamentals, iOS SDK, and Xcode development environment. Students learn UIKit, Core Data, networking, and iOS design patterns. The course includes App Store guidelines, testing strategies, and performance optimization. Advanced topics cover SwiftUI, Combine framework, and advanced iOS features like ARKit and Core ML.",
+                    "duration": "12 weeks",
+                    "level": "Intermediate",
+                    "skills": ["Swift programming", "iOS SDK", "UIKit", "Core Data", "Networking", "Design patterns", "SwiftUI", "App Store deployment"],
+                    "projects": ["Personal finance app", "Social networking app", "Augmented reality app", "Core ML integration", "Apple Watch companion app"],
+                    "career_paths": ["iOS Developer", "Mobile Developer", "Swift Developer", "App Developer", "Senior Mobile Engineer"]
+                },
+                {
+                    "name": "Android Development with Kotlin",
+                    "description": "Develop Android apps using Kotlin and modern Android development practices. This course covers Kotlin programming language, Android SDK, and Android Studio. Students learn about activities, fragments, layouts, and Material Design principles. The course includes data persistence, networking, background processing, and testing. Advanced topics cover Jetpack Compose, architecture components, and Play Store publishing. Students build feature-rich Android applications with modern development practices.",
+                    "duration": "11 weeks",
+                    "level": "Intermediate",
+                    "skills": ["Kotlin programming", "Android SDK", "Android Studio", "Material Design", "Jetpack Compose", "Architecture components", "Testing"],
+                    "projects": ["News reader app", "Music player application", "Location tracking app", "Camera application", "Android game development"],
+                    "career_paths": ["Android Developer", "Mobile Developer", "Kotlin Developer", "App Developer", "Mobile Architect"]
+                },
+                {
+                    "name": "Mobile UI/UX Design",
+                    "description": "Design user-friendly mobile interfaces and optimize user experience. This course covers mobile design principles, user research, and prototyping techniques. Students learn about information architecture, interaction design, and accessibility guidelines. The course includes design tools like Figma and Sketch, user testing methods, and design systems. Advanced topics cover motion design, micro-interactions, and cross-platform design consistency.",
+                    "duration": "8 weeks",
+                    "level": "Beginner to Intermediate",
+                    "skills": ["Mobile design principles", "User research", "Prototyping", "Figma/Sketch", "Accessibility", "Design systems", "User testing"],
+                    "projects": ["Mobile app redesign", "Design system creation", "User research study", "Interactive prototype", "Accessibility audit"],
+                    "career_paths": ["UI/UX Designer", "Mobile Designer", "Product Designer", "Interaction Designer", "Design Researcher"]
+                }
+            ]
+        },
+        {
+            "name": "Cybersecurity",
+            "courses": [
+                {
+                    "name": "Cybersecurity Fundamentals",
+                    "description": "Learn essential cybersecurity concepts and practices for protecting systems. This comprehensive course covers threat landscape, risk assessment, and security frameworks. Students learn about cryptography, network security, and incident response. The course includes security policies, compliance requirements, and business continuity planning. Advanced topics cover threat hunting, digital forensics, and emerging security challenges. Students gain practical experience with security tools and methodologies.",
+                    "duration": "10 weeks",
+                    "level": "Beginner",
+                    "skills": ["Security fundamentals", "Risk assessment", "Cryptography", "Network security", "Incident response", "Compliance", "Security tools"],
+                    "projects": ["Security assessment", "Incident response plan", "Security policy development", "Risk analysis", "Security awareness program"],
+                    "career_paths": ["Cybersecurity Analyst", "Security Consultant", "Information Security Officer", "Risk Analyst", "Compliance Specialist"]
+                },
+                {
+                    "name": "Ethical Hacking & Penetration Testing",
+                    "description": "Master ethical hacking techniques and penetration testing methodologies. This hands-on course covers penetration testing frameworks, vulnerability assessment, and exploitation techniques. Students learn about reconnaissance, scanning, enumeration, and post-exploitation activities. The course includes web application testing, network penetration testing, and wireless security. Advanced topics cover social engineering, physical security, and reporting methodologies.",
+                    "duration": "12 weeks",
+                    "level": "Advanced",
+                    "skills": ["Penetration testing", "Vulnerability assessment", "Exploitation techniques", "Web application testing", "Network security", "Social engineering", "Security reporting"],
+                    "projects": ["Web application pentest", "Network penetration test", "Wireless security assessment", "Social engineering campaign", "Comprehensive security audit"],
+                    "career_paths": ["Penetration Tester", "Ethical Hacker", "Security Consultant", "Vulnerability Researcher", "Red Team Specialist"]
+                },
+                {
+                    "name": "Network Security",
+                    "description": "Secure network infrastructure and understand common attack vectors. This course covers network protocols, firewalls, intrusion detection systems, and VPN technologies. Students learn about network monitoring, traffic analysis, and threat detection. The course includes wireless security, network segmentation, and secure network design. Advanced topics cover advanced persistent threats, network forensics, and zero-trust architecture.",
+                    "duration": "9 weeks",
+                    "level": "Intermediate",
+                    "skills": ["Network protocols", "Firewalls", "Intrusion detection", "VPN", "Network monitoring", "Threat detection", "Zero-trust architecture"],
+                    "projects": ["Network security design", "Firewall configuration", "IDS implementation", "Network monitoring setup", "Security incident investigation"],
+                    "career_paths": ["Network Security Engineer", "Security Architect", "SOC Analyst", "Network Administrator", "Security Consultant"]
+                },
+                {
+                    "name": "Web Application Security",
+                    "description": "Identify and fix security vulnerabilities in web applications. This course covers OWASP Top 10, secure coding practices, and web application testing methodologies. Students learn about SQL injection, XSS, CSRF, and authentication vulnerabilities. The course includes security testing tools, code review techniques, and secure development lifecycle. Advanced topics cover API security, cloud application security, and DevSecOps practices.",
+                    "duration": "8 weeks",
+                    "level": "Intermediate",
+                    "skills": ["Web application security", "OWASP Top 10", "Secure coding", "Security testing", "Code review", "API security", "DevSecOps"],
+                    "projects": ["Web application security audit", "Secure application development", "API security testing", "Security code review", "DevSecOps pipeline"],
+                    "career_paths": ["Application Security Engineer", "Security Developer", "Web Security Specialist", "DevSecOps Engineer", "Security Consultant"]
+                },
+                {
+                    "name": "Cloud Security",
+                    "description": "Implement security best practices for cloud-based infrastructure. This course covers cloud security models, shared responsibility, and cloud-specific threats. Students learn about identity and access management, data protection, and compliance in the cloud. The course includes security monitoring, incident response, and disaster recovery in cloud environments. Advanced topics cover multi-cloud security, container security, and serverless security.",
+                    "duration": "9 weeks",
+                    "level": "Intermediate to Advanced",
+                    "skills": ["Cloud security models", "IAM", "Data protection", "Compliance", "Security monitoring", "Container security", "Multi-cloud security"],
+                    "projects": ["Cloud security assessment", "IAM implementation", "Data encryption strategy", "Security monitoring setup", "Compliance audit"],
+                    "career_paths": ["Cloud Security Engineer", "Cloud Security Architect", "DevSecOps Engineer", "Compliance Specialist", "Security Consultant"]
+                }
+            ]
+        },
+        {
+            "name": "Artificial Intelligence",
+            "courses": [
+                {
+                    "name": "AI and Machine Learning Basics",
+                    "description": "Introduction to artificial intelligence and machine learning concepts. This foundational course covers AI history, machine learning types, and basic algorithms. Students learn about supervised and unsupervised learning, neural networks, and model evaluation. The course includes practical exercises with Python and popular ML libraries. Advanced topics cover AI ethics, bias detection, and responsible AI development. Students complete projects applying ML to real-world problems.",
+                    "duration": "10 weeks",
+                    "level": "Beginner",
+                    "skills": ["AI fundamentals", "Machine learning basics", "Python for ML", "Neural networks", "Model evaluation", "AI ethics", "Responsible AI"],
+                    "projects": ["Image classification", "Sentiment analysis", "Recommendation system", "Predictive modeling", "AI ethics analysis"],
+                    "career_paths": ["AI Developer", "Machine Learning Engineer", "Data Scientist", "AI Researcher", "AI Product Manager"]
+                },
+                {
+                    "name": "Natural Language Processing",
+                    "description": "Build systems that understand and process human language using NLP techniques. This course covers text preprocessing, language models, and sentiment analysis. Students learn about named entity recognition, topic modeling, and machine translation. The course includes modern NLP techniques like transformers, BERT, and GPT models. Advanced topics cover conversational AI, language generation, and multilingual NLP. Students build practical NLP applications.",
+                    "duration": "11 weeks",
+                    "level": "Intermediate to Advanced",
+                    "skills": ["Text preprocessing", "Language models", "Transformers", "BERT/GPT", "Sentiment analysis", "Named entity recognition", "Conversational AI"],
+                    "projects": ["Chatbot development", "Text summarization tool", "Language translator", "Sentiment analysis system", "Document classification"],
+                    "career_paths": ["NLP Engineer", "AI Researcher", "Conversational AI Developer", "Data Scientist", "AI Product Manager"]
+                },
+                {
+                    "name": "Computer Vision",
+                    "description": "Develop applications that can see and interpret visual information. This course covers image processing, feature detection, and object recognition. Students learn about convolutional neural networks, image segmentation, and video analysis. The course includes practical applications like face recognition, medical imaging, and autonomous vehicles. Advanced topics cover generative models, 3D vision, and real-time processing. Students build computer vision applications using OpenCV and deep learning frameworks.",
+                    "duration": "12 weeks",
+                    "level": "Intermediate to Advanced",
+                    "skills": ["Image processing", "CNN", "Object detection", "Image segmentation", "OpenCV", "Deep learning", "Real-time processing"],
+                    "projects": ["Face recognition system", "Object detection app", "Image segmentation tool", "Medical imaging analyzer", "Autonomous vehicle vision"],
+                    "career_paths": ["Computer Vision Engineer", "AI Researcher", "Robotics Engineer", "Medical AI Specialist", "Autonomous Systems Developer"]
+                },
+                {
+                    "name": "ChatBot Development",
+                    "description": "Create intelligent chatbots using modern AI frameworks and techniques. This course covers conversational AI principles, dialog management, and natural language understanding. Students learn about intent recognition, entity extraction, and response generation. The course includes chatbot platforms, integration techniques, and deployment strategies. Advanced topics cover voice assistants, multimodal interfaces, and personalization. Students build and deploy production-ready chatbots.",
+                    "duration": "8 weeks",
+                    "level": "Intermediate",
+                    "skills": ["Conversational AI", "Dialog management", "Intent recognition", "NLU", "Chatbot platforms", "Voice assistants", "Deployment"],
+                    "projects": ["Customer service chatbot", "Voice assistant", "FAQ automation", "Multilingual chatbot", "E-commerce assistant"],
+                    "career_paths": ["Conversational AI Developer", "Chatbot Developer", "AI Product Manager", "Voice UI Designer", "AI Solutions Architect"]
+                },
+                {
+                    "name": "AI Ethics and Responsible AI",
+                    "description": "Understand ethical considerations and responsible practices in AI development. This course covers AI bias, fairness, and transparency in machine learning systems. Students learn about algorithmic accountability, privacy protection, and regulatory compliance. The course includes case studies of AI failures, ethical frameworks, and best practices. Advanced topics cover explainable AI, human-AI interaction, and societal impact assessment. Students develop frameworks for responsible AI development.",
+                    "duration": "6 weeks",
+                    "level": "Beginner to Intermediate",
+                    "skills": ["AI ethics", "Bias detection", "Fairness", "Transparency", "Privacy", "Regulatory compliance", "Explainable AI"],
+                    "projects": ["Bias audit", "Ethics framework", "Fairness assessment", "Privacy impact analysis", "Responsible AI guidelines"],
+                    "career_paths": ["AI Ethics Specialist", "AI Policy Researcher", "Responsible AI Engineer", "AI Governance Manager", "Ethics Consultant"]
+                }
+            ]
+        }
+    ]
+}

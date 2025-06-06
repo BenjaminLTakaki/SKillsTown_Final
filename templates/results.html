@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}SkillsTown - Your Course Recommendations{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container text-center">
+        <h1>Your Personalized Course Recommendations</h1>
+    </div>
+</section>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-4">
+            <!-- CV Details Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-file-alt me-2"></i>CV Analysis
+                </div>
+                <div class="card-body">
+                    <p><strong>Filename:</strong> {{ filename }}</p>
+                    
+                    <h5 class="mt-4"><i class="fas fa-lightbulb me-2"></i>Extracted Skills</h5>
+                    <div class="skills-container mt-3">
+                        {% if skills %}
+                            {% for skill in skills %}
+                                <span class="skills-badge">{{ skill }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted">No specific skills detected.</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mt-4">
+                        <a href="/" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-left me-2"></i>Upload Another CV
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-8">
+            <!-- Recommendations Card -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-star me-2"></i>Recommended SkillsTown Courses
+                </div>
+                <div class="card-body">
+                    {% if recommendations %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>Found <strong>{{ recommendations|length }}</strong> matching courses.
+                        </div>
+                        
+                        {% for recommendation in recommendations %}
+                            <div class="card mb-3 course-card">
+                                <div class="card-body">
+                                    <span class="category-badge">{{ recommendation.category }}</span>
+                                    <h5 class="card-title">{{ recommendation.course }}</h5>
+                                    
+                                    {% if recommendation.description %}
+                                        <p class="card-text text-muted">{{ recommendation.description }}</p>
+                                    {% endif %}
+                                    
+                                    <h6 class="mt-3">Matched Skills:</h6>
+                                    <div>
+                                        {% for skill in recommendation.matching_skills %}
+                                            <span class="skills-badge matching-skill">{{ skill }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    
+                                    <div class="mt-3">
+                                        <a href="https://www.skillstown.nl" target="_blank" class="btn btn-success btn-sm">
+                                            <i class="fas fa-external-link-alt me-2"></i>View Course
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>No matching courses found.
+                        </div>
+                        <div class="text-center mt-4">
+                            <a href="https://www.skillstown.nl" target="_blank" class="btn btn-primary">
+                                <i class="fas fa-external-link-alt me-2"></i>Browse All SkillsTown Courses
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

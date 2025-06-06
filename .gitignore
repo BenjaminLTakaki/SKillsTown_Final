@@ -1,0 +1,6 @@
+.env
+/venv
+/instance
+skillstown-env/
+/__pycache__
+local_config.py
