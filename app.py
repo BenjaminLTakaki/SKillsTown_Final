@@ -18,7 +18,13 @@ from flask_sqlalchemy import SQLAlchemy
 
 load_dotenv()
 
-# Try to import from local_config for development, fallback for production
+try:
+    from auto_migration import run_auto_migration
+except ImportError:
+    def run_auto_migration():
+        print("Auto migration script not found")
+        return True
+    
 try:
     from local_config import NARRETEX_API_URL, check_environment, LOCAL_DATABASE_URL, DEVELOPMENT_MODE
 except ImportError:
@@ -187,6 +193,24 @@ def init_auth(app, get_url_for_func, get_stats_func):
     
     return db
 
+def init_database():
+    """Initialize database with migrations"""
+    try:
+        # Run auto-migration first
+        if is_production():
+            print("🔧 Running production database migration...")
+            run_auto_migration()
+        
+        # Then create all tables (this is safe - won't recreate existing tables)
+        db.create_all()
+        print("✅ Database initialization complete")
+        
+    except Exception as e:
+        print(f"❌ Database initialization failed: {e}")
+        # Don't fail the app startup, just log the error
+        import traceback
+        traceback.print_exc()
+
 # Fallback skill extraction
 def extract_skills_fallback(cv_text):
     patterns = [
@@ -342,7 +366,7 @@ def create_app(config_name=None):
     init_auth(app, get_url_for, get_skillstown_stats)
 
     with app.app_context(): 
-        db.create_all()
+        init_database()
 
     # Helpers
     COURSE_CATALOG_PATH = os.path.join(os.path.dirname(__file__), 'static', 'data', 'course_catalog.json')
