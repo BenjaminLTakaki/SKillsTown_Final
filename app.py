@@ -1092,6 +1092,138 @@ def create_app(config_name=None):
     def static_files(filename):
         return send_from_directory('static', filename)
 
+    @app.route('/user/quiz-history/<course_id>')
+    @login_required
+    def get_user_quiz_history(course_id):
+        """Get user's quiz history for a specific course"""
+        try:
+            # Verify user owns this course
+            course = UserCourse.query.filter_by(id=course_id, user_id=current_user.id).first()
+            if not course:
+                return jsonify({'error': 'Course not found'}), 404
+            
+            # Get quiz attempts for this course
+            quiz_attempts = db.session.query(CourseQuizAttempt).join(
+                CourseQuiz, CourseQuizAttempt.course_quiz_id == CourseQuiz.id
+            ).filter(
+                CourseQuiz.user_course_id == course_id,
+                CourseQuizAttempt.user_id == current_user.id,
+                CourseQuizAttempt.score.isnot(None)  # Only completed attempts
+            ).order_by(CourseQuizAttempt.completed_at.desc()).limit(10).all()
+            
+            history = []
+            for attempt in quiz_attempts:
+                history.append({
+                    'id': attempt.id,
+                    'attempt_api_id': attempt.attempt_api_id,
+                    'score': attempt.score,
+                    'total_questions': attempt.total_questions,
+                    'correct_answers': attempt.correct_answers,
+                    'completed_at': attempt.completed_at.isoformat() if attempt.completed_at else None,
+                    'quiz_title': attempt.course_quiz.quiz_title if attempt.course_quiz else 'Quiz'
+                })
+            
+            # Generate basic recommendations based on recent performance
+            recommendations = []
+            if history:
+                avg_score = sum(h['score'] for h in history[:3]) / min(len(history), 3)
+                if avg_score < 60:
+                    recommendations = [
+                        "Focus on reviewing fundamental concepts",
+                        "Consider taking practice quizzes on weak areas",
+                        "Review course materials before attempting more quizzes"
+                    ]
+                elif avg_score < 80:
+                    recommendations = [
+                        "Good progress! Continue practicing with targeted questions",
+                        "Focus on areas where you scored lowest",
+                        "Try more challenging quiz iterations"
+                    ]
+                else:
+                    recommendations = [
+                        "Excellent performance! You're ready for advanced topics",
+                        "Consider exploring related advanced courses",
+                        "Share your knowledge by helping others"
+                    ]
+            
+            return jsonify({
+                'history': history,
+                'recommendations': recommendations,
+                'summary': {
+                    'total_attempts': len(history),
+                    'average_score': sum(h['score'] for h in history) / len(history) if history else 0,
+                    'best_score': max(h['score'] for h in history) if history else 0,
+                    'recent_trend': 'improving' if len(history) >= 2 and history[0]['score'] > history[1]['score'] else 'stable'
+                }
+            })
+            
+        except Exception as e:
+            print(f"Error getting quiz history: {e}")
+            import traceback
+            traceback.print_exc()
+            return jsonify({'error': str(e)}), 500
+
+    @app.route('/user/learning-progress/<course_id>')
+    @login_required
+    def get_user_learning_progress(course_id):
+        """Get user's learning progress for a specific course"""
+        try:
+            # Verify user owns this course
+            course = UserCourse.query.filter_by(id=course_id, user_id=current_user.id).first()
+            if not course:
+                return jsonify({'error': 'Course not found'}), 404
+            
+            # Get learning progress
+            progress = UserLearningProgress.query.filter_by(
+                user_id=current_user.id,
+                course_id=str(course_id)
+            ).first()
+            
+            if not progress:
+                return jsonify({'error': 'No learning progress found'}), 404
+            
+            # Parse JSON fields safely
+            try:
+                knowledge_areas = json.loads(progress.knowledge_areas) if progress.knowledge_areas else {}
+            except (json.JSONDecodeError, TypeError):
+                knowledge_areas = {}
+                
+            try:
+                weak_areas = json.loads(progress.weak_areas) if progress.weak_areas else []
+            except (json.JSONDecodeError, TypeError):
+                weak_areas = []
+                
+            try:
+                strong_areas = json.loads(progress.strong_areas) if progress.strong_areas else []
+            except (json.JSONDecodeError, TypeError):
+                strong_areas = []
+                
+            try:
+                learning_curve = json.loads(progress.learning_curve) if progress.learning_curve else []
+            except (json.JSONDecodeError, TypeError):
+                learning_curve = []
+            
+            progress_data = {
+                'id': progress.id,
+                'user_id': progress.user_id,
+                'course_id': progress.course_id,
+                'knowledge_areas': knowledge_areas,
+                'weak_areas': weak_areas,
+                'strong_areas': strong_areas,
+                'learning_curve': learning_curve,
+                'overall_progress': progress.overall_progress or 0,
+                'mastery_level': progress.mastery_level or 'beginner',
+                'last_updated': progress.last_updated.isoformat() if progress.last_updated else None,
+                'masteryPercentage': progress.overall_progress or 0
+            }
+            
+            return jsonify({'progress': progress_data})
+            
+        except Exception as e:
+            print(f"Error getting learning progress: {e}")
+            import traceback
+            traceback.print_exc()
+            return jsonify({'error': str(e)}), 500
     # Add this test route to check your quiz API connectivity
     @app.route('/test-quiz-api')
     @login_required
