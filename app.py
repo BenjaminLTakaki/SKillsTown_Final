@@ -52,8 +52,8 @@ QUIZ_API_ACCESS_TOKEN = os.environ.get('QUIZ_API_ACCESS_TOKEN', '')
 
 def get_url_for(*args, **kwargs):
     url = url_for(*args, **kwargs)
-    if is_production() and not url.startswith('/skillstown'):
-        url = f"/skillstown{url}"
+    # Remove the skillstown prefix logic for now
+    # The routes should work without prefixing
     return url
 
 # Import models after db is defined
