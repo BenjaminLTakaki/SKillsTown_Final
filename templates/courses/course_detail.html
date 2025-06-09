@@ -809,31 +809,27 @@ function displayAnalyticsModal(data) {
     modal.show();
 }
 
-// Generate mock analytics for demonstration
-function generateMockAnalytics() {
-    return {
-        learningVelocity: Math.floor(Math.random() * 30) - 10,
-        consistencyScore: Math.floor(Math.random() * 40) + 60,
-        strongestAreas: [
-            { area: 'Basic Concepts', score: 85 },
-            { area: 'Practical Applications', score: 78 }
-        ],
-        improvementAreas: [
-            { area: 'Advanced Topics', score: 45 },
-            { area: 'Problem Solving', score: 52 }
-        ],
-        studyRecommendations: [
-            'Focus more time on advanced concepts',
-            'Practice with real-world examples',
-            'Review fundamental principles regularly'
-        ]
-    };
+async function showDetailedAnalytics() {
+    try {
+        // Only show real analytics, no fallback to mock data
+        const response = await fetch(`/course/${courseId}/learning-analytics`);
+        if (response.ok) {
+            const data = await response.json();
+            displayAnalyticsModal(data);
+        } else {
+            showErrorMessage("Analytics unavailable. Please try again later.");
+        }
+    } catch (error) {
+        console.error('Error loading analytics:', error);
+        showErrorMessage("Failed to load analytics. Check your connection.");
+    }
 }
 
-// Display mock analytics if real data unavailable
-function displayMockAnalytics() {
-    const mockData = { analytics: generateMockAnalytics() };
-    displayAnalyticsModal(mockData);
+function showErrorMessage(message) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'alert alert-warning';
+    alertDiv.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i>${message}`;
+    document.getElementById('quizMessage').appendChild(alertDiv);
 }
 
 // Generate a quiz specifically targeted at weak areas

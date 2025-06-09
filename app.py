@@ -1008,21 +1008,13 @@ def create_app(config_name=None):
                     # db.session.commit() # Commit will be done after learning progress update
                     print(f"[DEBUG] Quiz attempt model updated in memory with full results")
 
-                # NEW: Update or create learning progress
-                # Ensure quiz_attempt_model.course_quiz and quiz_attempt_model.course_quiz.user_course are loaded
-                # If they are lazy-loaded, accessing them here is fine.
-                # If not, you might need to query UserCourse separately if course_id is not directly on CourseQuiz.
-                # Assuming CourseQuiz has user_course_id which links to UserCourse table's id.
-                
-                # We need the original course_id (from UserCourse table)
-                # quiz_attempt_model -> course_quiz (CourseQuiz) -> user_course_id (UserCourse.id)
                 if quiz_attempt_model.course_quiz and quiz_attempt_model.course_quiz.user_course_id:
                     original_course_id = quiz_attempt_model.course_quiz.user_course_id
                     update_user_learning_progress(
                         user_id=current_user.id,
                         course_id=original_course_id,
-                        attempt_data=result_data, # This is the full API response
-                        quiz_attempt_model=quiz_attempt_model
+                        attempt_data=result_data, 
+                        quiz_attempt=quiz_attempt_model
                     )
                 else:
                     print(f"[ERROR] Could not determine original course_id for learning progress update. quiz_attempt_id: {quiz_attempt_model.id}")
