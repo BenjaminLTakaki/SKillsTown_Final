@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-auto_migration.py - Runs database migrations automatically on app startup
-Place this file in your project root
+Enhanced auto_migration.py - Handles missing columns in existing tables
 """
 
 import os
@@ -23,6 +22,13 @@ def check_and_add_column(conn, table_name, column_name, column_definition):
     """Check if column exists and add it if it doesn't"""
     try:
         inspector = inspect(conn)
+        
+        # Check if table exists first
+        existing_tables = inspector.get_table_names()
+        if table_name not in existing_tables:
+            logger.info(f"Table {table_name} doesn't exist - skipping column check")
+            return False
+            
         columns = [col['name'] for col in inspector.get_columns(table_name)]
         
         if column_name not in columns:
@@ -33,7 +39,7 @@ def check_and_add_column(conn, table_name, column_name, column_definition):
             logger.info(f"Column {column_name} already exists in {table_name}")
             return False
     except Exception as e:
-        logger.error(f"Error checking/adding column {column_name}: {e}")
+        logger.error(f"Error checking/adding column {column_name} to {table_name}: {e}")
         return False
 
 def create_table_if_not_exists(conn, table_name, create_sql):
@@ -107,6 +113,10 @@ def run_auto_migration():
                 if create_table_if_not_exists(conn, 'skillstown_course_details', skillstown_course_details_sql):
                     changes_made = True
                 
+                # 3b. Add quiz_results column to existing skillstown_course_details table
+                if check_and_add_column(conn, 'skillstown_course_details', 'quiz_results', 'TEXT'):
+                    changes_made = True
+                
                 # 4. Create skillstown_user_profiles table
                 skillstown_user_profiles_sql = """
                     CREATE TABLE skillstown_user_profiles (
@@ -176,6 +186,30 @@ def run_auto_migration():
                 if create_table_if_not_exists(conn, 'skillstown_user_learning_progress', skillstown_user_learning_progress_sql):
                     changes_made = True
                 
+                # 8. Check and add any other missing columns to existing tables
+                
+                # Check skillstown_user_courses for any missing columns
+                user_courses_columns = [
+                    ('status', 'VARCHAR(50) DEFAULT \'enrolled\''),
+                    ('created_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+                ]
+                
+                for col_name, col_def in user_courses_columns:
+                    if check_and_add_column(conn, 'skillstown_user_courses', col_name, col_def):
+                        changes_made = True
+                
+                # Check skillstown_course_details for any missing columns
+                course_details_columns = [
+                    ('progress_percentage', 'INTEGER DEFAULT 0'),
+                    ('completed_at', 'TIMESTAMP'),
+                    ('materials', 'TEXT'),
+                    ('created_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+                ]
+                
+                for col_name, col_def in course_details_columns:
+                    if check_and_add_column(conn, 'skillstown_course_details', col_name, col_def):
+                        changes_made = True
+                
                 # Commit all changes
                 trans.commit()
                 
@@ -189,6 +223,8 @@ def run_auto_migration():
             except Exception as e:
                 trans.rollback()
                 logger.error(f"❌ Migration failed: {e}")
+                import traceback
+                traceback.print_exc()
                 return False
                 
     except Exception as e:
