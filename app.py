@@ -7,7 +7,7 @@ import traceback
 import PyPDF2
 import requests
 from datetime import datetime 
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, current_app, Response
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, current_app, Response, send_from_directory
 from flask_login import login_required, current_user, LoginManager, login_user, logout_user, UserMixin
 from werkzeug.utils import secure_filename
 from sqlalchemy import text
@@ -20,7 +20,12 @@ from local_config import NARRETEX_API_URL, check_environment, LOCAL_DATABASE_URL
 load_dotenv()
 
 # Production detection
-is_production = os.environ.get('RENDER', False) or os.environ.get('FLASK_ENV') == 'production'
+is_production = (
+    os.environ.get('RENDER') or 
+    os.environ.get('RAILWAY_ENVIRONMENT') or 
+    os.environ.get('HEROKU_APP_NAME') or
+    os.environ.get('FLASK_ENV') == 'production'
+)
 
 # API configurations
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
@@ -290,6 +295,11 @@ def create_app(config_name=None):
         if db_url and db_url.startswith('postgres://'):
             db_url = db_url.replace('postgres://', 'postgresql://')
         app.config['SQLALCHEMY_DATABASE_URI'] = db_url or 'sqlite:///skillstown.db'
+
+    # Ensure upload directory exists and is writable
+    upload_dir = app.config['UPLOAD_FOLDER']
+    if not os.path.exists(upload_dir):
+        os.makedirs(upload_dir, exist_ok=True)
 
     # Initialize extensions
     db.init_app(app)
@@ -781,12 +791,20 @@ def create_app(config_name=None):
                 'success': False,
                 'error': f'Internal error: {str(e)}'
             }), 500
-
+    def check_service_health(url, timeout=5):
+        try:
+            response = requests.get(f"{url}/health", timeout=timeout)
+            return response.status_code == 200
+        except:
+            return False
     @app.route('/quiz/<quiz_id>/details')
     @login_required
     def get_quiz_details(quiz_id):
         """Get quiz details for taking the quiz"""
         try:
+            if not check_service_health(QUIZ_API_BASE_URL):
+                return jsonify({'error': 'Quiz service temporarily unavailable'}), 503
+            
             print(f"[DEBUG] Getting quiz details for quiz_id: {quiz_id}")
             
             # Verify user owns this quiz
@@ -1040,6 +1058,11 @@ def create_app(config_name=None):
             import traceback
             traceback.print_exc()
             return jsonify({'error': str(e)}), 500
+
+    # Add this after creating the app
+    @app.route('/static/<path:filename>')
+    def static_files(filename):
+        return send_from_directory('static', filename)
 
     # Add this test route to check your quiz API connectivity
     @app.route('/test-quiz-api')
@@ -1863,6 +1886,7 @@ def create_app(config_name=None):
 
     @app.route('/quizzes/<user_uuid>/from-course')
     @login_required
+   
     def list_quizzes_from_course(user_uuid):
         """Fetch all quizzes for a user from external quiz API"""
         try:
