@@ -917,6 +917,9 @@ def create_app(config_name=None):
             # Get the user's quiz UUID
             quiz_user_uuid = current_user.get_quiz_uuid()
             
+            # Store the original course_id for traceability - this is important for learning progress
+            original_course_id = user_course.id
+            
             # Only the "attempt-from-course" endpoint uses header auth
             endpoints_to_try = [f"/quiz/{quiz_id}/{quiz_user_uuid}/attempt-from-course"]  # Use POST /quiz/:quizId/:userId/attempt-from-course
             
@@ -946,10 +949,11 @@ def create_app(config_name=None):
                 attempt_data = response.json()
                 print(f"[DEBUG] Attempt data: {attempt_data}")
                 
-                # Save attempt to our database
+                # Save attempt to our database with the original course_id for better tracking
                 quiz_attempt = CourseQuizAttempt(
                     user_id=current_user.id,
                     course_quiz_id=course_quiz.id,
+                    course_id=original_course_id,  # Store the direct course_id for better relationship tracking
                     attempt_api_id=attempt_data.get('attemptId', attempt_data.get('id', 'unknown'))
                 )
                 db.session.add(quiz_attempt)
@@ -1892,7 +1896,6 @@ def create_app(config_name=None):
                         'step_1_create_quiz': {
                             'status': 'FAILED',
                             'status_code': create_response.status_code,
-                           
                             'response': create_response.text
                         },
                         'error': 'Quiz creation failed, cannot test attempt flow'
