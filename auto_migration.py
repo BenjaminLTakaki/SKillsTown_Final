@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
 Enhanced auto_migration.py - Handles missing columns in existing tables
+Fixed to handle the missing attempt_api_id column and other database issues
 """
 
 import os
@@ -34,6 +35,7 @@ def check_and_add_column(conn, table_name, column_name, column_definition):
         if column_name not in columns:
             logger.info(f"Adding missing column {column_name} to {table_name}")
             conn.execute(text(f"ALTER TABLE {table_name} ADD COLUMN {column_name} {column_definition}"))
+            conn.commit()
             return True
         else:
             logger.info(f"Column {column_name} already exists in {table_name}")
@@ -51,6 +53,7 @@ def create_table_if_not_exists(conn, table_name, create_sql):
         if table_name not in existing_tables:
             logger.info(f"Creating missing table {table_name}")
             conn.execute(text(create_sql))
+            conn.commit()
             return True
         else:
             logger.info(f"Table {table_name} already exists")
@@ -73,16 +76,14 @@ def run_auto_migration():
         engine = create_engine(db_url)
         
         with engine.connect() as conn:
-            trans = conn.begin()
-            
             try:
                 changes_made = False
                 
-                # 1. Add quiz_user_uuid column to students table
+                # 1. Add quiz_user_uuid column to students table if missing
                 if check_and_add_column(conn, 'students', 'quiz_user_uuid', 'VARCHAR(36) UNIQUE'):
                     changes_made = True
                 
-                # 2. Create skillstown_user_courses table
+                # 2. Create skillstown_user_courses table if missing
                 skillstown_user_courses_sql = """
                     CREATE TABLE skillstown_user_courses (
                         id SERIAL PRIMARY KEY,
@@ -97,7 +98,7 @@ def run_auto_migration():
                 if create_table_if_not_exists(conn, 'skillstown_user_courses', skillstown_user_courses_sql):
                     changes_made = True
                 
-                # 3. Create skillstown_course_details table
+                # 3. Create skillstown_course_details table if missing
                 skillstown_course_details_sql = """
                     CREATE TABLE skillstown_course_details (
                         id SERIAL PRIMARY KEY,
@@ -113,11 +114,20 @@ def run_auto_migration():
                 if create_table_if_not_exists(conn, 'skillstown_course_details', skillstown_course_details_sql):
                     changes_made = True
                 
-                # 3b. Add quiz_results column to existing skillstown_course_details table
-                if check_and_add_column(conn, 'skillstown_course_details', 'quiz_results', 'TEXT'):
-                    changes_made = True
+                # 3b. Add missing columns to skillstown_course_details if table exists
+                course_details_missing_columns = [
+                    ('quiz_results', 'TEXT'),
+                    ('progress_percentage', 'INTEGER DEFAULT 0'),
+                    ('completed_at', 'TIMESTAMP'),
+                    ('materials', 'TEXT'),
+                    ('created_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+                ]
                 
-                # 4. Create skillstown_user_profiles table
+                for col_name, col_def in course_details_missing_columns:
+                    if check_and_add_column(conn, 'skillstown_course_details', col_name, col_def):
+                        changes_made = True
+                
+                # 4. Create skillstown_user_profiles table if missing
                 skillstown_user_profiles_sql = """
                     CREATE TABLE skillstown_user_profiles (
                         id SERIAL PRIMARY KEY,
@@ -132,7 +142,7 @@ def run_auto_migration():
                 if create_table_if_not_exists(conn, 'skillstown_user_profiles', skillstown_user_profiles_sql):
                     changes_made = True
                 
-                # 5. Create skillstown_course_quizzes table
+                # 5. Create skillstown_course_quizzes table if missing
                 skillstown_course_quizzes_sql = """
                     CREATE TABLE skillstown_course_quizzes (
                         id SERIAL PRIMARY KEY,
@@ -147,7 +157,7 @@ def run_auto_migration():
                 if create_table_if_not_exists(conn, 'skillstown_course_quizzes', skillstown_course_quizzes_sql):
                     changes_made = True
                 
-                # 6. Create skillstown_quiz_attempts table
+                # 6. Create skillstown_quiz_attempts table if missing
                 skillstown_quiz_attempts_sql = """
                     CREATE TABLE skillstown_quiz_attempts (
                         id SERIAL PRIMARY KEY,
@@ -166,7 +176,24 @@ def run_auto_migration():
                 if create_table_if_not_exists(conn, 'skillstown_quiz_attempts', skillstown_quiz_attempts_sql):
                     changes_made = True
                 
-                # 7. Create skillstown_user_learning_progress table
+                # 6b. CRITICAL: Add missing columns to skillstown_quiz_attempts
+                quiz_attempts_missing_columns = [
+                    ('attempt_api_id', 'VARCHAR(100)'),
+                    ('course_quiz_id', 'INTEGER REFERENCES skillstown_course_quizzes(id) ON DELETE CASCADE'),
+                    ('score', 'INTEGER'),
+                    ('total_questions', 'INTEGER'),
+                    ('correct_answers', 'INTEGER'),
+                    ('feedback_strengths', 'TEXT'),
+                    ('feedback_improvements', 'TEXT'),
+                    ('user_answers', 'TEXT'),
+                    ('completed_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+                ]
+                
+                for col_name, col_def in quiz_attempts_missing_columns:
+                    if check_and_add_column(conn, 'skillstown_quiz_attempts', col_name, col_def):
+                        changes_made = True
+                
+                # 7. Create skillstown_user_learning_progress table if missing
                 skillstown_user_learning_progress_sql = """
                     CREATE TABLE skillstown_user_learning_progress (
                         id SERIAL PRIMARY KEY,
@@ -188,46 +215,48 @@ def run_auto_migration():
                 
                 # 8. Check and add any other missing columns to existing tables
                 
-                # Check skillstown_user_courses for any missing columns
-                user_courses_columns = [
+                # Check skillstown_user_courses for missing columns
+                user_courses_missing_columns = [
                     ('status', 'VARCHAR(50) DEFAULT \'enrolled\''),
                     ('created_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
                 ]
                 
-                for col_name, col_def in user_courses_columns:
+                for col_name, col_def in user_courses_missing_columns:
                     if check_and_add_column(conn, 'skillstown_user_courses', col_name, col_def):
                         changes_made = True
                 
-                # Check skillstown_course_details for any missing columns
-                course_details_columns = [
-                    ('progress_percentage', 'INTEGER DEFAULT 0'),
-                    ('completed_at', 'TIMESTAMP'),
-                    ('materials', 'TEXT'),
-                    ('created_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+                # Check skillstown_user_learning_progress for missing columns
+                learning_progress_missing_columns = [
+                    ('knowledge_areas', 'TEXT DEFAULT \'{}\''),
+                    ('weak_areas', 'TEXT DEFAULT \'[]\''),
+                    ('strong_areas', 'TEXT DEFAULT \'[]\''),
+                    ('recommended_topics', 'TEXT DEFAULT \'[]\''),
+                    ('learning_curve', 'TEXT DEFAULT \'[]\''),
+                    ('overall_progress', 'INTEGER DEFAULT 0'),
+                    ('mastery_level', 'VARCHAR(20) DEFAULT \'beginner\''),
+                    ('last_updated', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
                 ]
                 
-                for col_name, col_def in course_details_columns:
-                    if check_and_add_column(conn, 'skillstown_course_details', col_name, col_def):
+                for col_name, col_def in learning_progress_missing_columns:
+                    if check_and_add_column(conn, 'skillstown_user_learning_progress', col_name, col_def):
                         changes_made = True
                 
-                # Check skillstown_quiz_attempts for missing columns
-                quiz_attempts_columns = [
-                    ('course_quiz_id', 'INTEGER REFERENCES skillstown_course_quizzes(id) ON DELETE CASCADE'),
-                    ('score', 'INTEGER'),
-                    ('total_questions', 'INTEGER'),
-                    ('correct_answers', 'INTEGER'),
-                    ('feedback_strengths', 'TEXT'),
-                    ('feedback_improvements', 'TEXT'),
-                    ('user_answers', 'TEXT'),
-                    ('completed_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
-                ]
+                # Ensure the problematic attempt_api_id column exists
+                if check_and_add_column(conn, 'skillstown_quiz_attempts', 'attempt_api_id', 'VARCHAR(100) NOT NULL DEFAULT \'\''):
+                    changes_made = True
+                    logger.info("✅ Fixed missing attempt_api_id column in skillstown_quiz_attempts")
                 
-                for col_name, col_def in quiz_attempts_columns:
-                    if check_and_add_column(conn, 'skillstown_quiz_attempts', col_name, col_def):
-                        changes_made = True
-                
-                # Commit all changes
-                trans.commit()
+                # Update any existing records with empty attempt_api_id
+                try:
+                    conn.execute(text("""
+                        UPDATE skillstown_quiz_attempts 
+                        SET attempt_api_id = 'legacy-' || id::text 
+                        WHERE attempt_api_id IS NULL OR attempt_api_id = ''
+                    """))
+                    conn.commit()
+                    logger.info("✅ Updated legacy records with default attempt_api_id values")
+                except Exception as e:
+                    logger.warning(f"Could not update legacy records: {e}")
                 
                 if changes_made:
                     logger.info("✅ Database migration completed successfully!")
@@ -237,7 +266,6 @@ def run_auto_migration():
                 return True
                 
             except Exception as e:
-                trans.rollback()
                 logger.error(f"❌ Migration failed: {e}")
                 import traceback
                 traceback.print_exc()
@@ -247,5 +275,70 @@ def run_auto_migration():
         logger.error(f"❌ Database connection failed: {e}")
         return False
 
+def test_migration():
+    """Test if the migration was successful by checking critical columns"""
+    print("\n🔍 Testing migration...")
+    
+    db_url = get_database_url()
+    engine = create_engine(db_url)
+    
+    try:
+        with engine.connect() as conn:
+            # Test if tables exist and have correct structure
+            critical_checks = [
+                ("skillstown_quiz_attempts", "attempt_api_id"),
+                ("skillstown_quiz_attempts", "course_quiz_id"),
+                ("skillstown_course_quizzes", "quiz_api_id"),
+                ("skillstown_user_learning_progress", "mastery_level"),
+                ("students", "quiz_user_uuid")
+            ]
+            
+            inspector = inspect(conn)
+            
+            for table_name, column_name in critical_checks:
+                try:
+                    if table_name not in inspector.get_table_names():
+                        print(f"❌ Missing table: {table_name}")
+                        return False
+                    
+                    columns = [col['name'] for col in inspector.get_columns(table_name)]
+                    if column_name not in columns:
+                        print(f"❌ Missing column {column_name} in table {table_name}")
+                        return False
+                    else:
+                        print(f"✅ {table_name}.{column_name} exists")
+                        
+                except Exception as e:
+                    print(f"❌ Error checking {table_name}.{column_name}: {e}")
+                    return False
+            
+            print("✅ All critical migration checks passed!")
+            return True
+            
+    except Exception as e:
+        print(f"❌ Migration test failed: {e}")
+        return False
+
+def main():
+    """Main migration function"""
+    print("🔧 SkillsTown Database Migration Tool")
+    print("=" * 50)
+    
+    if run_auto_migration():
+        if test_migration():
+            print("\n🚀 Migration completed successfully!")
+            print("Your SkillsTown app should now work properly.")
+            print("The quiz generation error should be resolved.")
+        else:
+            print("\n⚠️  Migration completed but critical tests failed")
+            print("Please check the error messages above.")
+    else:
+        print("\n❌ Migration failed. Please check the errors above.")
+        return False
+    
+    return True
+
 if __name__ == '__main__':
-    run_auto_migration()
+    import sys
+    success = main()
+    sys.exit(0 if success else 1)
