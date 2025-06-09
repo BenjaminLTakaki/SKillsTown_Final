@@ -210,6 +210,22 @@ def run_auto_migration():
                     if check_and_add_column(conn, 'skillstown_course_details', col_name, col_def):
                         changes_made = True
                 
+                # Check skillstown_quiz_attempts for missing columns
+                quiz_attempts_columns = [
+                    ('course_quiz_id', 'INTEGER REFERENCES skillstown_course_quizzes(id) ON DELETE CASCADE'),
+                    ('score', 'INTEGER'),
+                    ('total_questions', 'INTEGER'),
+                    ('correct_answers', 'INTEGER'),
+                    ('feedback_strengths', 'TEXT'),
+                    ('feedback_improvements', 'TEXT'),
+                    ('user_answers', 'TEXT'),
+                    ('completed_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+                ]
+                
+                for col_name, col_def in quiz_attempts_columns:
+                    if check_and_add_column(conn, 'skillstown_quiz_attempts', col_name, col_def):
+                        changes_made = True
+                
                 # Commit all changes
                 trans.commit()
                 
