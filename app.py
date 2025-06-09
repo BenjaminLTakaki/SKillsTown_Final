@@ -271,25 +271,10 @@ learning_recommendations, career_paths.
 
 # App factory
 def create_app(config_name=None):
-    global is_production
-    
     # Check environment in development mode
     if DEVELOPMENT_MODE and check_environment:
         check_environment()
-        is_production = False
-    else:
-        if config_name == 'production': 
-            is_production = True
-        elif config_name is not None: 
-            is_production = False
-        else:
-            # Auto-detect production
-            is_production = (
-                os.environ.get('RENDER') or 
-                os.environ.get('DATABASE_URL', '').startswith('postgres') or
-                os.environ.get('FLASK_ENV') == 'production'
-            )
-
+    
     app = Flask(__name__)
 
     # Templates - Fixed path resolution
