@@ -15,27 +15,44 @@ from jinja2 import ChoiceLoader, FileSystemLoader
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
-from local_config import NARRETEX_API_URL, check_environment, LOCAL_DATABASE_URL, DEVELOPMENT_MODE
 
 load_dotenv()
 
-# Production detection
-is_production = (
+# Try to import from local_config for development, fallback for production
+try:
+    from local_config import NARRETEX_API_URL, check_environment, LOCAL_DATABASE_URL, DEVELOPMENT_MODE
+except ImportError:
+    # Production environment - local_config.py doesn't exist
+    DEVELOPMENT_MODE = False
+    LOCAL_DATABASE_URL = None
+    check_environment = None
+    
+    # Get from environment variables instead
+    NARRETEX_API_URL = os.environ.get('NARRETEX_API_URL', 'https://narretex-app.onrender.com')
+
+# Override DEVELOPMENT_MODE for production detection
+DEVELOPMENT_MODE = DEVELOPMENT_MODE and not (
     os.environ.get('RENDER') or 
-    os.environ.get('RAILWAY_ENVIRONMENT') or 
-    os.environ.get('HEROKU_APP_NAME') or
+    os.environ.get('DATABASE_URL', '').startswith('postgres') or
     os.environ.get('FLASK_ENV') == 'production'
 )
+
+def is_production():
+    return (
+        os.environ.get('RENDER') or 
+        os.environ.get('DATABASE_URL', '').startswith('postgres') or
+        os.environ.get('FLASK_ENV') == 'production'
+    )
 
 # API configurations
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent"
-QUIZ_API_BASE_URL = os.environ.get('QUIZ_API_BASE_URL', 'http://localhost:8081')
-QUIZ_API_ACCESS_TOKEN = os.environ.get('QUIZ_API_ACCESS_TOKEN', 'kJ9mP2vL8xQ5nR3tY7wZ6cB4dF2gH8jK9lM3nP5qR7sT2uV6wX8yZ9aB3cD5eF7gH2iJ4kL6mN8oP9qR2sT4uV6wX8yZ1aB3cD5eF7gH9iJ2kL')
+QUIZ_API_BASE_URL = os.environ.get('QUIZ_API_BASE_URL', 'https://chisel-app.onrender.com')
+QUIZ_API_ACCESS_TOKEN = os.environ.get('QUIZ_API_ACCESS_TOKEN', '')
 
 def get_url_for(*args, **kwargs):
     url = url_for(*args, **kwargs)
-    if is_production and not url.startswith('/skillstown'):
+    if is_production() and not url.startswith('/skillstown'):
         url = f"/skillstown{url}"
     return url
 
@@ -43,15 +60,10 @@ def get_url_for(*args, **kwargs):
 from models import Company, Student, Category, ContentPage, Course, CourseContentPage, UserProfile, SkillsTownCourse, CourseDetail, CourseQuiz, CourseQuizAttempt, UserCourse, UserLearningProgress, db
 
 def get_quiz_api_headers():
-    """Get headers for quiz API requests with proper authentication"""
-    access_token = os.environ.get('QUIZ_API_ACCESS_TOKEN', QUIZ_API_ACCESS_TOKEN)
-    headers = {
+    return {
         'Content-Type': 'application/json',
-        'Authorization': f'Bearer {access_token}'
+        'Authorization': f'Bearer {QUIZ_API_ACCESS_TOKEN}'
     }
-    # Debug: Print headers (remove in production)
-    print(f"[DEBUG] Quiz API headers: {headers}")
-    return headers
 
 def generate_podcast_for_course(course_name, course_description):
     """
@@ -262,7 +274,7 @@ def create_app(config_name=None):
     global is_production
     
     # Check environment in development mode
-    if DEVELOPMENT_MODE:
+    if DEVELOPMENT_MODE and check_environment:
         check_environment()
         is_production = False
     else:
@@ -270,6 +282,13 @@ def create_app(config_name=None):
             is_production = True
         elif config_name is not None: 
             is_production = False
+        else:
+            # Auto-detect production
+            is_production = (
+                os.environ.get('RENDER') or 
+                os.environ.get('DATABASE_URL', '').startswith('postgres') or
+                os.environ.get('FLASK_ENV') == 'production'
+            )
 
     app = Flask(__name__)
 
@@ -1864,6 +1883,7 @@ def create_app(config_name=None):
                         'step_1_create_quiz': {
                             'status': 'FAILED',
                             'status_code': create_response.status_code,
+                           
                             'response': create_response.text
                         },
                         'error': 'Quiz creation failed, cannot test attempt flow'
