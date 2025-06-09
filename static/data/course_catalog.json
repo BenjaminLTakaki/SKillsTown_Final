@@ -10,7 +10,52 @@
                     "level": "Beginner",
                     "skills": ["Python basics", "Object-oriented programming", "File handling", "Web scraping", "Data manipulation", "Error handling", "Library usage"],
                     "projects": ["Personal calculator", "Weather app", "Web scraper", "Data analysis dashboard", "File organizer tool"],
-                    "career_paths": ["Software Developer", "Data Analyst", "Backend Developer", "Automation Engineer", "Python Developer"]
+                    "career_paths": ["Software Developer", "Data Analyst", "Backend Developer", "Automation Engineer", "Python Developer"],
+                    "learning_objectives": [
+                        "Write Python programs using proper syntax and semantics",
+                        "Implement object-oriented programming concepts including classes and inheritance",
+                        "Handle file operations and implement robust exception handling",
+                        "Build practical applications using Python libraries like requests and pandas",
+                        "Debug Python code effectively and apply best coding practices",
+                        "Create automated scripts for data manipulation and web scraping"
+                    ],
+                    "difficulty_progression": {
+                        "beginner": {
+                            "topics": ["variables", "data_types", "basic_operators", "control_structures", "basic_functions"],
+                            "percentage": 45
+                        },
+                        "intermediate": {
+                            "topics": ["object_oriented_programming", "file_handling", "error_handling", "library_usage"],
+                            "percentage": 40
+                        },
+                        "advanced": {
+                            "topics": ["web_scraping", "data_manipulation", "advanced_projects"],
+                            "percentage": 15
+                        }
+                    },
+                    "knowledge_areas": [
+                        {
+                            "area": "Python Syntax and Fundamentals",
+                            "weight": 0.35,
+                            "topics": ["variables", "data_types", "operators", "control_structures", "functions"]
+                        },
+                        {
+                            "area": "Object-Oriented Programming",
+                            "weight": 0.25,
+                            "topics": ["classes", "objects", "inheritance", "encapsulation", "methods"]
+                        },
+                        {
+                            "area": "Practical Application Development",
+                            "weight": 0.4,
+                            "topics": ["file_handling", "libraries", "web_scraping", "data_manipulation", "project_building"]
+                        }
+                    ],
+                    "prerequisites": [],
+                    "assessment_focus": {
+                        "conceptual": 0.3,
+                        "practical": 0.5,
+                        "problem_solving": 0.2
+                    }
                 },
                 {
                     "name": "Advanced Python Development",
@@ -19,7 +64,57 @@
                     "level": "Advanced",
                     "skills": ["Decorators", "Generators", "Async programming", "Design patterns", "Performance optimization", "Testing with pytest", "Package development", "Concurrency"],
                     "projects": ["REST API with FastAPI", "Async web scraper", "Performance monitoring tool", "Python package distribution", "Microservice architecture"],
-                    "career_paths": ["Senior Python Developer", "Backend Architect", "DevOps Engineer", "Technical Lead", "Software Architect"]
+                    "career_paths": ["Senior Python Developer", "Backend Architect", "DevOps Engineer", "Technical Lead", "Software Architect"],
+                    "learning_objectives": [
+                        "Implement advanced Python features like decorators, generators, and context managers",
+                        "Design and implement scalable applications using appropriate design patterns",
+                        "Optimize Python code performance using profiling and optimization techniques",
+                        "Build concurrent and asynchronous applications using threading and async/await",
+                        "Create comprehensive test suites using pytest and advanced testing strategies",
+                        "Develop and distribute Python packages following best practices"
+                    ],
+                    "difficulty_progression": {
+                        "beginner": {
+                            "topics": ["decorators", "generators", "context_managers"],
+                            "percentage": 25
+                        },
+                        "intermediate": {
+                            "topics": ["design_patterns", "async_programming", "testing", "performance_optimization"],
+                            "percentage": 45
+                        },
+                        "advanced": {
+                            "topics": ["metaclasses", "concurrency", "package_development", "microservices"],
+                            "percentage": 30
+                        }
+                    },
+                    "knowledge_areas": [
+                        {
+                            "area": "Advanced Language Features",
+                            "weight": 0.3,
+                            "topics": ["decorators", "generators", "context_managers", "metaclasses", "descriptors"]
+                        },
+                        {
+                            "area": "Software Architecture and Patterns",
+                            "weight": 0.25,
+                            "topics": ["design_patterns", "solid_principles", "architectural_patterns", "code_organization"]
+                        },
+                        {
+                            "area": "Performance and Concurrency",
+                            "weight": 0.25,
+                            "topics": ["performance_optimization", "async_programming", "threading", "multiprocessing", "memory_management"]
+                        },
+                        {
+                            "area": "Professional Development Practices",
+                            "weight": 0.2,
+                            "topics": ["testing", "package_development", "documentation", "deployment", "ci_cd"]
+                        }
+                    ],
+                    "prerequisites": ["Python for Beginners", "Basic understanding of OOP concepts"],
+                    "assessment_focus": {
+                        "conceptual": 0.4,
+                        "practical": 0.4,
+                        "problem_solving": 0.2
+                    }
                 },
                 {
                     "name": "JavaScript Fundamentals",
@@ -28,7 +123,57 @@
                     "level": "Beginner to Intermediate",
                     "skills": ["JavaScript fundamentals", "DOM manipulation", "ES6+ features", "Async programming", "API integration", "Testing with Jest", "Browser APIs"],
                     "projects": ["Interactive todo app", "Weather dashboard", "Browser game", "API-driven web app", "Chrome extension"],
-                    "career_paths": ["Frontend Developer", "Full-stack Developer", "Web Developer", "JavaScript Engineer", "UI Developer"]
+                    "career_paths": ["Frontend Developer", "Full-stack Developer", "Web Developer", "JavaScript Engineer", "UI Developer"],
+                    "learning_objectives": [
+                        "Write modern JavaScript code using ES6+ syntax and features",
+                        "Manipulate DOM elements and handle user events effectively",
+                        "Implement asynchronous programming using promises and async/await",
+                        "Integrate with REST APIs and handle HTTP requests",
+                        "Build interactive web applications with proper error handling",
+                        "Test JavaScript code using Jest and debugging tools"
+                    ],
+                    "difficulty_progression": {
+                        "beginner": {
+                            "topics": ["variables", "functions", "arrays", "objects", "basic_dom"],
+                            "percentage": 40
+                        },
+                        "intermediate": {
+                            "topics": ["es6_features", "async_programming", "api_integration", "advanced_dom"],
+                            "percentage": 45
+                        },
+                        "advanced": {
+                            "topics": ["closures", "prototypes", "advanced_async", "performance_optimization"],
+                            "percentage": 15
+                        }
+                    },
+                    "knowledge_areas": [
+                        {
+                            "area": "Core JavaScript Language",
+                            "weight": 0.35,
+                            "topics": ["syntax", "data_types", "functions", "objects", "arrays", "es6_features"]
+                        },
+                        {
+                            "area": "DOM and Browser APIs",
+                            "weight": 0.3,
+                            "topics": ["dom_manipulation", "event_handling", "browser_apis", "local_storage"]
+                        },
+                        {
+                            "area": "Asynchronous Programming",
+                            "weight": 0.25,
+                            "topics": ["callbacks", "promises", "async_await", "fetch_api", "ajax"]
+                        },
+                        {
+                            "area": "Development Practices",
+                            "weight": 0.1,
+                            "topics": ["debugging", "testing", "performance", "best_practices"]
+                        }
+                    ],
+                    "prerequisites": ["Basic HTML and CSS knowledge"],
+                    "assessment_focus": {
+                        "conceptual": 0.3,
+                        "practical": 0.5,
+                        "problem_solving": 0.2
+                    }
                 },
                 {
                     "name": "Java Programming Complete Course",
@@ -37,7 +182,57 @@
                     "level": "Beginner to Advanced",
                     "skills": ["Java fundamentals", "Object-oriented programming", "Spring Boot", "Database connectivity", "Microservices", "Testing with JUnit", "Maven/Gradle"],
                     "projects": ["Banking application", "E-commerce backend", "Microservices system", "Spring Boot REST API", "Enterprise web application"],
-                    "career_paths": ["Java Developer", "Backend Developer", "Enterprise Developer", "Software Architect", "Spring Developer"]
+                    "career_paths": ["Java Developer", "Backend Developer", "Enterprise Developer", "Software Architect", "Spring Developer"],
+                    "learning_objectives": [
+                        "Master Java syntax, OOP principles, and core language features",
+                        "Build enterprise applications using Spring Boot framework",
+                        "Implement database connectivity and data persistence with JPA/Hibernate",
+                        "Develop RESTful web services and microservices architecture",
+                        "Apply testing strategies using JUnit and Mockito frameworks",
+                        "Deploy Java applications using build tools and containerization"
+                    ],
+                    "difficulty_progression": {
+                        "beginner": {
+                            "topics": ["java_syntax", "oop_basics", "collections", "exception_handling"],
+                            "percentage": 35
+                        },
+                        "intermediate": {
+                            "topics": ["generics", "streams", "jdbc", "spring_basics", "testing"],
+                            "percentage": 40
+                        },
+                        "advanced": {
+                            "topics": ["spring_boot", "microservices", "security", "performance_tuning"],
+                            "percentage": 25
+                        }
+                    },
+                    "knowledge_areas": [
+                        {
+                            "area": "Core Java Programming",
+                            "weight": 0.3,
+                            "topics": ["syntax", "oop", "collections", "generics", "streams", "lambda_expressions"]
+                        },
+                        {
+                            "area": "Enterprise Development",
+                            "weight": 0.35,
+                            "topics": ["spring_framework", "spring_boot", "dependency_injection", "aop", "spring_security"]
+                        },
+                        {
+                            "area": "Data Management",
+                            "weight": 0.2,
+                            "topics": ["jdbc", "jpa", "hibernate", "database_design", "transactions"]
+                        },
+                        {
+                            "area": "Professional Practices",
+                            "weight": 0.15,
+                            "topics": ["testing", "build_tools", "deployment", "microservices", "performance"]
+                        }
+                    ],
+                    "prerequisites": ["Basic programming concepts"],
+                    "assessment_focus": {
+                        "conceptual": 0.35,
+                        "practical": 0.45,
+                        "problem_solving": 0.2
+                    }
                 },
                 {
                     "name": "C# and .NET Development",
@@ -46,7 +241,57 @@
                     "level": "Beginner to Intermediate",
                     "skills": ["C# programming", "ASP.NET Core", "Entity Framework", "WPF", "Azure deployment", "API development", "LINQ"],
                     "projects": ["Desktop inventory app", "Web-based CRM", "REST API service", "Cloud-deployed application", "Blazor web app"],
-                    "career_paths": [".NET Developer", "Full-stack Developer", "Enterprise Developer", "Cloud Developer", "C# Developer"]
+                    "career_paths": [".NET Developer", "Full-stack Developer", "Enterprise Developer", "Cloud Developer", "C# Developer"],
+                    "learning_objectives": [
+                        "Master C# programming language and .NET framework fundamentals",
+                        "Build web applications using ASP.NET Core and modern web practices",
+                        "Develop desktop applications using WPF and modern UI patterns",
+                        "Implement data access using Entity Framework and LINQ",
+                        "Create and consume RESTful APIs with proper authentication",
+                        "Deploy applications to Azure cloud platform"
+                    ],
+                    "difficulty_progression": {
+                        "beginner": {
+                            "topics": ["csharp_syntax", "oop", "collections", "linq_basics"],
+                            "percentage": 35
+                        },
+                        "intermediate": {
+                            "topics": ["aspnet_core", "entity_framework", "api_development", "wpf"],
+                            "percentage": 45
+                        },
+                        "advanced": {
+                            "topics": ["async_programming", "dependency_injection", "azure_deployment", "microservices"],
+                            "percentage": 20
+                        }
+                    },
+                    "knowledge_areas": [
+                        {
+                            "area": "C# Language and .NET Framework",
+                            "weight": 0.3,
+                            "topics": ["csharp_syntax", "oop", "generics", "delegates", "linq", "async_await"]
+                        },
+                        {
+                            "area": "Web Development",
+                            "weight": 0.35,
+                            "topics": ["aspnet_core", "mvc", "web_api", "blazor", "authentication", "authorization"]
+                        },
+                        {
+                            "area": "Data Access and Storage",
+                            "weight": 0.2,
+                            "topics": ["entity_framework", "sql_server", "migrations", "data_modeling"]
+                        },
+                        {
+                            "area": "Desktop and Cloud",
+                            "weight": 0.15,
+                            "topics": ["wpf", "azure", "deployment", "dependency_injection"]
+                        }
+                    ],
+                    "prerequisites": ["Basic programming concepts"],
+                    "assessment_focus": {
+                        "conceptual": 0.3,
+                        "practical": 0.5,
+                        "problem_solving": 0.2
+                    }
                 },
                 {
                     "name": "Go Programming Language",
@@ -55,7 +300,57 @@
                     "level": "Intermediate",
                     "skills": ["Go fundamentals", "Concurrency with goroutines", "Web development", "Microservices", "Docker", "Performance optimization", "Testing"],
                     "projects": ["Concurrent web server", "Microservice API", "Real-time chat application", "Containerized deployment", "CLI tool development"],
-                    "career_paths": ["Backend Developer", "DevOps Engineer", "System Programmer", "Cloud Engineer", "Go Developer"]
+                    "career_paths": ["Backend Developer", "DevOps Engineer", "System Programmer", "Cloud Engineer", "Go Developer"],
+                    "learning_objectives": [
+                        "Master Go syntax, type system, and idiomatic programming patterns",
+                        "Implement concurrent programs using goroutines and channels effectively",
+                        "Build high-performance web services and REST APIs",
+                        "Design and implement microservices architecture with Go",
+                        "Apply testing strategies and performance optimization techniques",
+                        "Deploy Go applications using containerization and cloud platforms"
+                    ],
+                    "difficulty_progression": {
+                        "beginner": {
+                            "topics": ["go_syntax", "types", "functions", "structs", "interfaces"],
+                            "percentage": 30
+                        },
+                        "intermediate": {
+                            "topics": ["goroutines", "channels", "web_development", "testing", "error_handling"],
+                            "percentage": 45
+                        },
+                        "advanced": {
+                            "topics": ["microservices", "performance_optimization", "docker", "production_deployment"],
+                            "percentage": 25
+                        }
+                    },
+                    "knowledge_areas": [
+                        {
+                            "area": "Go Language Fundamentals",
+                            "weight": 0.25,
+                            "topics": ["syntax", "types", "functions", "structs", "interfaces", "packages"]
+                        },
+                        {
+                            "area": "Concurrency and Performance",
+                            "weight": 0.35,
+                            "topics": ["goroutines", "channels", "sync_package", "performance_optimization", "profiling"]
+                        },
+                        {
+                            "area": "Web Services and APIs",
+                            "weight": 0.25,
+                            "topics": ["http_package", "rest_apis", "middleware", "database_integration"]
+                        },
+                        {
+                            "area": "Production and Deployment",
+                            "weight": 0.15,
+                            "topics": ["testing", "docker", "microservices", "deployment", "monitoring"]
+                        }
+                    ],
+                    "prerequisites": ["Basic programming experience", "Understanding of web concepts"],
+                    "assessment_focus": {
+                        "conceptual": 0.3,
+                        "practical": 0.5,
+                        "problem_solving": 0.2
+                    }
                 }
             ]
         },
@@ -69,7 +364,57 @@
                     "level": "Beginner to Intermediate",
                     "skills": ["React fundamentals", "Hooks", "State management", "Redux Toolkit", "React Router", "Testing", "Performance optimization", "Styled components"],
                     "projects": ["Personal portfolio", "Todo app with Redux", "Social media dashboard", "E-commerce frontend", "Real-time chat app"],
-                    "career_paths": ["Frontend Developer", "React Developer", "Full-stack Developer", "UI Engineer", "Frontend Architect"]
+                    "career_paths": ["Frontend Developer", "React Developer", "Full-stack Developer", "UI Engineer", "Frontend Architect"],
+                    "learning_objectives": [
+                        "Build modern React applications using functional components and hooks",
+                        "Manage application state effectively using React hooks and Redux Toolkit",
+                        "Implement client-side routing and navigation with React Router",
+                        "Style React components using modern CSS-in-JS and styling solutions",
+                        "Test React applications using React Testing Library and Jest",
+                        "Optimize React application performance and deploy to production"
+                    ],
+                    "difficulty_progression": {
+                        "beginner": {
+                            "topics": ["jsx", "components", "props", "state", "basic_hooks"],
+                            "percentage": 35
+                        },
+                        "intermediate": {
+                            "topics": ["advanced_hooks", "context", "routing", "state_management", "styling"],
+                            "percentage": 45
+                        },
+                        "advanced": {
+                            "topics": ["performance_optimization", "testing", "deployment", "advanced_patterns"],
+                            "percentage": 20
+                        }
+                    },
+                    "knowledge_areas": [
+                        {
+                            "area": "React Core Concepts",
+                            "weight": 0.3,
+                            "topics": ["jsx", "components", "props", "state", "lifecycle", "hooks"]
+                        },
+                        {
+                            "area": "State Management and Routing",
+                            "weight": 0.25,
+                            "topics": ["context", "redux", "react_router", "form_handling"]
+                        },
+                        {
+                            "area": "Styling and UI Development",
+                            "weight": 0.2,
+                            "topics": ["css_modules", "styled_components", "responsive_design", "ui_libraries"]
+                        },
+                        {
+                            "area": "Testing and Performance",
+                            "weight": 0.25,
+                            "topics": ["testing_library", "jest", "performance_optimization", "deployment"]
+                        }
+                    ],
+                    "prerequisites": ["JavaScript fundamentals", "HTML/CSS knowledge"],
+                    "assessment_focus": {
+                        "conceptual": 0.3,
+                        "practical": 0.5,
+                        "problem_solving": 0.2
+                    }
                 },
                 {
                     "name": "Vue.js for Beginners",
@@ -78,7 +423,57 @@
                     "level": "Beginner",
                     "skills": ["Vue.js fundamentals", "Composition API", "Vue Router", "Vuex/Pinia", "Component development", "API integration", "Testing"],
                     "projects": ["Personal blog", "Task manager", "Weather app", "Real-time dashboard", "Vue.js portfolio"],
-                    "career_paths": ["Frontend Developer", "Vue.js Developer", "Web Developer", "UI Developer", "JavaScript Developer"]
+                    "career_paths": ["Frontend Developer", "Vue.js Developer", "Web Developer", "UI Developer", "JavaScript Developer"],
+                    "learning_objectives": [
+                        "Build interactive web applications using Vue.js 3 and Composition API",
+                        "Manage component state and implement reactive data patterns",
+                        "Create single-page applications with Vue Router navigation",
+                        "Implement global state management using Pinia/Vuex",
+                        "Integrate Vue applications with REST APIs and external services",
+                        "Test Vue components and deploy applications to production"
+                    ],
+                    "difficulty_progression": {
+                        "beginner": {
+                            "topics": ["vue_basics", "templates", "directives", "data_binding", "methods"],
+                            "percentage": 45
+                        },
+                        "intermediate": {
+                            "topics": ["components", "composition_api", "routing", "state_management"],
+                            "percentage": 40
+                        },
+                        "advanced": {
+                            "topics": ["custom_directives", "plugins", "testing", "deployment"],
+                            "percentage": 15
+                        }
+                    },
+                    "knowledge_areas": [
+                        {
+                            "area": "Vue.js Core Framework",
+                            "weight": 0.4,
+                            "topics": ["templates", "directives", "data_binding", "computed_properties", "watchers"]
+                        },
+                        {
+                            "area": "Component Architecture",
+                            "weight": 0.3,
+                            "topics": ["components", "props", "events", "slots", "composition_api"]
+                        },
+                        {
+                            "area": "Application Architecture",
+                            "weight": 0.2,
+                            "topics": ["vue_router", "state_management", "api_integration"]
+                        },
+                        {
+                            "area": "Development Workflow",
+                            "weight": 0.1,
+                            "topics": ["vue_cli", "testing", "deployment", "build_tools"]
+                        }
+                    ],
+                    "prerequisites": ["JavaScript fundamentals", "Basic HTML/CSS"],
+                    "assessment_focus": {
+                        "conceptual": 0.3,
+                        "practical": 0.5,
+                        "problem_solving": 0.2
+                    }
                 },
                 {
                     "name": "Angular Development",
@@ -87,7 +482,57 @@
                     "level": "Intermediate to Advanced",
                     "skills": ["Angular fundamentals", "TypeScript", "Angular CLI", "RxJS", "NgRx", "Testing", "PWA development", "Angular Material"],
                     "projects": ["Task management system", "E-commerce application", "Progressive web app", "Enterprise dashboard", "Angular mobile app"],
-                    "career_paths": ["Angular Developer", "Frontend Developer", "Full-stack Developer", "Enterprise Developer", "Technical Lead"]
+                    "career_paths": ["Angular Developer", "Frontend Developer", "Full-stack Developer", "Enterprise Developer", "Technical Lead"],
+                    "learning_objectives": [
+                        "Build complex single-page applications using Angular framework and TypeScript",
+                        "Implement reactive programming patterns using RxJS observables",
+                        "Manage application state with NgRx and implement enterprise patterns",
+                        "Create responsive applications using Angular Material and PWA features",
+                        "Test Angular applications comprehensively using Jasmine and Karma",
+                        "Deploy Angular applications to various hosting platforms"
+                    ],
+                    "difficulty_progression": {
+                        "beginner": {
+                            "topics": ["typescript", "components", "templates", "data_binding", "services"],
+                            "percentage": 30
+                        },
+                        "intermediate": {
+                            "topics": ["routing", "forms", "http_client", "rxjs", "dependency_injection"],
+                            "percentage": 45
+                        },
+                        "advanced": {
+                            "topics": ["ngrx", "testing", "pwa", "performance_optimization", "deployment"],
+                            "percentage": 25
+                        }
+                    },
+                    "knowledge_areas": [
+                        {
+                            "area": "Angular Core Framework",
+                            "weight": 0.35,
+                            "topics": ["components", "services", "dependency_injection", "lifecycle_hooks", "templates"]
+                        },
+                        {
+                            "area": "Reactive Programming",
+                            "weight": 0.25,
+                            "topics": ["rxjs", "observables", "operators", "async_pipe", "reactive_forms"]
+                        },
+                        {
+                            "area": "Application Architecture",
+                            "weight": 0.25,
+                            "topics": ["routing", "guards", "lazy_loading", "ngrx", "state_management"]
+                        },
+                        {
+                            "area": "Enterprise Features",
+                            "weight": 0.15,
+                            "topics": ["testing", "i18n", "pwa", "angular_material", "deployment"]
+                        }
+                    ],
+                    "prerequisites": ["JavaScript/TypeScript knowledge", "Web development basics"],
+                    "assessment_focus": {
+                        "conceptual": 0.4,
+                        "practical": 0.4,
+                        "problem_solving": 0.2
+                    }
                 },
                 {
                     "name": "Node.js Backend Development",
@@ -96,7 +541,57 @@
                     "level": "Intermediate",
                     "skills": ["Node.js fundamentals", "Express.js", "MongoDB", "REST API development", "Authentication", "Testing", "Socket.io", "Microservices"],
                     "projects": ["REST API service", "Real-time chat backend", "E-commerce API", "Microservices system", "GraphQL API"],
-                    "career_paths": ["Backend Developer", "Node.js Developer", "Full-stack Developer", "API Developer", "DevOps Engineer"]
+                    "career_paths": ["Backend Developer", "Node.js Developer", "Full-stack Developer", "API Developer", "DevOps Engineer"],
+                    "learning_objectives": [
+                        "Build scalable backend applications using Node.js and Express.js",
+                        "Design and implement RESTful APIs with proper HTTP methods and status codes",
+                        "Implement authentication and authorization using JWT and OAuth",
+                        "Work with MongoDB and Mongoose for data persistence and modeling",
+                        "Build real-time applications using WebSocket and Socket.io",
+                        "Deploy Node.js applications to cloud platforms with CI/CD pipelines"
+                    ],
+                    "difficulty_progression": {
+                        "beginner": {
+                            "topics": ["nodejs_basics", "modules", "npm", "async_programming", "express_basics"],
+                            "percentage": 30
+                        },
+                        "intermediate": {
+                            "topics": ["rest_apis", "middleware", "authentication", "database_integration", "testing"],
+                            "percentage": 45
+                        },
+                        "advanced": {
+                            "topics": ["microservices", "real_time", "performance", "deployment", "security"],
+                            "percentage": 25
+                        }
+                    },
+                    "knowledge_areas": [
+                        {
+                            "area": "Node.js Core and Express.js",
+                            "weight": 0.3,
+                            "topics": ["nodejs_runtime", "modules", "express", "middleware", "routing"]
+                        },
+                        {
+                            "area": "API Development",
+                            "weight": 0.35,
+                            "topics": ["rest_apis", "http_methods", "status_codes", "validation", "documentation"]
+                        },
+                        {
+                            "area": "Data Management and Security",
+                            "weight": 0.25,
+                            "topics": ["mongodb", "mongoose", "authentication", "authorization", "security_best_practices"]
+                        },
+                        {
+                            "area": "Advanced Backend Concepts",
+                            "weight": 0.1,
+                            "topics": ["testing", "deployment", "monitoring", "performance_optimization"]
+                        }
+                    ],
+                    "prerequisites": ["JavaScript fundamentals", "Basic web concepts"],
+                    "assessment_focus": {
+                        "conceptual": 0.3,
+                        "practical": 0.5,
+                        "problem_solving": 0.2
+                    }
                 },
                 {
                     "name": "Full-Stack Web Development",
@@ -105,7 +600,57 @@
                     "level": "Beginner to Intermediate",
                     "skills": ["Frontend frameworks", "Backend development", "Database design", "Authentication", "DevOps", "Git", "Deployment", "Project management"],
                     "projects": ["Personal blog platform", "Social media application", "E-commerce website", "Project management tool", "SaaS application"],
-                    "career_paths": ["Full-stack Developer", "Web Developer", "Software Engineer", "Startup CTO", "Technical Consultant"]
+                    "career_paths": ["Full-stack Developer", "Web Developer", "Software Engineer", "Startup CTO", "Technical Consultant"],
+                    "learning_objectives": [
+                        "Build complete web applications integrating frontend and backend technologies",
+                        "Design and implement RESTful APIs with proper authentication and authorization",
+                        "Create responsive user interfaces using modern frontend frameworks",
+                        "Implement database design and data modeling for web applications",
+                        "Deploy applications using modern DevOps practices and cloud platforms",
+                        "Manage full-stack projects from conception to production deployment"
+                    ],
+                    "difficulty_progression": {
+                        "beginner": {
+                            "topics": ["html_css", "javascript_basics", "frontend_framework_basics", "backend_basics"],
+                            "percentage": 30
+                        },
+                        "intermediate": {
+                            "topics": ["api_development", "database_integration", "authentication", "state_management"],
+                            "percentage": 50
+                        },
+                        "advanced": {
+                            "topics": ["deployment", "devops", "performance_optimization", "scalability"],
+                            "percentage": 20
+                        }
+                    },
+                    "knowledge_areas": [
+                        {
+                            "area": "Frontend Development",
+                            "weight": 0.35,
+                            "topics": ["react_vue", "state_management", "responsive_design", "user_experience"]
+                        },
+                        {
+                            "area": "Backend Development",
+                            "weight": 0.35,
+                            "topics": ["nodejs_express", "api_design", "server_architecture", "middleware"]
+                        },
+                        {
+                            "area": "Data Management",
+                            "weight": 0.2,
+                            "topics": ["database_design", "sql_nosql", "data_modeling", "orm"]
+                        },
+                        {
+                            "area": "DevOps and Deployment",
+                            "weight": 0.1,
+                            "topics": ["version_control", "deployment", "ci_cd", "monitoring"]
+                        }
+                    ],
+                    "prerequisites": ["Basic programming knowledge", "HTML/CSS fundamentals"],
+                    "assessment_focus": {
+                        "conceptual": 0.25,
+                        "practical": 0.6,
+                        "problem_solving": 0.15
+                    }
                 },
                 {
                     "name": "HTML5 & CSS3 Masterclass",
@@ -114,7 +659,57 @@
                     "level": "Beginner to Intermediate",
                     "skills": ["Semantic HTML5", "CSS Grid", "Flexbox", "Responsive design", "CSS animations", "Sass", "Accessibility", "Performance optimization"],
                     "projects": ["Responsive portfolio", "Landing page", "CSS component library", "Animated website", "Mobile-first design"],
-                    "career_paths": ["Frontend Developer", "Web Designer", "UI Developer", "Web Developer", "UX Developer"]
+                    "career_paths": ["Frontend Developer", "Web Designer", "UI Developer", "Web Developer", "UX Developer"],
+                    "learning_objectives": [
+                        "Create semantic and accessible HTML5 markup following best practices",
+                        "Build responsive layouts using CSS Grid and Flexbox effectively",
+                        "Implement modern CSS features including custom properties and animations",
+                        "Optimize web performance and ensure cross-browser compatibility",
+                        "Design mobile-first responsive websites that work across all devices",
+                        "Build reusable CSS component libraries using preprocessors"
+                    ],
+                    "difficulty_progression": {
+                        "beginner": {
+                            "topics": ["html5_semantics", "css_basics", "selectors", "box_model", "positioning"],
+                            "percentage": 40
+                        },
+                        "intermediate": {
+                            "topics": ["flexbox", "grid", "responsive_design", "animations", "sass"],
+                            "percentage": 45
+                        },
+                        "advanced": {
+                            "topics": ["custom_properties", "performance", "accessibility", "component_libraries"],
+                            "percentage": 15
+                        }
+                    },
+                    "knowledge_areas": [
+                        {
+                            "area": "HTML5 and Semantic Markup",
+                            "weight": 0.25,
+                            "topics": ["semantic_elements", "accessibility", "forms", "multimedia", "microdata"]
+                        },
+                        {
+                            "area": "Modern CSS Layout",
+                            "weight": 0.35,
+                            "topics": ["flexbox", "grid", "positioning", "responsive_design", "media_queries"]
+                        },
+                        {
+                            "area": "Advanced CSS Features",
+                            "weight": 0.25,
+                            "topics": ["animations", "transitions", "custom_properties", "calc", "sass"]
+                        },
+                        {
+                            "area": "Web Standards and Performance",
+                            "weight": 0.15,
+                            "topics": ["accessibility", "performance", "browser_compatibility", "optimization"]
+                        }
+                    ],
+                    "prerequisites": [],
+                    "assessment_focus": {
+                        "conceptual": 0.3,
+                        "practical": 0.6,
+                        "problem_solving": 0.1
+                    }
                 }
             ]
         },
@@ -128,7 +723,57 @@
                     "level": "Beginner to Intermediate",
                     "skills": ["Python for data science", "Pandas", "NumPy", "Data visualization", "Machine learning", "Statistical analysis", "Model deployment", "Jupyter notebooks"],
                     "projects": ["Sales data analysis", "Customer segmentation", "Predictive pricing model", "Business intelligence dashboard", "Machine learning pipeline"],
-                    "career_paths": ["Data Scientist", "Data Analyst", "Business Intelligence Analyst", "Machine Learning Engineer", "Research Analyst"]
+                    "career_paths": ["Data Scientist", "Data Analyst", "Business Intelligence Analyst", "Machine Learning Engineer", "Research Analyst"],
+                    "learning_objectives": [
+                        "Manipulate and analyze large datasets using Pandas and NumPy effectively",
+                        "Create compelling data visualizations using Matplotlib and Seaborn",
+                        "Apply statistical analysis techniques to extract insights from data",
+                        "Build and evaluate machine learning models for predictive analytics",
+                        "Clean and preprocess real-world messy data for analysis",
+                        "Deploy data science models to production environments"
+                    ],
+                    "difficulty_progression": {
+                        "beginner": {
+                            "topics": ["python_basics", "pandas", "numpy", "basic_visualization", "descriptive_stats"],
+                            "percentage": 35
+                        },
+                        "intermediate": {
+                            "topics": ["data_cleaning", "eda", "statistical_analysis", "basic_ml", "advanced_visualization"],
+                            "percentage": 45
+                        },
+                        "advanced": {
+                            "topics": ["advanced_ml", "model_evaluation", "feature_engineering", "deployment"],
+                            "percentage": 20
+                        }
+                    },
+                    "knowledge_areas": [
+                        {
+                            "area": "Data Manipulation and Analysis",
+                            "weight": 0.3,
+                            "topics": ["pandas", "numpy", "data_cleaning", "data_transformation", "aggregation"]
+                        },
+                        {
+                            "area": "Data Visualization and Exploration",
+                            "weight": 0.25,
+                            "topics": ["matplotlib", "seaborn", "plotly", "eda", "statistical_plots"]
+                        },
+                        {
+                            "area": "Statistical Analysis",
+                            "weight": 0.2,
+                            "topics": ["descriptive_statistics", "inferential_statistics", "hypothesis_testing", "correlation"]
+                        },
+                        {
+                            "area": "Machine Learning",
+                            "weight": 0.25,
+                            "topics": ["scikit_learn", "supervised_learning", "unsupervised_learning", "model_evaluation"]
+                        }
+                    ],
+                    "prerequisites": ["Python fundamentals"],
+                    "assessment_focus": {
+                        "conceptual": 0.3,
+                        "practical": 0.5,
+                        "problem_solving": 0.2
+                    }
                 },
                 {
                     "name": "Machine Learning Fundamentals",
@@ -137,7 +782,57 @@
                     "level": "Intermediate",
                     "skills": ["Machine learning algorithms", "Scikit-learn", "TensorFlow", "Model evaluation", "Feature engineering", "Hyperparameter tuning", "Model deployment"],
                     "projects": ["House price prediction", "Image classification", "Recommendation system", "Fraud detection model", "Time series forecasting"],
-                    "career_paths": ["Machine Learning Engineer", "Data Scientist", "AI Researcher", "Analytics Consultant", "AI Developer"]
+                    "career_paths": ["Machine Learning Engineer", "Data Scientist", "AI Researcher", "Analytics Consultant", "AI Developer"],
+                    "learning_objectives": [
+                        "Understand fundamental machine learning algorithms and their applications",
+                        "Implement supervised and unsupervised learning models using scikit-learn",
+                        "Evaluate model performance and select appropriate algorithms for problems",
+                        "Engineer features and preprocess data for machine learning",
+                        "Tune hyperparameters and optimize model performance",
+                        "Deploy machine learning models to production environments"
+                    ],
+                    "difficulty_progression": {
+                        "beginner": {
+                            "topics": ["ml_concepts", "linear_regression", "classification", "model_evaluation"],
+                            "percentage": 30
+                        },
+                        "intermediate": {
+                            "topics": ["advanced_algorithms", "ensemble_methods", "feature_engineering", "cross_validation"],
+                            "percentage": 50
+                        },
+                        "advanced": {
+                            "topics": ["deep_learning_basics", "hyperparameter_tuning", "deployment", "mlops"],
+                            "percentage": 20
+                        }
+                    },
+                    "knowledge_areas": [
+                        {
+                            "area": "Supervised Learning",
+                            "weight": 0.4,
+                            "topics": ["regression", "classification", "tree_models", "ensemble_methods", "svm"]
+                        },
+                        {
+                            "area": "Unsupervised Learning",
+                            "weight": 0.25,
+                            "topics": ["clustering", "dimensionality_reduction", "anomaly_detection"]
+                        },
+                        {
+                            "area": "Model Development and Evaluation",
+                            "weight": 0.25,
+                            "topics": ["feature_engineering", "model_selection", "cross_validation", "metrics"]
+                        },
+                        {
+                            "area": "Production ML",
+                            "weight": 0.1,
+                            "topics": ["model_deployment", "monitoring", "mlops", "scaling"]
+                        }
+                    ],
+                    "prerequisites": ["Python programming", "Basic statistics", "Linear algebra basics"],
+                    "assessment_focus": {
+                        "conceptual": 0.35,
+                        "practical": 0.45,
+                        "problem_solving": 0.2
+                    }
                 },
                 {
                     "name": "Deep Learning with TensorFlow",
@@ -146,7 +841,57 @@
                     "level": "Advanced",
                     "skills": ["Neural networks", "TensorFlow", "Keras", "Computer vision", "Natural language processing", "Transfer learning", "Model optimization"],
                     "projects": ["Image classification system", "Text sentiment analyzer", "Object detection model", "Language translation system", "Generative AI application"],
-                    "career_paths": ["Deep Learning Engineer", "AI Researcher", "Computer Vision Engineer", "NLP Engineer", "ML Research Scientist"]
+                    "career_paths": ["Deep Learning Engineer", "AI Researcher", "Computer Vision Engineer", "NLP Engineer", "ML Research Scientist"],
+                    "learning_objectives": [
+                        "Design and implement neural network architectures using TensorFlow/Keras",
+                        "Build convolutional neural networks for computer vision applications",
+                        "Develop recurrent and transformer models for natural language processing",
+                        "Apply transfer learning and fine-tuning techniques effectively",
+                        "Optimize deep learning models for performance and deployment",
+                        "Implement generative models including GANs and autoencoders"
+                    ],
+                    "difficulty_progression": {
+                        "beginner": {
+                            "topics": ["neural_networks", "tensorflow_basics", "keras", "basic_cnn"],
+                            "percentage": 25
+                        },
+                        "intermediate": {
+                            "topics": ["advanced_cnn", "rnn", "lstm", "transfer_learning", "optimization"],
+                            "percentage": 50
+                        },
+                        "advanced": {
+                            "topics": ["transformers", "gans", "distributed_training", "production_deployment"],
+                            "percentage": 25
+                        }
+                    },
+                    "knowledge_areas": [
+                        {
+                            "area": "Neural Network Fundamentals",
+                            "weight": 0.25,
+                            "topics": ["perceptrons", "backpropagation", "activation_functions", "optimization", "regularization"]
+                        },
+                        {
+                            "area": "Computer Vision",
+                            "weight": 0.35,
+                            "topics": ["cnn", "image_classification", "object_detection", "segmentation", "transfer_learning"]
+                        },
+                        {
+                            "area": "Natural Language Processing",
+                            "weight": 0.25,
+                            "topics": ["rnn", "lstm", "transformers", "attention", "language_models"]
+                        },
+                        {
+                            "area": "Advanced Deep Learning",
+                            "weight": 0.15,
+                            "topics": ["gans", "autoencoders", "distributed_training", "model_optimization"]
+                        }
+                    ],
+                    "prerequisites": ["Machine Learning Fundamentals", "Python programming", "Linear algebra", "Calculus basics"],
+                    "assessment_focus": {
+                        "conceptual": 0.4,
+                        "practical": 0.4,
+                        "problem_solving": 0.2
+                    }
                 },
                 {
                     "name": "Data Visualization with Tableau",
@@ -155,7 +900,57 @@
                     "level": "Beginner to Intermediate",
                     "skills": ["Tableau Desktop", "Data visualization", "Dashboard design", "Data storytelling", "Calculated fields", "Parameters", "Data connections"],
                     "projects": ["Sales performance dashboard", "Customer analytics dashboard", "Financial reporting system", "Marketing campaign analysis", "Executive summary dashboard"],
-                    "career_paths": ["Business Intelligence Analyst", "Data Analyst", "Tableau Developer", "Data Visualization Specialist", "Business Analyst"]
+                    "career_paths": ["Business Intelligence Analyst", "Data Analyst", "Tableau Developer", "Data Visualization Specialist", "Business Analyst"],
+                    "learning_objectives": [
+                        "Connect to various data sources and prepare data for visualization",
+                        "Create effective visualizations using appropriate chart types and design principles",
+                        "Build interactive dashboards with filters, parameters, and actions",
+                        "Implement calculated fields and table calculations for advanced analysis",
+                        "Design compelling data stories that communicate insights effectively",
+                        "Deploy and share Tableau visualizations across organizations"
+                    ],
+                    "difficulty_progression": {
+                        "beginner": {
+                            "topics": ["tableau_interface", "basic_charts", "data_connections", "filters"],
+                            "percentage": 40
+                        },
+                        "intermediate": {
+                            "topics": ["calculated_fields", "parameters", "dashboard_design", "interactivity"],
+                            "percentage": 45
+                        },
+                        "advanced": {
+                            "topics": ["table_calculations", "advanced_analytics", "custom_sql", "performance_optimization"],
+                            "percentage": 15
+                        }
+                    },
+                    "knowledge_areas": [
+                        {
+                            "area": "Data Preparation and Connections",
+                            "weight": 0.25,
+                            "topics": ["data_sources", "data_interpreter", "joins", "unions", "data_blending"]
+                        },
+                        {
+                            "area": "Visualization Design",
+                            "weight": 0.35,
+                            "topics": ["chart_types", "marks_card", "visual_best_practices", "color_theory", "formatting"]
+                        },
+                        {
+                            "area": "Dashboard Development",
+                            "weight": 0.25,
+                            "topics": ["dashboard_layout", "interactivity", "actions", "filters", "parameters"]
+                        },
+                        {
+                            "area": "Advanced Analytics",
+                            "weight": 0.15,
+                            "topics": ["calculated_fields", "table_calculations", "forecasting", "trend_analysis"]
+                        }
+                    ],
+                    "prerequisites": ["Basic data analysis concepts"],
+                    "assessment_focus": {
+                        "conceptual": 0.25,
+                        "practical": 0.65,
+                        "problem_solving": 0.1
+                    }
                 },
                 {
                     "name": "SQL for Data Analysis",
@@ -164,7 +959,57 @@
                     "level": "Beginner to Intermediate",
                     "skills": ["SQL fundamentals", "Advanced queries", "Database design", "Performance optimization", "Data modeling", "Stored procedures", "Reporting"],
                     "projects": ["Sales analysis system", "Customer database design", "Automated reporting tool", "Data warehouse queries", "Performance optimization project"],
-                    "career_paths": ["Data Analyst", "Database Developer", "Business Intelligence Developer", "Data Engineer", "Database Administrator"]
+                    "career_paths": ["Data Analyst", "Database Developer", "Business Intelligence Developer", "Data Engineer", "Database Administrator"],
+                    "learning_objectives": [
+                        "Write complex SQL queries using joins, subqueries, and window functions",
+                        "Design relational databases with proper normalization and indexing",
+                        "Analyze business data using SQL aggregation and analytical functions",
+                        "Optimize query performance and understand execution plans",
+                        "Create automated reporting solutions using stored procedures",
+                        "Work with different database systems and understand their differences"
+                    ],
+                    "difficulty_progression": {
+                        "beginner": {
+                            "topics": ["basic_select", "filtering", "sorting", "grouping", "basic_joins"],
+                            "percentage": 35
+                        },
+                        "intermediate": {
+                            "topics": ["advanced_joins", "subqueries", "window_functions", "cte", "data_modification"],
+                            "percentage": 45
+                        },
+                        "advanced": {
+                            "topics": ["performance_optimization", "stored_procedures", "database_design", "advanced_analytics"],
+                            "percentage": 20
+                        }
+                    },
+                    "knowledge_areas": [
+                        {
+                            "area": "SQL Query Fundamentals",
+                            "weight": 0.4,
+                            "topics": ["select_statements", "joins", "filtering", "grouping", "sorting"]
+                        },
+                        {
+                            "area": "Advanced SQL Techniques",
+                            "weight": 0.35,
+                            "topics": ["window_functions", "cte", "subqueries", "pivoting", "recursive_queries"]
+                        },
+                        {
+                            "area": "Database Design and Modeling",
+                            "weight": 0.15,
+                            "topics": ["normalization", "relationships", "indexing", "constraints", "schema_design"]
+                        },
+                        {
+                            "area": "Performance and Administration",
+                            "weight": 0.1,
+                            "topics": ["query_optimization", "execution_plans", "stored_procedures", "functions"]
+                        }
+                    ],
+                    "prerequisites": ["Basic database concepts"],
+                    "assessment_focus": {
+                        "conceptual": 0.3,
+                        "practical": 0.5,
+                        "problem_solving": 0.2
+                    }
                 },
                 {
                     "name": "Big Data Analytics with Spark",
@@ -173,7 +1018,57 @@
                     "level": "Advanced",
                     "skills": ["Apache Spark", "Distributed computing", "Spark SQL", "MLlib", "Stream processing", "Big data architecture", "Cloud deployment"],
                     "projects": ["Large-scale data processing pipeline", "Real-time analytics system", "Machine learning on big data", "ETL pipeline with Spark", "Distributed data processing"],
-                    "career_paths": ["Big Data Engineer", "Data Engineer", "Spark Developer", "Data Architect", "Platform Engineer"]
+                    "career_paths": ["Big Data Engineer", "Data Engineer", "Spark Developer", "Data Architect", "Platform Engineer"],
+                    "learning_objectives": [
+                        "Understand distributed computing concepts and Spark architecture",
+                        "Process large datasets efficiently using Spark DataFrames and RDDs",
+                        "Implement machine learning pipelines using MLlib at scale",
+                        "Build real-time data processing systems with Spark Streaming",
+                        "Optimize Spark applications for performance and resource utilization",
+                        "Deploy and manage Spark applications on cloud platforms"
+                    ],
+                    "difficulty_progression": {
+                        "beginner": {
+                            "topics": ["big_data_concepts", "spark_basics", "rdd", "dataframes", "spark_sql"],
+                            "percentage": 30
+                        },
+                        "intermediate": {
+                            "topics": ["mllib", "spark_streaming", "performance_tuning", "cluster_deployment"],
+                            "percentage": 50
+                        },
+                        "advanced": {
+                            "topics": ["advanced_optimization", "ecosystem_integration", "production_deployment", "monitoring"],
+                            "percentage": 20
+                        }
+                    },
+                    "knowledge_areas": [
+                        {
+                            "area": "Spark Core and SQL",
+                            "weight": 0.35,
+                            "topics": ["rdd", "dataframes", "datasets", "spark_sql", "catalyst_optimizer"]
+                        },
+                        {
+                            "area": "Machine Learning and Analytics",
+                            "weight": 0.25,
+                            "topics": ["mllib", "ml_pipelines", "feature_engineering", "model_training"]
+                        },
+                        {
+                            "area": "Stream Processing",
+                            "weight": 0.2,
+                            "topics": ["spark_streaming", "structured_streaming", "kafka_integration", "real_time_analytics"]
+                        },
+                        {
+                            "area": "Performance and Deployment",
+                            "weight": 0.2,
+                            "topics": ["performance_tuning", "cluster_management", "resource_optimization", "monitoring"]
+                        }
+                    ],
+                    "prerequisites": ["SQL knowledge", "Python or Scala programming", "Distributed systems basics"],
+                    "assessment_focus": {
+                        "conceptual": 0.35,
+                        "practical": 0.45,
+                        "problem_solving": 0.2
+                    }
                 }
             ]
         },
@@ -187,7 +1082,57 @@
                     "level": "Beginner",
                     "skills": ["AWS core services", "Cloud architecture", "Security", "Cost optimization", "Infrastructure management", "Monitoring", "Certification preparation"],
                     "projects": ["Web application deployment", "Database migration to cloud", "Serverless application", "Disaster recovery plan", "Cost optimization analysis"],
-                    "career_paths": ["Cloud Engineer", "AWS Solutions Architect", "DevOps Engineer", "Cloud Consultant", "Systems Administrator"]
+                    "career_paths": ["Cloud Engineer", "AWS Solutions Architect", "DevOps Engineer", "Cloud Consultant", "Systems Administrator"],
+                    "learning_objectives": [
+                        "Understand cloud computing concepts and AWS service portfolio",
+                        "Deploy and manage applications using core AWS services",
+                        "Implement security best practices and IAM policies",
+                        "Design cost-effective cloud solutions with monitoring",
+                        "Plan disaster recovery and backup strategies",
+                        "Prepare for and pass the AWS Cloud Practitioner certification"
+                    ],
+                    "difficulty_progression": {
+                        "beginner": {
+                            "topics": ["cloud_concepts", "aws_overview", "ec2", "s3", "iam"],
+                            "percentage": 45
+                        },
+                        "intermediate": {
+                            "topics": ["vpc", "rds", "lambda", "cloudformation", "monitoring"],
+                            "percentage": 40
+                        },
+                        "advanced": {
+                            "topics": ["security_best_practices", "cost_optimization", "disaster_recovery", "certification_prep"],
+                            "percentage": 15
+                        }
+                    },
+                    "knowledge_areas": [
+                        {
+                            "area": "Core AWS Services",
+                            "weight": 0.4,
+                            "topics": ["ec2", "s3", "rds", "vpc", "lambda", "cloudformation"]
+                        },
+                        {
+                            "area": "Security and Compliance",
+                            "weight": 0.25,
+                            "topics": ["iam", "security_groups", "encryption", "compliance", "shared_responsibility"]
+                        },
+                        {
+                            "area": "Architecture and Design",
+                            "weight": 0.2,
+                            "topics": ["well_architected", "scalability", "reliability", "performance"]
+                        },
+                        {
+                            "area": "Billing and Support",
+                            "weight": 0.15,
+                            "topics": ["pricing_models", "cost_optimization", "support_plans", "billing_dashboard"]
+                        }
+                    ],
+                    "prerequisites": ["Basic IT knowledge"],
+                    "assessment_focus": {
+                        "conceptual": 0.5,
+                        "practical": 0.35,
+                        "problem_solving": 0.15
+                    }
                 },
                 {
                     "name": "Microsoft Azure Fundamentals",
@@ -196,252 +1141,57 @@
                     "level": "Beginner",
                     "skills": ["Azure services", "Azure Active Directory", "Security", "DevOps", "Kubernetes", "Serverless computing", "Hybrid cloud"],
                     "projects": ["Azure web app deployment", "Containerized application", "Azure DevOps pipeline", "Identity management system", "Hybrid cloud solution"],
-                    "career_paths": ["Azure Developer", "Cloud Architect", "DevOps Engineer", "Azure Administrator", "Cloud Security Engineer"]
-                },
-                {
-                    "name": "Google Cloud Platform",
-                    "description": "Build and deploy applications on Google Cloud Platform infrastructure. This course covers GCP core services including Compute Engine, Cloud Storage, Cloud SQL, and App Engine. Students learn about Google Kubernetes Engine, BigQuery for analytics, and machine learning services. The course includes practical projects for deploying scalable applications, implementing CI/CD pipelines, and managing cloud resources. Advanced topics cover multi-region deployments, security best practices, and cost management.",
-                    "duration": "8 weeks",
-                    "level": "Beginner to Intermediate",
-                    "skills": ["GCP services", "Kubernetes", "BigQuery", "Machine learning", "CI/CD", "Security", "Cost management"],
-                    "projects": ["Scalable web application", "Data analytics pipeline", "Machine learning deployment", "Kubernetes cluster", "Multi-region architecture"],
-                    "career_paths": ["GCP Developer", "Cloud Architect", "Data Engineer", "DevOps Engineer", "Site Reliability Engineer"]
-                },
-                {
-                    "name": "Docker and Containerization",
-                    "description": "Learn containerization with Docker and orchestration with Kubernetes. This course covers container fundamentals, Docker images, and container networking. Students learn to build, deploy, and manage containerized applications. The course includes Docker Compose for multi-container applications, container security, and best practices. Advanced topics cover Kubernetes architecture, pod management, services, and ingress controllers. Students gain hands-on experience with container orchestration.",
-                    "duration": "9 weeks",
-                    "level": "Intermediate",
-                    "skills": ["Docker fundamentals", "Container orchestration", "Kubernetes", "Container security", "Docker Compose", "CI/CD with containers", "Microservices"],
-                    "projects": ["Containerized web application", "Microservices architecture", "Kubernetes deployment", "Container security implementation", "CI/CD pipeline"],
-                    "career_paths": ["DevOps Engineer", "Container Engineer", "Platform Engineer", "Site Reliability Engineer", "Cloud Engineer"]
-                },
-                {
-                    "name": "Kubernetes Administration",
-                    "description": "Master Kubernetes for container orchestration and cluster management. This advanced course covers Kubernetes architecture, cluster setup, and administration tasks. Students learn about pods, services, deployments, and networking. The course includes security policies, RBAC, monitoring, and troubleshooting. Advanced topics cover custom resources, operators, and multi-cluster management. Students gain practical experience managing production Kubernetes environments.",
-                    "duration": "10 weeks",
-                    "level": "Advanced",
-                    "skills": ["Kubernetes administration", "Cluster management", "Security policies", "Monitoring", "Troubleshooting", "Custom resources", "Multi-cluster"],
-                    "projects": ["Production cluster setup", "Security implementation", "Monitoring system", "Custom operator development", "Multi-cluster federation"],
-                    "career_paths": ["Kubernetes Administrator", "Platform Engineer", "DevOps Engineer", "Site Reliability Engineer", "Cloud Architect"]
-                },
-                {
-                    "name": "Serverless Computing",
-                    "description": "Build serverless applications using AWS Lambda, Azure Functions, and more. This course covers serverless architecture patterns, function development, and event-driven programming. Students learn to build APIs, process data, and integrate with cloud services using serverless technologies. The course includes monitoring, debugging, and performance optimization for serverless applications. Advanced topics cover serverless security, cost optimization, and multi-cloud serverless strategies.",
-                    "duration": "7 weeks",
-                    "level": "Intermediate",
-                    "skills": ["Serverless architecture", "AWS Lambda", "Azure Functions", "Event-driven programming", "API development", "Monitoring", "Cost optimization"],
-                    "projects": ["Serverless API", "Data processing pipeline", "Event-driven application", "Serverless web app", "Multi-cloud function"],
-                    "career_paths": ["Serverless Developer", "Cloud Architect", "Backend Developer", "DevOps Engineer", "Solutions Architect"]
-                }
-            ]
-        },
-        {
-            "name": "DevOps & Tools",
-            "courses": [
-                {
-                    "name": "Git Version Control",
-                    "description": "Master Git for version control and collaborative software development. This course covers Git fundamentals including repositories, commits, branches, and merging. Students learn advanced Git workflows, conflict resolution, and collaboration strategies. The course includes GitHub/GitLab usage, pull requests, and code review processes. Advanced topics cover Git hooks, submodules, and repository management. Students gain practical experience with industry-standard development workflows.",
-                    "duration": "4 weeks",
-                    "level": "Beginner",
-                    "skills": ["Git fundamentals", "Branching strategies", "Collaboration workflows", "GitHub/GitLab", "Code review", "Git hooks", "Repository management"],
-                    "projects": ["Collaborative project", "Open source contribution", "Git workflow implementation", "Automated testing with hooks", "Repository structure design"],
-                    "career_paths": ["Software Developer", "DevOps Engineer", "Technical Lead", "Open Source Contributor", "Project Manager"]
-                },
-                {
-                    "name": "CI/CD Pipeline Development",
-                    "description": "Build automated deployment pipelines using Jenkins, GitHub Actions, and GitLab CI. This course covers continuous integration and deployment concepts, pipeline design, and automation strategies. Students learn to create build pipelines, automated testing, and deployment workflows. The course includes infrastructure as code, monitoring, and rollback strategies. Advanced topics cover pipeline optimization, security scanning, and multi-environment deployments.",
-                    "duration": "9 weeks",
-                    "level": "Intermediate",
-                    "skills": ["CI/CD concepts", "Jenkins", "GitHub Actions", "GitLab CI", "Pipeline design", "Automated testing", "Infrastructure as code"],
-                    "projects": ["Build automation pipeline", "Multi-stage deployment", "Automated testing suite", "Infrastructure pipeline", "Security scanning integration"],
-                    "career_paths": ["DevOps Engineer", "Build Engineer", "Platform Engineer", "Release Manager", "Site Reliability Engineer"]
-                },
-                {
-                    "name": "Infrastructure as Code",
-                    "description": "Manage infrastructure using Terraform, Ansible, and other IaC tools. This course covers infrastructure automation, configuration management, and provisioning strategies. Students learn to create reusable infrastructure templates, manage state, and implement best practices. The course includes cloud provider integration, security considerations, and disaster recovery planning. Advanced topics cover multi-cloud deployments, infrastructure testing, and governance.",
-                    "duration": "8 weeks",
-                    "level": "Intermediate",
-                    "skills": ["Terraform", "Ansible", "Infrastructure automation", "Configuration management", "Cloud provisioning", "State management", "Security"],
-                    "projects": ["Cloud infrastructure automation", "Configuration management system", "Multi-environment setup", "Disaster recovery implementation", "Infrastructure testing"],
-                    "career_paths": ["DevOps Engineer", "Infrastructure Engineer", "Cloud Engineer", "Platform Engineer", "Systems Administrator"]
-                },
-                {
-                    "name": "Monitoring and Logging",
-                    "description": "Implement monitoring solutions using Prometheus, Grafana, and ELK stack. This course covers observability principles, metrics collection, and alerting strategies. Students learn to set up monitoring dashboards, log aggregation, and distributed tracing. The course includes performance monitoring, capacity planning, and incident response. Advanced topics cover custom metrics, automated remediation, and observability for microservices.",
-                    "duration": "7 weeks",
-                    "level": "Intermediate",
-                    "skills": ["Prometheus", "Grafana", "ELK stack", "Observability", "Alerting", "Log analysis", "Performance monitoring"],
-                    "projects": ["Monitoring dashboard", "Log aggregation system", "Alerting configuration", "Performance analysis", "Incident response automation"],
-                    "career_paths": ["Site Reliability Engineer", "DevOps Engineer", "Platform Engineer", "Monitoring Specialist", "Performance Engineer"]
-                },
-                {
-                    "name": "DevOps Best Practices",
-                    "description": "Learn DevOps culture, practices, and tools for improved software delivery. This comprehensive course covers DevOps principles, collaboration strategies, and organizational transformation. Students learn about lean practices, continuous improvement, and measurement strategies. The course includes security integration (DevSecOps), quality assurance, and team dynamics. Advanced topics cover scaling DevOps practices, cultural change management, and business value measurement.",
-                    "duration": "6 weeks",
-                    "level": "Beginner to Intermediate",
-                    "skills": ["DevOps culture", "Collaboration", "Continuous improvement", "DevSecOps", "Quality assurance", "Team dynamics", "Change management"],
-                    "projects": ["DevOps assessment", "Process improvement plan", "Security integration", "Team collaboration tools", "Metrics dashboard"],
-                    "career_paths": ["DevOps Engineer", "Technical Lead", "Platform Manager", "DevOps Consultant", "Transformation Manager"]
-                },
-                {
-                    "name": "Linux System Administration",
-                    "description": "Master Linux command line and system administration for servers and containers. This course covers Linux fundamentals, file systems, process management, and networking. Students learn system configuration, user management, and security hardening. The course includes shell scripting, automation, and troubleshooting techniques. Advanced topics cover performance tuning, cluster management, and container orchestration on Linux systems.",
-                    "duration": "10 weeks",
-                    "level": "Beginner to Intermediate",
-                    "skills": ["Linux fundamentals", "System administration", "Shell scripting", "Networking", "Security", "Performance tuning", "Automation"],
-                    "projects": ["Server configuration", "Automation scripts", "Security hardening", "Monitoring setup", "Backup system"],
-                    "career_paths": ["System Administrator", "DevOps Engineer", "Platform Engineer", "Site Reliability Engineer", "Infrastructure Engineer"]
-                }
-            ]
-        },
-        {
-            "name": "Mobile Development",
-            "courses": [
-                {
-                    "name": "React Native Development",
-                    "description": "Build cross-platform mobile apps using React Native framework. This course covers React Native fundamentals, component development, and navigation. Students learn to integrate with device features, handle user input, and manage state. The course includes API integration, local storage, and publishing to app stores. Advanced topics cover performance optimization, native module development, and testing strategies. Students build complete mobile applications from concept to deployment.",
-                    "duration": "10 weeks",
-                    "level": "Intermediate",
-                    "skills": ["React Native", "Mobile development", "Cross-platform apps", "Navigation", "State management", "API integration", "App store deployment"],
-                    "projects": ["Todo mobile app", "Weather application", "Social media app", "E-commerce mobile app", "Real-time chat application"],
-                    "career_paths": ["Mobile Developer", "React Native Developer", "Full-stack Developer", "App Developer", "Cross-platform Developer"]
-                },
-                {
-                    "name": "Flutter App Development",
-                    "description": "Create beautiful mobile applications using Flutter and Dart programming. This course covers Flutter fundamentals, widget development, and state management. Students learn Dart programming language, UI design principles, and animation techniques. The course includes database integration, API consumption, and platform-specific features. Advanced topics cover custom widgets, performance optimization, and publishing to multiple platforms.",
-                    "duration": "11 weeks",
-                    "level": "Beginner to Intermediate",
-                    "skills": ["Flutter", "Dart programming", "Widget development", "State management", "UI design", "Animations", "Cross-platform development"],
-                    "projects": ["Personal expense tracker", "Recipe sharing app", "Fitness tracking app", "E-learning mobile app", "Location-based service app"],
-                    "career_paths": ["Flutter Developer", "Mobile Developer", "Cross-platform Developer", "UI Developer", "App Developer"]
-                },
-                {
-                    "name": "iOS Development with Swift",
-                    "description": "Build native iOS applications using Swift programming language. This comprehensive course covers Swift fundamentals, iOS SDK, and Xcode development environment. Students learn UIKit, Core Data, networking, and iOS design patterns. The course includes App Store guidelines, testing strategies, and performance optimization. Advanced topics cover SwiftUI, Combine framework, and advanced iOS features like ARKit and Core ML.",
-                    "duration": "12 weeks",
-                    "level": "Intermediate",
-                    "skills": ["Swift programming", "iOS SDK", "UIKit", "Core Data", "Networking", "Design patterns", "SwiftUI", "App Store deployment"],
-                    "projects": ["Personal finance app", "Social networking app", "Augmented reality app", "Core ML integration", "Apple Watch companion app"],
-                    "career_paths": ["iOS Developer", "Mobile Developer", "Swift Developer", "App Developer", "Senior Mobile Engineer"]
-                },
-                {
-                    "name": "Android Development with Kotlin",
-                    "description": "Develop Android apps using Kotlin and modern Android development practices. This course covers Kotlin programming language, Android SDK, and Android Studio. Students learn about activities, fragments, layouts, and Material Design principles. The course includes data persistence, networking, background processing, and testing. Advanced topics cover Jetpack Compose, architecture components, and Play Store publishing. Students build feature-rich Android applications with modern development practices.",
-                    "duration": "11 weeks",
-                    "level": "Intermediate",
-                    "skills": ["Kotlin programming", "Android SDK", "Android Studio", "Material Design", "Jetpack Compose", "Architecture components", "Testing"],
-                    "projects": ["News reader app", "Music player application", "Location tracking app", "Camera application", "Android game development"],
-                    "career_paths": ["Android Developer", "Mobile Developer", "Kotlin Developer", "App Developer", "Mobile Architect"]
-                },
-                {
-                    "name": "Mobile UI/UX Design",
-                    "description": "Design user-friendly mobile interfaces and optimize user experience. This course covers mobile design principles, user research, and prototyping techniques. Students learn about information architecture, interaction design, and accessibility guidelines. The course includes design tools like Figma and Sketch, user testing methods, and design systems. Advanced topics cover motion design, micro-interactions, and cross-platform design consistency.",
-                    "duration": "8 weeks",
-                    "level": "Beginner to Intermediate",
-                    "skills": ["Mobile design principles", "User research", "Prototyping", "Figma/Sketch", "Accessibility", "Design systems", "User testing"],
-                    "projects": ["Mobile app redesign", "Design system creation", "User research study", "Interactive prototype", "Accessibility audit"],
-                    "career_paths": ["UI/UX Designer", "Mobile Designer", "Product Designer", "Interaction Designer", "Design Researcher"]
-                }
-            ]
-        },
-        {
-            "name": "Cybersecurity",
-            "courses": [
-                {
-                    "name": "Cybersecurity Fundamentals",
-                    "description": "Learn essential cybersecurity concepts and practices for protecting systems. This comprehensive course covers threat landscape, risk assessment, and security frameworks. Students learn about cryptography, network security, and incident response. The course includes security policies, compliance requirements, and business continuity planning. Advanced topics cover threat hunting, digital forensics, and emerging security challenges. Students gain practical experience with security tools and methodologies.",
-                    "duration": "10 weeks",
-                    "level": "Beginner",
-                    "skills": ["Security fundamentals", "Risk assessment", "Cryptography", "Network security", "Incident response", "Compliance", "Security tools"],
-                    "projects": ["Security assessment", "Incident response plan", "Security policy development", "Risk analysis", "Security awareness program"],
-                    "career_paths": ["Cybersecurity Analyst", "Security Consultant", "Information Security Officer", "Risk Analyst", "Compliance Specialist"]
-                },
-                {
-                    "name": "Ethical Hacking & Penetration Testing",
-                    "description": "Master ethical hacking techniques and penetration testing methodologies. This hands-on course covers penetration testing frameworks, vulnerability assessment, and exploitation techniques. Students learn about reconnaissance, scanning, enumeration, and post-exploitation activities. The course includes web application testing, network penetration testing, and wireless security. Advanced topics cover social engineering, physical security, and reporting methodologies.",
-                    "duration": "12 weeks",
-                    "level": "Advanced",
-                    "skills": ["Penetration testing", "Vulnerability assessment", "Exploitation techniques", "Web application testing", "Network security", "Social engineering", "Security reporting"],
-                    "projects": ["Web application pentest", "Network penetration test", "Wireless security assessment", "Social engineering campaign", "Comprehensive security audit"],
-                    "career_paths": ["Penetration Tester", "Ethical Hacker", "Security Consultant", "Vulnerability Researcher", "Red Team Specialist"]
-                },
-                {
-                    "name": "Network Security",
-                    "description": "Secure network infrastructure and understand common attack vectors. This course covers network protocols, firewalls, intrusion detection systems, and VPN technologies. Students learn about network monitoring, traffic analysis, and threat detection. The course includes wireless security, network segmentation, and secure network design. Advanced topics cover advanced persistent threats, network forensics, and zero-trust architecture.",
-                    "duration": "9 weeks",
-                    "level": "Intermediate",
-                    "skills": ["Network protocols", "Firewalls", "Intrusion detection", "VPN", "Network monitoring", "Threat detection", "Zero-trust architecture"],
-                    "projects": ["Network security design", "Firewall configuration", "IDS implementation", "Network monitoring setup", "Security incident investigation"],
-                    "career_paths": ["Network Security Engineer", "Security Architect", "SOC Analyst", "Network Administrator", "Security Consultant"]
-                },
-                {
-                    "name": "Web Application Security",
-                    "description": "Identify and fix security vulnerabilities in web applications. This course covers OWASP Top 10, secure coding practices, and web application testing methodologies. Students learn about SQL injection, XSS, CSRF, and authentication vulnerabilities. The course includes security testing tools, code review techniques, and secure development lifecycle. Advanced topics cover API security, cloud application security, and DevSecOps practices.",
-                    "duration": "8 weeks",
-                    "level": "Intermediate",
-                    "skills": ["Web application security", "OWASP Top 10", "Secure coding", "Security testing", "Code review", "API security", "DevSecOps"],
-                    "projects": ["Web application security audit", "Secure application development", "API security testing", "Security code review", "DevSecOps pipeline"],
-                    "career_paths": ["Application Security Engineer", "Security Developer", "Web Security Specialist", "DevSecOps Engineer", "Security Consultant"]
-                },
-                {
-                    "name": "Cloud Security",
-                    "description": "Implement security best practices for cloud-based infrastructure. This course covers cloud security models, shared responsibility, and cloud-specific threats. Students learn about identity and access management, data protection, and compliance in the cloud. The course includes security monitoring, incident response, and disaster recovery in cloud environments. Advanced topics cover multi-cloud security, container security, and serverless security.",
-                    "duration": "9 weeks",
-                    "level": "Intermediate to Advanced",
-                    "skills": ["Cloud security models", "IAM", "Data protection", "Compliance", "Security monitoring", "Container security", "Multi-cloud security"],
-                    "projects": ["Cloud security assessment", "IAM implementation", "Data encryption strategy", "Security monitoring setup", "Compliance audit"],
-                    "career_paths": ["Cloud Security Engineer", "Cloud Security Architect", "DevSecOps Engineer", "Compliance Specialist", "Security Consultant"]
-                }
-            ]
-        },
-        {
-            "name": "Artificial Intelligence",
-            "courses": [
-                {
-                    "name": "AI and Machine Learning Basics",
-                    "description": "Introduction to artificial intelligence and machine learning concepts. This foundational course covers AI history, machine learning types, and basic algorithms. Students learn about supervised and unsupervised learning, neural networks, and model evaluation. The course includes practical exercises with Python and popular ML libraries. Advanced topics cover AI ethics, bias detection, and responsible AI development. Students complete projects applying ML to real-world problems.",
-                    "duration": "10 weeks",
-                    "level": "Beginner",
-                    "skills": ["AI fundamentals", "Machine learning basics", "Python for ML", "Neural networks", "Model evaluation", "AI ethics", "Responsible AI"],
-                    "projects": ["Image classification", "Sentiment analysis", "Recommendation system", "Predictive modeling", "AI ethics analysis"],
-                    "career_paths": ["AI Developer", "Machine Learning Engineer", "Data Scientist", "AI Researcher", "AI Product Manager"]
-                },
-                {
-                    "name": "Natural Language Processing",
-                    "description": "Build systems that understand and process human language using NLP techniques. This course covers text preprocessing, language models, and sentiment analysis. Students learn about named entity recognition, topic modeling, and machine translation. The course includes modern NLP techniques like transformers, BERT, and GPT models. Advanced topics cover conversational AI, language generation, and multilingual NLP. Students build practical NLP applications.",
-                    "duration": "11 weeks",
-                    "level": "Intermediate to Advanced",
-                    "skills": ["Text preprocessing", "Language models", "Transformers", "BERT/GPT", "Sentiment analysis", "Named entity recognition", "Conversational AI"],
-                    "projects": ["Chatbot development", "Text summarization tool", "Language translator", "Sentiment analysis system", "Document classification"],
-                    "career_paths": ["NLP Engineer", "AI Researcher", "Conversational AI Developer", "Data Scientist", "AI Product Manager"]
-                },
-                {
-                    "name": "Computer Vision",
-                    "description": "Develop applications that can see and interpret visual information. This course covers image processing, feature detection, and object recognition. Students learn about convolutional neural networks, image segmentation, and video analysis. The course includes practical applications like face recognition, medical imaging, and autonomous vehicles. Advanced topics cover generative models, 3D vision, and real-time processing. Students build computer vision applications using OpenCV and deep learning frameworks.",
-                    "duration": "12 weeks",
-                    "level": "Intermediate to Advanced",
-                    "skills": ["Image processing", "CNN", "Object detection", "Image segmentation", "OpenCV", "Deep learning", "Real-time processing"],
-                    "projects": ["Face recognition system", "Object detection app", "Image segmentation tool", "Medical imaging analyzer", "Autonomous vehicle vision"],
-                    "career_paths": ["Computer Vision Engineer", "AI Researcher", "Robotics Engineer", "Medical AI Specialist", "Autonomous Systems Developer"]
-                },
-                {
-                    "name": "ChatBot Development",
-                    "description": "Create intelligent chatbots using modern AI frameworks and techniques. This course covers conversational AI principles, dialog management, and natural language understanding. Students learn about intent recognition, entity extraction, and response generation. The course includes chatbot platforms, integration techniques, and deployment strategies. Advanced topics cover voice assistants, multimodal interfaces, and personalization. Students build and deploy production-ready chatbots.",
-                    "duration": "8 weeks",
-                    "level": "Intermediate",
-                    "skills": ["Conversational AI", "Dialog management", "Intent recognition", "NLU", "Chatbot platforms", "Voice assistants", "Deployment"],
-                    "projects": ["Customer service chatbot", "Voice assistant", "FAQ automation", "Multilingual chatbot", "E-commerce assistant"],
-                    "career_paths": ["Conversational AI Developer", "Chatbot Developer", "AI Product Manager", "Voice UI Designer", "AI Solutions Architect"]
-                },
-                {
-                    "name": "AI Ethics and Responsible AI",
-                    "description": "Understand ethical considerations and responsible practices in AI development. This course covers AI bias, fairness, and transparency in machine learning systems. Students learn about algorithmic accountability, privacy protection, and regulatory compliance. The course includes case studies of AI failures, ethical frameworks, and best practices. Advanced topics cover explainable AI, human-AI interaction, and societal impact assessment. Students develop frameworks for responsible AI development.",
-                    "duration": "6 weeks",
-                    "level": "Beginner to Intermediate",
-                    "skills": ["AI ethics", "Bias detection", "Fairness", "Transparency", "Privacy", "Regulatory compliance", "Explainable AI"],
-                    "projects": ["Bias audit", "Ethics framework", "Fairness assessment", "Privacy impact analysis", "Responsible AI guidelines"],
-                    "career_paths": ["AI Ethics Specialist", "AI Policy Researcher", "Responsible AI Engineer", "AI Governance Manager", "Ethics Consultant"]
+                    "career_paths": ["Azure Developer", "Cloud Architect", "DevOps Engineer", "Azure Administrator", "Cloud Security Engineer"],
+                    "learning_objectives": [
+                        "Navigate Azure portal and manage Azure subscriptions and resources",
+                        "Deploy virtual machines, storage accounts, and networking components",
+                        "Implement identity and access management with Azure Active Directory",
+                        "Build and deploy applications using Azure App Service and Functions",
+                        "Set up CI/CD pipelines using Azure DevOps services",
+                        "Design hybrid cloud solutions integrating on-premises and Azure"
+                    ],
+                    "difficulty_progression": {
+                        "beginner": {
+                            "topics": ["azure_fundamentals", "virtual_machines", "storage", "networking"],
+                            "percentage": 40
+                        },
+                        "intermediate": {
+                            "topics": ["app_services", "databases", "azure_ad", "devops"],
+                            "percentage": 45
+                        },
+                        "advanced": {
+                            "topics": ["kubernetes", "functions", "hybrid_cloud", "governance"],
+                            "percentage": 15
+                        }
+                    },
+                    "knowledge_areas": [
+                        {
+                            "area": "Core Azure Services",
+                            "weight": 0.35,
+                            "topics": ["compute", "storage", "networking", "databases", "app_services"]
+                        },
+                        {
+                            "area": "Identity and Security",
+                            "weight": 0.25,
+                            "topics": ["azure_ad", "rbac", "key_vault", "security_center", "compliance"]
+                        },
+                        {
+                            "area": "Development and DevOps",
+                            "weight": 0.25,
+                            "topics": ["azure_devops", "functions", "logic_apps", "api_management"]
+                        },
+                        {
+                            "area": "Management and Governance",
+                            "weight": 0.15,
+                            "topics": ["resource_manager", "policies", "blueprints", "cost_management"]
+                        }
+                    ],
+                    "prerequisites": ["Basic cloud concepts"],
+                    "assessment_focus": {
+                        "conceptual": 0.4,
+                        "practical": 0.45,
+                        "problem_solving": 0.15
+                    }
                 }
             ]
         }

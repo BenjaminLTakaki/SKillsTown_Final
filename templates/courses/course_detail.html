@@ -344,6 +344,35 @@
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
+/* Enhanced learning progress styles */
+.progress-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: conic-gradient(#28a745 calc(var(--percentage) * 1%), #e9ecef 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    position: relative;
+}
+
+.progress-circle-inner {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.knowledge-areas {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
 @media (max-width: 768px) {
     .quiz-option {
         padding: 10px;
@@ -352,40 +381,121 @@
     .score-display {
         font-size: 2rem;
     }
+    
+    .progress-circle {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .progress-circle-inner {
+        width: 75px;
+        height: 75px;
+    }
 }
 </style>
 
 <script>
-// Global variables for quiz functionality
+// Enhanced Course Detail JavaScript with Learning Progress and Analytics
+document.addEventListener('DOMContentLoaded', function() {
+    const courseId = '{{ course.id }}';
+    const userId = '{{ current_user.id }}';
+    
+    // Initialize page components
+    loadLearningProgress();
+    loadQuizHistory();
+    initializeProgressCharts();
+    
+    // Auto-refresh data every 30 seconds if user is active
+    let refreshInterval = setInterval(() => {
+        if (document.visibilityState === 'visible') {
+            loadLearningProgress();
+        }
+    }, 30000);
+    
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', () => {
+        if (refreshInterval) clearInterval(refreshInterval);
+    });
+    
+    // Smooth scrolling for materials
+    document.querySelectorAll('.material-item').forEach((item, i) => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            item.style.transition = 'all 0.5s ease';
+            item.style.opacity = '1';
+            item.style.transform = 'translateY(0)';
+        }, 100 * i);
+    });
+});
+
+// Global variables for quiz functionality and learning progress
 let currentQuiz = null;
 let currentAttempt = null;
 let userAnswers = [];
+let learningProgress = null;
+let quizHistory = [];
+let learningAnalytics = null;
 
-const userUuid = "{{ current_user.get_quiz_uuid() }}";  // proxy endpoint parameter
+const userUuid = "{{ current_user.get_quiz_uuid() }}";
+const courseId = "{{ course.id }}";
 
-// Quiz generation functionality
+// Enhanced quiz generation with personalization
 async function generateQuiz(courseId) {
     const btn = document.getElementById('generateQuizBtn');
     const progress = document.getElementById('quizProgress');
     const message = document.getElementById('quizMessage');
     
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generating...';
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generating Personalized Quiz...';
     progress.style.display = 'block';
     message.innerHTML = '';
     
     try {
-        const response = await fetch(`/course/${courseId}/generate-quiz`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+        // Check if this is an iteration (user has taken quizzes before)
+        const iterationNumber = quizHistory.length + 1;
+        const isIteration = iterationNumber > 1;
+        
+        let response;
+        
+        if (isIteration && learningProgress) {
+            // Generate iteration quiz based on previous performance
+            response = await fetch(`/course/${courseId}/quiz-iteration`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    courseName: '{{ course.course_name }}',
+                    iterationNumber: iterationNumber,
+                    weakAreas: learningProgress.weakAreas || []
+                })
+            });
+        } else {
+            // Generate first quiz
+            response = await fetch(`/course/${courseId}/generate-quiz`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+        }
         
         const data = await response.json();
         
         if (response.ok && data.success) {
-            message.innerHTML = `<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>Quiz generated successfully! "${data.title}" with ${data.questions_count} questions.</div>`;
+            const personalizedMessage = isIteration ? 
+                `Iteration ${iterationNumber} quiz generated! This quiz is personalized based on your previous performance.` :
+                `First quiz generated! Future quizzes will be personalized based on your performance.`;
+            
+            message.innerHTML = `
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle me-2"></i>${personalizedMessage}
+                    <br><small><strong>"${data.title}"</strong> with ${data.questions_count} questions.</small>
+                    ${data.focus_areas && data.focus_areas.length > 0 ? 
+                        `<br><small><strong>Focus areas:</strong> ${data.focus_areas.join(', ')}</small>` : ''}
+                </div>
+            `;
             
             // Load the quiz for taking
             setTimeout(() => {
@@ -398,18 +508,347 @@ async function generateQuiz(courseId) {
         
     } catch (error) {
         console.error('Quiz generation error:', error);
-        message.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Failed to generate quiz: ${error.message}</div>`;
+        message.innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle me-2"></i>Failed to generate quiz: ${error.message}
+                <br><small>This might be a temporary issue. Please try again.</small>
+            </div>
+        `;
     } finally {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-question-circle me-2"></i>Generate Quiz';
+        btn.innerHTML = '<i class="fas fa-question-circle me-2"></i>Generate Personalized Quiz';
         progress.style.display = 'none';
     }
+}
+
+// Load user's learning progress for the course
+async function loadLearningProgress() {
+    try {
+        const response = await fetch(`/user/learning-progress/${courseId}`);
+        
+        if (response.ok) {
+            const data = await response.json();
+            learningProgress = data.progress;
+            displayLearningProgress(learningProgress);
+        } else if (response.status === 404) {
+            // No progress yet - this is fine for new users
+            displayNoProgress();
+        }
+    } catch (error) {
+        console.error('Error loading learning progress:', error);
+        displayNoProgress();
+    }
+}
+
+// Display learning progress in the UI
+function displayLearningProgress(progress) {
+    if (!progress) return;
+    
+    // Update progress card
+    const progressCard = document.getElementById('learningProgressCard') || createLearningProgressCard();
+    
+    const masteryPercentage = progress.masteryPercentage || 0;
+    const masteryLevel = progress.masteryLevel || 'beginner';
+    const learningCurve = progress.learningCurve || [];
+    
+    progressCard.innerHTML = `
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Learning Progress</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="text-center mb-3">
+                        <div class="progress-circle mb-2" style="--percentage: ${masteryPercentage}">
+                            <div class="progress-circle-inner">
+                                <span class="h4 mb-0">${masteryPercentage}%</span>
+                                <small class="text-muted">Mastery</small>
+                            </div>
+                        </div>
+                        <span class="badge bg-${getMasteryColor(masteryLevel)} fs-6">${masteryLevel.toUpperCase()}</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h6>Knowledge Areas</h6>
+                    <div class="knowledge-areas">
+                        ${displayKnowledgeAreas(progress.knowledgeAreas)}
+                    </div>
+                </div>
+            </div>
+            
+            ${progress.weakAreas && progress.weakAreas.length > 0 ? `
+                <div class="mt-3">
+                    <h6><i class="fas fa-target me-2 text-warning"></i>Focus Areas</h6>
+                    <div class="focus-areas">
+                        ${progress.weakAreas.map(area => 
+                            `<span class="badge bg-warning text-dark me-2 mb-1">${area}</span>`
+                        ).join('')}
+                    </div>
+                </div>
+            ` : ''}
+            
+            ${learningCurve.length > 0 ? `
+                <div class="mt-3">
+                    <h6><i class="fas fa-chart-area me-2"></i>Learning Curve</h6>
+                    <canvas id="learningCurveChart" width="400" height="150"></canvas>
+                </div>
+            ` : ''}
+            
+            <div class="mt-3 text-center">
+                <button class="btn btn-outline-info btn-sm" onclick="showDetailedAnalytics()">
+                    <i class="fas fa-analytics me-1"></i>View Detailed Analytics
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Draw learning curve chart if data is available
+    if (learningCurve.length > 0) {
+        setTimeout(() => drawLearningCurveChart(learningCurve), 100);
+    }
+}
+
+// Create learning progress card if it doesn't exist
+function createLearningProgressCard() {
+    const card = document.createElement('div');
+    card.id = 'learningProgressCard';
+    card.className = 'card shadow-sm mb-4';
+    
+    // Insert after quiz generator section
+    const quizSection = document.querySelector('.card-header:has(.fa-brain)').parentElement;
+    if (quizSection) {
+        quizSection.parentNode.insertBefore(card, quizSection.nextSibling);
+    }
+    
+    return card;
+}
+
+// Display knowledge areas performance
+function displayKnowledgeAreas(knowledgeAreas) {
+    if (!knowledgeAreas || Object.keys(knowledgeAreas).length === 0) {
+        return '<small class="text-muted">No data yet</small>';
+    }
+    
+    let html = '';
+    for (const [area, stats] of Object.entries(knowledgeAreas)) {
+        const color = stats.averageScore >= 80 ? 'success' : 
+                     stats.averageScore >= 60 ? 'warning' : 'danger';
+        const trend = stats.trend === 'improving' ? '↗️' : 
+                     stats.trend === 'declining' ? '↘️' : '➡️';
+        
+        html += `
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <small><strong>${area}</strong></small>
+                <div>
+                    <span class="badge bg-${color}">${stats.averageScore}%</span>
+                    <span class="ms-1">${trend}</span>
+                </div>
+            </div>
+        `;
+    }
+    
+    return html;
+}
+
+// Draw learning curve chart using Chart.js (if available)
+function drawLearningCurveChart(learningCurve) {
+    const ctx = document.getElementById('learningCurveChart');
+    if (!ctx) return;
+    
+    // Simple canvas drawing if Chart.js not available
+    const canvas = ctx;
+    const context = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    
+    // Clear canvas
+    context.clearRect(0, 0, width, height);
+    
+    // Draw simple line chart
+    const scores = learningCurve.map(entry => entry.overallScore);
+    const maxScore = Math.max(...scores, 100);
+    const stepX = width / (scores.length - 1 || 1);
+    
+    context.strokeStyle = '#28a745';
+    context.lineWidth = 2;
+    context.beginPath();
+    
+    scores.forEach((score, index) => {
+        const x = index * stepX;
+        const y = height - (score / maxScore) * height;
+        
+        if (index === 0) {
+            context.moveTo(x, y);
+        } else {
+            context.lineTo(x, y);
+        }
+    });
+    
+    context.stroke();
+}
+
+// Show detailed analytics modal
+async function showDetailedAnalytics() {
+    try {
+        const response = await fetch(`/course/${courseId}/learning-analytics`);
+        
+        if (response.ok) {
+            const data = await response.json();
+            learningAnalytics = data.analytics;
+            displayAnalyticsModal(data);
+        } else {
+            // Show mock analytics if endpoint not available
+            displayMockAnalytics();
+        }
+    } catch (error) {
+        console.error('Error loading analytics:', error);
+        displayMockAnalytics();
+    }
+}
+
+// Display analytics in a modal
+function displayAnalyticsModal(data) {
+    const analytics = data.analytics || generateMockAnalytics();
+    
+    const modalHtml = `
+        <div class="modal fade" id="analyticsModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="fas fa-chart-bar me-2"></i>Detailed Learning Analytics
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card border-primary mb-3">
+                                    <div class="card-header bg-primary text-white">
+                                        <h6 class="mb-0">Learning Velocity</h6>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <h3 class="text-${analytics.learningVelocity >= 0 ? 'success' : 'warning'}">
+                                            ${analytics.learningVelocity >= 0 ? '+' : ''}${analytics.learningVelocity}%
+                                        </h3>
+                                        <small class="text-muted">Rate of improvement</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card border-info mb-3">
+                                    <div class="card-header bg-info text-white">
+                                        <h6 class="mb-0">Consistency Score</h6>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <h3 class="text-${analytics.consistencyScore >= 70 ? 'success' : 'warning'}">
+                                            ${analytics.consistencyScore}%
+                                        </h3>
+                                        <small class="text-muted">Performance stability</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-trophy me-2 text-success"></i>Strongest Areas</h6>
+                                <ul class="list-group mb-3">
+                                    ${analytics.strongestAreas.map(area => `
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span>${area.area}</span>
+                                            <span class="badge bg-success">${area.score}%</span>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-target me-2 text-warning"></i>Areas for Improvement</h6>
+                                <ul class="list-group mb-3">
+                                    ${analytics.improvementAreas.map(area => `
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span>${area.area}</span>
+                                            <span class="badge bg-warning text-dark">${area.score}%</span>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        ${analytics.studyRecommendations.length > 0 ? `
+                            <div class="mt-3">
+                                <h6><i class="fas fa-lightbulb me-2 text-info"></i>Study Recommendations</h6>
+                                <div class="alert alert-info">
+                                    <ul class="mb-0">
+                                        ${analytics.studyRecommendations.map(rec => `<li>${rec}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="generatePersonalizedQuiz()">
+                            Generate Targeted Quiz
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById('analyticsModal');
+    if (existingModal) existingModal.remove();
+    
+    // Add modal to page
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    // Show modal using Bootstrap
+    const modal = new bootstrap.Modal(document.getElementById('analyticsModal'));
+    modal.show();
+}
+
+// Generate mock analytics for demonstration
+function generateMockAnalytics() {
+    return {
+        learningVelocity: Math.floor(Math.random() * 30) - 10,
+        consistencyScore: Math.floor(Math.random() * 40) + 60,
+        strongestAreas: [
+            { area: 'Basic Concepts', score: 85 },
+            { area: 'Practical Applications', score: 78 }
+        ],
+        improvementAreas: [
+            { area: 'Advanced Topics', score: 45 },
+            { area: 'Problem Solving', score: 52 }
+        ],
+        studyRecommendations: [
+            'Focus more time on advanced concepts',
+            'Practice with real-world examples',
+            'Review fundamental principles regularly'
+        ]
+    };
+}
+
+// Display mock analytics if real data unavailable
+function displayMockAnalytics() {
+    const mockData = { analytics: generateMockAnalytics() };
+    displayAnalyticsModal(mockData);
+}
+
+// Generate a quiz specifically targeted at weak areas
+function generatePersonalizedQuiz() {
+    // Close analytics modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('analyticsModal'));
+    if (modal) modal.hide();
+    
+    // Generate quiz with focus on weak areas
+    generateQuiz(courseId);
 }
 
 // Load quiz for taking
 async function loadQuizForTaking(quizId) {
     try {
-        // Get quiz details
         const response = await fetch(`/quiz/${quizId}/details`);
         const quiz = await response.json();
         
@@ -417,7 +856,6 @@ async function loadQuizForTaking(quizId) {
             currentQuiz = quiz;
             displayQuiz(quiz);
             
-            // Start a quiz attempt
             const attemptResponse = await fetch(`/quiz/${quizId}/start`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' }
@@ -426,12 +864,8 @@ async function loadQuizForTaking(quizId) {
             const attemptData = await attemptResponse.json();
             if (attemptResponse.ok) {
                 currentAttempt = attemptData;
-                console.log('Quiz attempt started:', attemptData.attemptId);
             }
-        } else {
-            throw new Error('Failed to load quiz details');
         }
-        
     } catch (error) {
         console.error('Error loading quiz:', error);
         document.getElementById('quizMessage').innerHTML = 
@@ -446,7 +880,6 @@ function displayQuiz(quiz) {
     const quizQuestions = document.getElementById('quizQuestions');
     const quizNavigation = document.getElementById('quizNavigation');
     
-    // Show quiz details
     quizDetails.innerHTML = `
         <div class="quiz-header p-3 bg-info text-white rounded">
             <h5 class="mb-1">${quiz.quiz.title}</h5>
@@ -455,10 +888,8 @@ function displayQuiz(quiz) {
         </div>
     `;
     
-    // Initialize user answers array
     userAnswers = new Array(quiz.quiz.questions.length).fill(null);
     
-    // Display questions
     let questionsHtml = '';
     quiz.quiz.questions.forEach((question, index) => {
         questionsHtml += `
@@ -477,40 +908,28 @@ function displayQuiz(quiz) {
             `;
         });
         
-        questionsHtml += `
-                </div>
-            </div>
-        `;
+        questionsHtml += `</div></div>`;
     });
     
     quizQuestions.innerHTML = questionsHtml;
     quizInterface.style.display = 'block';
     quizNavigation.style.display = 'block';
     
-    // Scroll to quiz
     quizInterface.scrollIntoView({ behavior: 'smooth' });
 }
 
 // Handle option selection
 function selectOption(questionIndex, optionIndex) {
-    // Update user answers
     userAnswers[questionIndex] = optionIndex;
     
-    // Update UI
     const questionDiv = document.querySelector(`[data-question="${questionIndex}"]`);
     const options = questionDiv.querySelectorAll('.quiz-option');
     const radioInputs = questionDiv.querySelectorAll('input[type="radio"]');
     
-    // Remove selected class from all options
     options.forEach(opt => opt.classList.remove('selected'));
-    
-    // Add selected class to chosen option
     options[optionIndex].classList.add('selected');
-    
-    // Update radio button
     radioInputs[optionIndex].checked = true;
     
-    // Check if all questions are answered
     updateSubmitButton();
 }
 
@@ -542,7 +961,7 @@ async function submitQuiz() {
     
     const submitBtn = document.getElementById('submitQuizBtn');
     submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Submitting...';
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Submitting & Analyzing...';
     
     try {
         const response = await fetch(`/quiz/attempt/${currentAttempt.attemptId}/complete`, {
@@ -554,23 +973,33 @@ async function submitQuiz() {
         const result = await response.json();
         
         if (response.ok) {
-            displayQuizResults(result);
-            loadQuizHistory(); // Refresh quiz history
+            // Display enhanced results with learning insights
+            displayEnhancedQuizResults(result);
+            
+            // Refresh learning progress and quiz history
+            setTimeout(() => {
+                loadLearningProgress();
+                loadQuizHistory();
+            }, 1000);
         } else {
             throw new Error(result.error || 'Failed to submit quiz');
         }
         
     } catch (error) {
         console.error('Error submitting quiz:', error);
-        alert('Error submitting quiz: ' + error.message);
+        document.getElementById('quizMessage').innerHTML = 
+            `<div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                Error submitting quiz: ${error.message}
+            </div>`;
     } finally {
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<i class="fas fa-check me-2"></i>Submit Quiz';
     }
 }
 
-// Display quiz results
-function displayQuizResults(result) {
+// Display enhanced quiz results with learning insights
+function displayEnhancedQuizResults(result) {
     const quizInterface = document.getElementById('quizInterface');
     const quizResults = document.getElementById('quizResults');
     const resultsContent = document.getElementById('resultsContent');
@@ -580,12 +1009,18 @@ function displayQuizResults(result) {
         
         let scoreColor = 'success';
         let scoreIcon = 'trophy';
+        let nextStepAdvice = '';
+        
         if (score < 60) {
             scoreColor = 'danger';
             scoreIcon = 'exclamation-triangle';
+            nextStepAdvice = 'Focus on reviewing the material and consider taking a remedial quiz.';
         } else if (score < 80) {
             scoreColor = 'warning';
             scoreIcon = 'star-half-alt';
+            nextStepAdvice = 'Good progress! Continue practicing with more targeted questions.';
+        } else {
+            nextStepAdvice = 'Excellent! You may be ready for more advanced content.';
         }
         
         resultsContent.innerHTML = `
@@ -620,12 +1055,21 @@ function displayQuizResults(result) {
                 </div>
             </div>
             
+            <div class="alert alert-info">
+                <h6><i class="fas fa-route me-2"></i>Next Steps</h6>
+                <p class="mb-2">${nextStepAdvice}</p>
+                <small class="text-muted">Your learning progress has been updated based on this performance.</small>
+            </div>
+            
             <div class="text-center mt-4">
-                <button class="btn btn-primary me-2" onclick="generateQuiz('{{ course.id }}')">
-                    <i class="fas fa-redo me-1"></i>Take Another Quiz
+                <button class="btn btn-primary me-2" onclick="generateQuiz('${courseId}')">
+                    <i class="fas fa-redo me-1"></i>Take Another Personalized Quiz
                 </button>
-                <button class="btn btn-outline-info" onclick="loadQuizHistory()">
-                    <i class="fas fa-history me-1"></i>View Quiz History
+                <button class="btn btn-outline-info me-2" onclick="loadLearningProgress()">
+                    <i class="fas fa-chart-line me-1"></i>View Updated Progress
+                </button>
+                <button class="btn btn-outline-success" onclick="showDetailedAnalytics()">
+                    <i class="fas fa-analytics me-1"></i>View Learning Analytics
                 </button>
             </div>
         `;
@@ -639,37 +1083,163 @@ function displayQuizResults(result) {
     quizResults.scrollIntoView({ behavior: 'smooth' });
 }
 
+// Helper functions
+function getMasteryColor(level) {
+    switch (level) {
+        case 'expert': return 'success';
+        case 'advanced': return 'info';
+        case 'intermediate': return 'warning';
+        default: return 'secondary';
+    }
+}
+
+function displayNoProgress() {
+    const progressCard = createLearningProgressCard();
+    progressCard.innerHTML = `
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Learning Progress</h5>
+        </div>
+        <div class="card-body text-center">
+            <i class="fas fa-graduation-cap fa-3x text-muted mb-3"></i>
+            <h6>Start Your Learning Journey</h6>
+            <p class="text-muted">Take your first quiz to begin tracking your progress and getting personalized recommendations.</p>
+            <button class="btn btn-primary" onclick="generateQuiz('${courseId}')">
+                <i class="fas fa-play me-1"></i>Take First Assessment
+            </button>
+        </div>
+    `;
+}
+
+function initializeProgressCharts() {
+    // Initialize any additional charts or visualizations
+    console.log('Progress charts initialized');
+}
+
+// Keep all existing quiz functions (loadQuizForTaking, displayQuiz, selectOption, etc.)
+async function loadQuizForTaking(quizId) {
+    try {
+        const response = await fetch(`/quiz/${quizId}/details`);
+        const quiz = await response.json();
+        
+        if (response.ok) {
+            currentQuiz = quiz;
+            displayQuiz(quiz);
+            
+            const attemptResponse = await fetch(`/quiz/${quizId}/start`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            
+            const attemptData = await attemptResponse.json();
+            if (attemptResponse.ok) {
+                currentAttempt = attemptData;
+            }
+        }
+    } catch (error) {
+        console.error('Error loading quiz:', error);
+        document.getElementById('quizMessage').innerHTML = 
+            `<div class="alert alert-danger">Error loading quiz: ${error.message}</div>`;
+    }
+}
+
+function displayQuiz(quiz) {
+    const quizInterface = document.getElementById('quizInterface');
+    const quizDetails = document.getElementById('quizDetails');
+    const quizQuestions = document.getElementById('quizQuestions');
+    const quizNavigation = document.getElementById('quizNavigation');
+    
+    quizDetails.innerHTML = `
+        <div class="quiz-header p-3 bg-info text-white rounded">
+            <h5 class="mb-1">${quiz.quiz.title}</h5>
+            <p class="mb-0">${quiz.quiz.description}</p>
+            <small><i class="fas fa-question-circle me-1"></i>${quiz.quiz.questions.length} Questions</small>
+        </div>
+    `;
+    
+    userAnswers = new Array(quiz.quiz.questions.length).fill(null);
+    
+    let questionsHtml = '';
+    quiz.quiz.questions.forEach((question, index) => {
+        questionsHtml += `
+            <div class="quiz-question" data-question="${index}">
+                <h6>Question ${index + 1}:</h6>
+                <p>${question.question}</p>
+                <div class="quiz-options">
+        `;
+        
+        question.options.forEach((option, optionIndex) => {
+            questionsHtml += `
+                <div class="quiz-option" onclick="selectOption(${index}, ${optionIndex})">
+                    <input type="radio" name="question_${index}" value="${optionIndex}" id="q${index}_opt${optionIndex}">
+                    <label for="q${index}_opt${optionIndex}">${option}</label>
+                </div>
+            `;
+        });
+        
+        questionsHtml += `</div></div>`;
+    });
+    
+    quizQuestions.innerHTML = questionsHtml;
+    quizInterface.style.display = 'block';
+    quizNavigation.style.display = 'block';
+    
+    quizInterface.scrollIntoView({ behavior: 'smooth' });
+}
+
+function selectOption(questionIndex, optionIndex) {
+    userAnswers[questionIndex] = optionIndex;
+    
+    const questionDiv = document.querySelector(`[data-question="${questionIndex}"]`);
+    const options = questionDiv.querySelectorAll('.quiz-option');
+    const radioInputs = questionDiv.querySelectorAll('input[type="radio"]');
+    
+    options.forEach(opt => opt.classList.remove('selected'));
+    options[optionIndex].classList.add('selected');
+    radioInputs[optionIndex].checked = true;
+    
+    updateSubmitButton();
+}
+
+function updateSubmitButton() {
+    const submitBtn = document.getElementById('submitQuizBtn');
+    const allAnswered = userAnswers.every(answer => answer !== null);
+    
+    if (allAnswered) {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('btn-secondary');
+        submitBtn.classList.add('btn-success');
+        submitBtn.innerHTML = '<i class="fas fa-check me-2"></i>Submit Quiz';
+    } else {
+        submitBtn.disabled = true;
+        submitBtn.classList.remove('btn-success');
+        submitBtn.classList.add('btn-secondary');
+        const answered = userAnswers.filter(answer => answer !== null).length;
+        submitBtn.innerHTML = `<i class="fas fa-clock me-2"></i>Answer All Questions (${answered}/${userAnswers.length})`;
+    }
+}
+
 // Load quiz history and recommendations
 async function loadQuizHistory() {
     try {
-        // Get quiz attempts via proxy
-        const attemptsResponse = await fetch(`${quiz_proxy_url}/user/${userUuid}/quiz-attempts-from-course`, {
-            headers: { 'Content-Type': 'application/json' }
-        });
-        const attemptsData = await attemptsResponse.json();
-
-         // Get recommendations
-         const recommendationsResponse = await fetch(`${quiz_proxy_url}/course/${courseId}/quiz-recommendations`, {
-             headers: { 'Authorization': `Bearer ${quiz_api_access_token}` }
-         });
-          const recommendationsData = await recommendationsResponse.json();
-         
-         if (attemptsResponse.ok) {
-             displayQuizHistory(attemptsData.attempts, recommendationsData);
-         }
-        
+        const response = await fetch(`/user/quiz-history/${courseId}`);
+        if (response.ok) {
+            const data = await response.json();
+            quizHistory = data.history || [];
+            if (quizHistory.length > 0) {
+                displayQuizHistory(quizHistory, data.recommendations);
+            }
+        }
     } catch (error) {
         console.error('Error loading quiz history:', error);
     }
 }
 
-// Display quiz history
 function displayQuizHistory(attempts, recommendations) {
     const historySection = document.getElementById('quizHistorySection');
     const historyContent = document.getElementById('quizHistoryContent');
     
     if (attempts.length === 0) {
-        return; // Don't show if no attempts
+        return;
     }
     
     let historyHtml = `
@@ -692,70 +1262,12 @@ function displayQuizHistory(attempts, recommendations) {
         `;
     });
     
-    historyHtml += `
-                </div>
-            </div>
-            <div class="col-md-6">
-    `;
-    
-    // Add recommendations if available
-    if (recommendations && recommendations.recommendations) {
-        const recs = recommendations.recommendations;
-        historyHtml += `
-                <h6><i class="fas fa-graduation-cap me-2"></i>Recommended Next Steps</h6>
-                <p class="small text-info">${recs.specific_advice || ''}</p>
-        `;
-        
-        // Show different recommendation types
-        ['remedial_courses', 'next_courses', 'advanced_courses'].forEach(type => {
-            if (recs[type] && recs[type].length > 0) {
-                const typeNames = {
-                    'remedial_courses': 'Foundation Building',
-                    'next_courses': 'Next Steps', 
-                    'advanced_courses': 'Advanced Challenges'
-                };
-                
-                historyHtml += `
-                    <div class="recommendation-section mb-3">
-                        <h6 class="small fw-bold">${typeNames[type]}:</h6>
-                `;
-                
-                recs[type].slice(0, 2).forEach(course => {
-                    historyHtml += `
-                        <div class="recommendation-card p-2 bg-white border rounded mb-2">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong class="small">${course.name}</strong>
-                                    <br><small class="text-muted">${course.reason}</small>
-                                </div>
-                                <button class="btn btn-sm btn-outline-primary enroll-btn" 
-                                        data-category="${course.category}" 
-                                        data-course="${course.name}">
-                                    Enroll
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                historyHtml += `</div>`;
-            }
-        });
-    }
-    
-    historyHtml += `
-            </div>
-        </div>
-    `;
+    historyHtml += `</div></div></div>`;
     
     historyContent.innerHTML = historyHtml;
     historySection.style.display = 'block';
-    
-    // Add enrollment functionality
-    addEnrollmentListeners();
 }
 
-// Add enrollment functionality for recommended courses
 function addEnrollmentListeners() {
     document.querySelectorAll('.enroll-btn').forEach(button => {
         button.addEventListener('click', function() {

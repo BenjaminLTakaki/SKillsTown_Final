@@ -225,5 +225,24 @@ class CourseQuizAttempt(db.Model):
     user = db.relationship('Student', backref='quiz_attempts')
     course_quiz = db.relationship('CourseQuiz', backref='attempts')
     
+class UserLearningProgress(db.Model):
+    __tablename__ = 'skillstown_user_learning_progress'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.String(36), db.ForeignKey('students.id'), nullable=False)
+    course_id = db.Column(db.String(50), nullable=False)
+    knowledge_areas = db.Column(db.Text)  # JSON string
+    weak_areas = db.Column(db.Text)  # JSON array
+    strong_areas = db.Column(db.Text)  # JSON array
+    recommended_topics = db.Column(db.Text)  # JSON array
+    learning_curve = db.Column(db.Text)  # JSON array
+    overall_progress = db.Column(db.Integer, default=0)
+    mastery_level = db.Column(db.String(20), default='beginner')
+    last_updated = db.Column(db.DateTime, default=db.func.current_timestamp())
+    
+    __table_args__ = (db.UniqueConstraint('user_id', 'course_id', name='unique_user_course_progress'),)
+    
+    def __repr__(self):
+        return f'<UserLearningProgress {self.user_id}:{self.course_id}>'
     def __repr__(self):
         return f'<CourseQuizAttempt {self.attempt_api_id}>'

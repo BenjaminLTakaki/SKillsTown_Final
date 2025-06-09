@@ -6,7 +6,7 @@ import sys
 import traceback
 import PyPDF2
 import requests
-from datetime import datetime  # Fixed: Use this instead of import datetime
+from datetime import datetime 
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, current_app, Response
 from flask_login import login_required, current_user, LoginManager, login_user, logout_user, UserMixin
 from werkzeug.utils import secure_filename
@@ -35,7 +35,7 @@ def get_url_for(*args, **kwargs):
     return url
 
 # Import models after db is defined
-from models import Company, Student, Category, ContentPage, Course, CourseContentPage, UserProfile, SkillsTownCourse, CourseDetail, CourseQuiz, CourseQuizAttempt, UserCourse, db
+from models import Company, Student, Category, ContentPage, Course, CourseContentPage, UserProfile, SkillsTownCourse, CourseDetail, CourseQuiz, CourseQuizAttempt, UserCourse, UserLearningProgress, db
 
 def get_quiz_api_headers():
     """Get headers for quiz API requests with proper authentication"""
@@ -480,6 +480,148 @@ def create_app(config_name=None):
                 break
         return courses
 
+    def generate_course_recommendations_from_progress(progress, recent_attempts):
+        """Generate course recommendations based on learning progress and recent attempts."""
+        catalog = load_course_catalog()
+        recommendations = {
+            'remedial_courses': [],
+            'next_courses': [],
+            'advanced_courses': [],
+            'specific_advice': ''
+        }
+
+        if not progress:
+            recommendations['specific_advice'] = "We need more data to provide personalized recommendations. Please complete a quiz for this course."
+            # Provide some generic starting courses if no progress
+            recommendations['next_courses'] = get_intermediate_courses(catalog)[:2] # Suggest a couple of general courses
+            return recommendations
+
+        mastery_level = progress.mastery_level.lower() if progress.mastery_level else 'beginner'
+        overall_progress_score = progress.overall_progress or 0
+        
+        # Try to parse weak_areas and strong_areas
+        try:
+            weak_areas = json.loads(progress.weak_areas) if progress.weak_areas else []
+        except json.JSONDecodeError:
+            weak_areas = []
+        try:
+            strong_areas = json.loads(progress.strong_areas) if progress.strong_areas else []
+        except json.JSONDecodeError:
+            strong_areas = []
+
+        if mastery_level == 'beginner' or overall_progress_score < 50:
+            recommendations['specific_advice'] = "You're at the beginner stage. Focus on building a strong foundation. "
+            if weak_areas:
+                recommendations['specific_advice'] += f"Consider revisiting topics related to: {', '.join(weak_areas)}. "
+            recommendations['remedial_courses'] = get_foundational_courses(catalog)
+            # Suggest next steps if some strong areas exist or score is not too low
+            if overall_progress_score > 30 or strong_areas:
+                 recommendations['next_courses'] = get_intermediate_courses(catalog)[:1] 
+
+        elif mastery_level == 'intermediate' or overall_progress_score < 75:
+            recommendations['specific_advice'] = "You're making good progress at the intermediate level! "
+            if weak_areas:
+                recommendations['specific_advice'] += f"To advance, focus on improving in: {', '.join(weak_areas)}. "
+            if strong_areas:
+                recommendations['specific_advice'] += f"Leverage your strengths in: {', '.join(strong_areas)}. "
+            recommendations['next_courses'] = get_intermediate_courses(catalog)
+            recommendations['advanced_courses'] = get_advanced_courses(catalog)[:1] # Suggest a taste of advanced
+
+        elif mastery_level == 'advanced' or overall_progress_score < 90:
+            recommendations['specific_advice'] = "You're at an advanced stage! Keep challenging yourself. "
+            if weak_areas:
+                recommendations['specific_advice'] += f"Refine your skills in: {', '.join(weak_areas)}. "
+            recommendations['advanced_courses'] = get_advanced_courses(catalog)
+            # Could also suggest related expert courses or specializations
+
+        elif mastery_level == 'expert' or overall_progress_score >= 90:
+            recommendations['specific_advice'] = "Excellent! You've reached an expert level in this area. "
+            if strong_areas:
+                 recommendations['specific_advice'] += f"You show mastery in: {', '.join(strong_areas)}. "
+            recommendations['specific_advice'] += "Consider exploring specialized topics or mentoring others."
+            # Suggest highly specialized or new/emerging related courses
+            recommendations['advanced_courses'] = get_advanced_courses(catalog) # Offer more advanced options
+
+        # Fallback if no specific category fits well
+        if not recommendations['remedial_courses'] and not recommendations['next_courses'] and not recommendations['advanced_courses']:
+            recommendations['next_courses'] = get_intermediate_courses(catalog)
+            if not recommendations['specific_advice']:
+                 recommendations['specific_advice'] = "Continue exploring courses to expand your knowledge."
+
+        return recommendations
+
+    def update_user_learning_progress(user_id, course_id, attempt_data, quiz_attempt):
+        """Update user's learning progress based on quiz performance"""
+        try:
+            # Get or create learning progress
+            progress = UserLearningProgress.query.filter_by(
+                user_id=user_id,
+                course_id=str(course_id)
+            ).first()
+            
+            if not progress:
+                progress = UserLearningProgress(
+                    user_id=user_id,
+                    course_id=str(course_id),
+                    knowledge_areas='{}',
+                    weak_areas='[]',
+                    strong_areas='[]',
+                    recommended_topics='[]',
+                    learning_curve='[]',
+                    overall_progress=0,
+                    mastery_level='beginner'
+                )
+                db.session.add(progress)
+            
+            # Extract performance data from attempt
+            score = quiz_attempt.score or 0
+            
+            # Update overall progress (weighted average)
+            current_curve = json.loads(progress.learning_curve) if progress.learning_curve else []
+            current_curve.append({
+                'date': datetime.utcnow().isoformat(),
+                'overallScore': score,
+                'attemptId': quiz_attempt.id # Assuming quiz_attempt has an 'id' field for the local DB attempt ID
+            })
+            
+            # Keep only last 20 attempts
+            if len(current_curve) > 20:
+                current_curve = current_curve[-20:]
+            
+            progress.learning_curve = json.dumps(current_curve)
+            
+            # Calculate new overall progress (average of recent attempts)
+            if current_curve: # Ensure current_curve is not empty
+                recent_scores = [entry['overallScore'] for entry in current_curve[-5:] if 'overallScore' in entry]
+                if recent_scores: # Ensure recent_scores is not empty
+                    progress.overall_progress = round(sum(recent_scores) / len(recent_scores))
+                else:
+                    progress.overall_progress = score # Fallback to current score if no recent scores
+            else:
+                progress.overall_progress = score # Fallback if learning curve was initially empty
+
+            # Update mastery level based on progress
+            if progress.overall_progress >= 90:
+                progress.mastery_level = 'expert'
+            elif progress.overall_progress >= 75:
+                progress.mastery_level = 'advanced'
+            elif progress.overall_progress >= 50:
+                progress.mastery_level = 'intermediate'
+            else:
+                progress.mastery_level = 'beginner'
+            
+            progress.last_updated = datetime.utcnow()
+            
+            # The calling function (complete_quiz_attempt) will handle db.session.commit()
+            print(f"[DEBUG] Updated learning progress for user {user_id}, course {course_id}. New overall progress: {progress.overall_progress}, Mastery: {progress.mastery_level}")
+            return progress # Return the progress object
+            
+        except Exception as e:
+            print(f"Error updating learning progress: {e}")
+            traceback.print_exc() # Print full traceback for debugging
+            # db.session.rollback() # Consider rolling back if this function is part of a larger transaction and fails
+            return None
+
     # Routes
     @app.route('/')
     def index():
@@ -554,23 +696,45 @@ def create_app(config_name=None):
             
             # Get course info from catalog for more details
             catalog_info = get_detailed_course_info(course.course_name)
+
+            # NEW: Get user's learning progress for personalization
+            learning_progress = UserLearningProgress.query.filter_by(
+                user_id=current_user.id,
+                course_id=str(course_id)  # Ensure course_id is string for comparison if stored as string
+            ).first()
+            
+            # NEW: Get previous quiz attempts for iteration logic
+            previous_attempts = CourseQuizAttempt.query.filter_by(
+                user_id=current_user.id
+            ).join(CourseQuiz).filter(
+                CourseQuiz.user_course_id == course_id
+            ).order_by(CourseQuizAttempt.completed_at.desc()).limit(5).all()
             
             # Prepare the request payload for quiz API
             quiz_payload = {
                 "user_id": quiz_user_uuid,
-                "course_id": course_id,
                 "course": {
+                    "id": course_id, # ADDED this
                     "name": course.course_name,
                     "description": description,
-                    "duration": catalog_info.get('duration', '8 weeks'),
+                    "duration": catalog_info.get('duration', 'Variable'), # Updated default
                     "level": catalog_info.get('level', 'Intermediate'),
                     "skills": catalog_info.get('skills', []),
                     "projects": catalog_info.get('projects', []),
                     "career_paths": catalog_info.get('career_paths', [])
+                },
+                # NEW: Add personalization data
+                "personalization": {
+                    "has_progress": learning_progress is not None,
+                    "mastery_level": learning_progress.mastery_level if learning_progress else "beginner",
+                    "weak_areas": json.loads(learning_progress.weak_areas) if learning_progress and learning_progress.weak_areas else [],
+                    "strong_areas": json.loads(learning_progress.strong_areas) if learning_progress and learning_progress.strong_areas else [],
+                    "previous_attempts": len(previous_attempts),
+                    "iteration_number": len(previous_attempts) + 1
                 }
             }
             
-            print(f"[DEBUG] Sending quiz payload: {quiz_payload}")
+            print(f"[DEBUG] Sending quiz payload: {json.dumps(quiz_payload, indent=2)}") # Enhanced debug
             
             # Call the quiz API to create quiz
             response = requests.post(
@@ -767,11 +931,11 @@ def create_app(config_name=None):
             print(f"[DEBUG] Completing quiz attempt: {attempt_id}")
             
             # Get the attempt from our database
-            quiz_attempt = CourseQuizAttempt.query.filter_by(
+            quiz_attempt_model = CourseQuizAttempt.query.filter_by( # Renamed to avoid conflict
                 attempt_api_id=attempt_id,
                 user_id=current_user.id
             ).first()
-            if not quiz_attempt:
+            if not quiz_attempt_model:
                 print(f"[DEBUG] Quiz attempt not found: {attempt_id}")
                 return jsonify({'error': 'Quiz attempt not found'}), 404
             
@@ -813,6 +977,7 @@ def create_app(config_name=None):
                 # Parse initial acknowledgment
                 initial_data = response.json()
                 print(f"[DEBUG] Initial complete response: {initial_data}")
+                result_data = initial_data # Default to initial data
                 # Attempt to fetch full result details
                 try:
                     details_resp = requests.get(
@@ -821,27 +986,50 @@ def create_app(config_name=None):
                         timeout=30
                     )
                     if details_resp.status_code == 200:
-                        result_data = details_resp.json()
+                        result_data = details_resp.json() # Use detailed data if successful
                         print(f"[DEBUG] Fetched detailed result data: {result_data}")
                     else:
-                        result_data = initial_data
-                        print(f"[DEBUG] Detailed fetch failed, status {details_resp.status_code}")
+                        # result_data remains initial_data
+                        print(f"[DEBUG] Detailed fetch failed, status {details_resp.status_code}, using initial response for results.")
                 except Exception as e:
-                    result_data = initial_data
-                    print(f"[DEBUG] Exception fetching detailed results: {e}")
+                    # result_data remains initial_data
+                    print(f"[DEBUG] Exception fetching detailed results: {e}, using initial response for results.")
 
                 # Update our attempt record with results if provided
                 if 'results' in result_data:
                     r = result_data['results']
-                    quiz_attempt.score = r.get('score', 0)
-                    quiz_attempt.total_questions = r.get('totalQuestions', 0)
-                    quiz_attempt.correct_answers = r.get('correct', 0)
-                    quiz_attempt.feedback_strengths = r.get('strengths', '')
-                    quiz_attempt.feedback_improvements = r.get('improvements', '')
-                    quiz_attempt.user_answers = json.dumps(answers_list)
-                    quiz_attempt.completed_at = datetime.utcnow()
-                    db.session.commit()
-                    print(f"[DEBUG] Quiz attempt updated in database with full results")
+                    quiz_attempt_model.score = r.get('score', 0)
+                    quiz_attempt_model.total_questions = r.get('totalQuestions', 0)
+                    quiz_attempt_model.correct_answers = r.get('correct', 0)
+                    quiz_attempt_model.feedback_strengths = json.dumps(r.get('strengths', '')) # Store as JSON
+                    quiz_attempt_model.feedback_improvements = json.dumps(r.get('improvements', '')) # Store as JSON
+                    quiz_attempt_model.user_answers = json.dumps(answers_list)
+                    quiz_attempt_model.completed_at = datetime.utcnow()
+                    # db.session.commit() # Commit will be done after learning progress update
+                    print(f"[DEBUG] Quiz attempt model updated in memory with full results")
+
+                # NEW: Update or create learning progress
+                # Ensure quiz_attempt_model.course_quiz and quiz_attempt_model.course_quiz.user_course are loaded
+                # If they are lazy-loaded, accessing them here is fine.
+                # If not, you might need to query UserCourse separately if course_id is not directly on CourseQuiz.
+                # Assuming CourseQuiz has user_course_id which links to UserCourse table's id.
+                
+                # We need the original course_id (from UserCourse table)
+                # quiz_attempt_model -> course_quiz (CourseQuiz) -> user_course_id (UserCourse.id)
+                if quiz_attempt_model.course_quiz and quiz_attempt_model.course_quiz.user_course_id:
+                    original_course_id = quiz_attempt_model.course_quiz.user_course_id
+                    update_user_learning_progress(
+                        user_id=current_user.id,
+                        course_id=original_course_id,
+                        attempt_data=result_data, # This is the full API response
+                        quiz_attempt_model=quiz_attempt_model
+                    )
+                else:
+                    print(f"[ERROR] Could not determine original course_id for learning progress update. quiz_attempt_id: {quiz_attempt_model.id}")
+
+                db.session.commit() # Commit both quiz_attempt_model and learning_progress changes
+                print(f"[DEBUG] Database commit successful after quiz completion and learning progress update.")
+
                 # Always return wrapped under 'results' for client display
                 if 'results' in result_data:
                     return jsonify(result_data)
@@ -855,6 +1043,7 @@ def create_app(config_name=None):
                 return jsonify({'error': error_msg}), 500
                         
         except Exception as e:
+            db.session.rollback() # Rollback on any exception during the process
             print(f"[DEBUG] Exception in complete_quiz_attempt: {e}")
             import traceback
             traceback.print_exc()
@@ -975,72 +1164,50 @@ def create_app(config_name=None):
     @app.route('/course/<int:course_id>/quiz-recommendations')
     @login_required
     def get_quiz_recommendations(course_id):
-        """Get AI-generated course recommendations based on quiz performance"""
+        """Get AI-generated course recommendations based on quiz performance and learning progress"""
         try:
-            # Get the latest quiz attempt for this course
-            latest_attempt = db.session.query(CourseQuizAttempt).join(
-                CourseQuiz, CourseQuizAttempt.course_quiz_id == CourseQuiz.id
-            ).filter(
+            # Get learning progress
+            progress = UserLearningProgress.query.filter_by(
+                user_id=current_user.id,
+                course_id=str(course_id)
+            ).first()
+            
+            # Get recent attempts
+            recent_attempts = CourseQuizAttempt.query.filter_by(
+                user_id=current_user.id
+            ).join(CourseQuiz).filter(
                 CourseQuiz.user_course_id == course_id,
-                CourseQuizAttempt.user_id == current_user.id,
-                CourseQuizAttempt.score.isnot(None)
-            ).order_by(CourseQuizAttempt.completed_at.desc()).first()
+                CourseQuizAttempt.score.isnot(None) # Ensure attempts have scores
+            ).order_by(CourseQuizAttempt.completed_at.desc()).limit(5).all()
             
-            if not latest_attempt:
-                return jsonify({'error': 'No completed quiz attempts found'}), 404
+            # Generate enhanced recommendations
+            recommendations = generate_course_recommendations_from_progress(progress, recent_attempts)
             
-            # Get user's quiz UUID for API calls
-            quiz_user_uuid = current_user.get_quiz_uuid()
+            progress_data = {
+                'mastery_level': 'beginner',
+                'overall_progress': 0,
+                'weak_areas': [],
+                'strong_areas': []
+            }
+            if progress:
+                progress_data['mastery_level'] = progress.mastery_level
+                progress_data['overall_progress'] = progress.overall_progress
+                try:
+                    progress_data['weak_areas'] = json.loads(progress.weak_areas) if progress.weak_areas else []
+                except json.JSONDecodeError:
+                    progress_data['weak_areas'] = [] # Default to empty list on error
+                try:
+                    progress_data['strong_areas'] = json.loads(progress.strong_areas) if progress.strong_areas else []
+                except json.JSONDecodeError:
+                    progress_data['strong_areas'] = [] # Default to empty list on error
             
-            # Call quiz API to get detailed results and recommendations
-            try:
-                response = requests.get(
-                    f"{QUIZ_API_BASE_URL}/quiz/attempt/{latest_attempt.attempt_api_id}/{quiz_user_uuid}/results-from-course",
-                    headers=get_quiz_api_headers(),
-                    timeout=30
-                )
-                if response.status_code == 200:
-                    result_data = response.json()
-                    # Generate recommendations using API results
-                    recommendations = generate_course_recommendations_from_quiz(
-                        latest_attempt, [result_data]
-                    )
-                    return jsonify({
-                        'latest_attempt': {
-                            'score': latest_attempt.score,
-                            'feedback_strengths': latest_attempt.feedback_strengths,
-                            'feedback_improvements': latest_attempt.feedback_improvements,
-                            'completed_at': latest_attempt.completed_at.isoformat() if latest_attempt.completed_at else None
-                        },
-                        'recommendations': recommendations
-                    })
-                else:
-                    # Fallback to basic recommendations if API fails
-                    recommendations = generate_basic_recommendations_from_score(latest_attempt.score)
-                    return jsonify({
-                        'latest_attempt': {
-                            'score': latest_attempt.score,
-                            'feedback_strengths': latest_attempt.feedback_strengths,
-                            'feedback_improvements': latest_attempt.feedback_improvements,
-                            'completed_at': latest_attempt.completed_at.isoformat() if latest_attempt.completed_at else None
-                        },
-                        'recommendations': recommendations
-                    })
-            except requests.RequestException as e:
-                # Fallback to basic recommendations on request failure
-                recommendations = generate_basic_recommendations_from_score(latest_attempt.score)
-                return jsonify({
-                    'latest_attempt': {
-                        'score': latest_attempt.score,
-                        'feedback_strengths': latest_attempt.feedback_strengths,
-                        'feedback_improvements': latest_attempt.feedback_improvements,
-                        'completed_at': latest_attempt.completed_at.isoformat() if latest_attempt.completed_at else None
-                    },
-                    'recommendations': recommendations
-                })
-                    
+            return jsonify({
+                'recommendations': recommendations,
+                'progress': progress_data
+            })
         except Exception as e:
             print(f"Error getting quiz recommendations: {e}")
+            traceback.print_exc()
             return jsonify({'error': str(e)}), 500
 
     # PODCAST ROUTES
@@ -1383,6 +1550,7 @@ def create_app(config_name=None):
     @app.route('/test-quiz-api-simple')
     def test_quiz_api_simple():
         """Simple test route without login requirement to diagnose API authentication"""
+        test_results = []
         try:
             access_token = os.environ.get('QUIZ_API_ACCESS_TOKEN', QUIZ_API_ACCESS_TOKEN)
             base_url = QUIZ_API_BASE_URL
@@ -1490,7 +1658,92 @@ def create_app(config_name=None):
                 'quiz_api_base_url': QUIZ_API_BASE_URL,
                 'traceback': traceback.format_exc()
             }), 500
+        
+    @app.route('/user/learning-progress/<course_id>')
+    @login_required
+    def get_user_learning_progress(course_id):
+        """Get user's learning progress for a specific course"""
+        try:
+            progress = UserLearningProgress.query.filter_by(
+                user_id=current_user.id,
+                course_id=course_id
+            ).first()
+            
+            if not progress:
+                return jsonify({'error': 'No learning progress found'}), 404
+            
+            # Parse JSON fields
+            progress_data = {
+                'id': progress.id,
+                'user_id': progress.user_id,
+                'course_id': progress.course_id,
+                'knowledge_areas': json.loads(progress.knowledge_areas) if progress.knowledge_areas else {},
+                'weak_areas': json.loads(progress.weak_areas) if progress.weak_areas else [],
+                'strong_areas': json.loads(progress.strong_areas) if progress.strong_areas else [],
+                'recommended_topics': json.loads(progress.recommended_topics) if progress.recommended_topics else [],
+                'learning_curve': json.loads(progress.learning_curve) if progress.learning_curve else [],
+                'overall_progress': progress.overall_progress,
+                'mastery_level': progress.mastery_level,
+                'last_updated': progress.last_updated.isoformat() if progress.last_updated else None,
+                'masteryPercentage': progress.overall_progress
+            }
+            
+            return jsonify({'progress': progress_data})
+            
+        except Exception as e:
+            print(f"Error getting learning progress: {e}")
+            return jsonify({'error': str(e)}), 500
 
+    @app.route('/course/<int:course_id>/learning-analytics')
+    @login_required
+    def get_learning_analytics(course_id):
+        """Get detailed learning analytics for a course"""
+        try:
+            # Get learning progress
+            progress = UserLearningProgress.query.filter_by(
+                user_id=current_user.id,
+                course_id=str(course_id)
+            ).first()
+            
+            # Get recent quiz attempts
+            recent_attempts = CourseQuizAttempt.query.filter_by(
+                user_id=current_user.id
+            ).join(CourseQuiz).filter(
+                CourseQuiz.user_course_id == course_id
+            ).order_by(CourseQuizAttempt.completed_at.desc()).limit(10).all()
+            
+            analytics = {
+                'learningVelocity': 0,
+                'consistencyScore': 0,
+                'strongestAreas': [],
+                'improvementAreas': [],
+                'studyRecommendations': []
+            }
+            
+            # Calculate analytics if we have data
+            if recent_attempts:
+                scores = [attempt.score for attempt in recent_attempts if attempt.score is not None]
+                if len(scores) >= 3:
+                    old_avg = sum(scores[-3:]) / 3
+                    new_avg = sum(scores[:3]) / 3
+                    analytics['learningVelocity'] = round(((new_avg - old_avg) / old_avg) * 100)
+                
+                # Calculate consistency
+                if scores:
+                    mean_score = sum(scores) / len(scores)
+                    variance = sum((score - mean_score) ** 2 for score in scores) / len(scores)
+                    analytics['consistencyScore'] = max(0, round(100 - (variance / 4)))
+            
+            return jsonify({
+                'progress': progress,
+                'analytics': analytics,
+                'recentAttempts': len(recent_attempts)
+            })
+            
+        except Exception as e:
+            print(f"Error getting learning analytics: {e}")
+            return jsonify({'error': str(e)}), 500
+        
     @app.route('/debug-quiz-flow')
     def debug_quiz_flow():
         """Debug route to test the complete quiz flow and identify authentication issues"""
