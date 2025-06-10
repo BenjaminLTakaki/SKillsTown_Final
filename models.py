@@ -205,13 +205,13 @@ class CourseQuiz(db.Model):
     def __repr__(self):
         return f'<CourseQuiz {self.quiz_api_id}>'
 
-# NEW: Model to track quiz attempts
 class CourseQuizAttempt(db.Model):
     __tablename__ = 'skillstown_quiz_attempts'
     
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.String(36), db.ForeignKey('students.id'), nullable=False)
     course_quiz_id = db.Column(db.Integer, db.ForeignKey('skillstown_course_quizzes.id'), nullable=False)
+    course_id = db.Column(db.Integer, nullable=True)  # Direct course_id for easier tracking
     attempt_api_id = db.Column(db.String(100), nullable=False)  # ID from the quiz API
     score = db.Column(db.Integer)
     total_questions = db.Column(db.Integer)

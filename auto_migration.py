@@ -180,6 +180,7 @@ def run_auto_migration():
                 quiz_attempts_missing_columns = [
                     ('attempt_api_id', 'VARCHAR(100)'),
                     ('course_quiz_id', 'INTEGER REFERENCES skillstown_course_quizzes(id) ON DELETE CASCADE'),
+                    ('course_id', 'INTEGER'),
                     ('score', 'INTEGER'),
                     ('total_questions', 'INTEGER'),
                     ('correct_answers', 'INTEGER'),

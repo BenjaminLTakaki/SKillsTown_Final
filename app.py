@@ -953,7 +953,7 @@ def create_app(config_name=None):
                 quiz_attempt = CourseQuizAttempt(
                     user_id=current_user.id,
                     course_quiz_id=course_quiz.id,
-                    course_id=original_course_id,  # Store the direct course_id for better relationship tracking
+                    course_id=user_course.id,
                     attempt_api_id=attempt_data.get('attemptId', attempt_data.get('id', 'unknown'))
                 )
                 db.session.add(quiz_attempt)
