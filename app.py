@@ -1274,6 +1274,7 @@ def create_app(config_name=None):
             
             print(f"Description length: {len(description)} chars")
             print(f"Description preview: {description[:100]}...")
+            
             # Generate podcast
             print("Calling generate_podcast_for_course...")
             audio_data = generate_podcast_for_course(course.course_name, description)
@@ -1291,7 +1292,7 @@ def create_app(config_name=None):
                     print(f"First 20 bytes: {audio_data[:20]}")
             else:
                 print("❌ ERROR: audio_data is None or empty")
-                
+            
             if audio_data and len(audio_data) > 0:
                 # Store the audio data in session or database for streaming
                 # For now, we'll return it directly for streaming (no attachment header)
@@ -1307,12 +1308,12 @@ def create_app(config_name=None):
                 )
             else:
                 print("❌ ERROR: Empty or invalid audio data")
-                flash('Failed to generate podcast - empty audio data', 'error')
+                flash('Podcast service is temporarily unavailable. Please try again later.', 'warning')
                 return redirect(get_url_for('course_detail', course_id=course_id))
         except Exception as e:
             print(f"❌ EXCEPTION in podcast generation: {e}")
             traceback.print_exc()
-            flash(f'Error generating podcast: {str(e)}', 'error')
+            flash('Podcast service is temporarily unavailable. Please try again later.', 'warning')
             return redirect(get_url_for('course_detail', course_id=course_id))
 
     @app.route('/test-podcast')
