@@ -397,9 +397,6 @@
 <script>
 // Enhanced Course Detail JavaScript with Learning Progress and Analytics
 document.addEventListener('DOMContentLoaded', function() {
-    const courseId = '{{ course.id }}';
-    const userId = '{{ current_user.id }}';
-    
     // Initialize page components
     loadLearningProgress();
     loadQuizHistory();
@@ -690,6 +687,7 @@ function drawLearningCurveChart(learningCurve) {
 // Show detailed analytics modal
 async function showDetailedAnalytics() {
     try {
+        // Only show real analytics, no fallback to mock data
         const response = await fetch(`/course/${courseId}/learning-analytics`);
         
         if (response.ok) {
@@ -697,12 +695,11 @@ async function showDetailedAnalytics() {
             learningAnalytics = data.analytics;
             displayAnalyticsModal(data);
         } else {
-            // Show mock analytics if endpoint not available
-            displayMockAnalytics();
+            showErrorMessage("Analytics unavailable. Please try again later.");
         }
     } catch (error) {
         console.error('Error loading analytics:', error);
-        displayMockAnalytics();
+        showErrorMessage("Failed to load analytics. Check your connection.");
     }
 }
 
@@ -807,22 +804,6 @@ function displayAnalyticsModal(data) {
     // Show modal using Bootstrap
     const modal = new bootstrap.Modal(document.getElementById('analyticsModal'));
     modal.show();
-}
-
-async function showDetailedAnalytics() {
-    try {
-        // Only show real analytics, no fallback to mock data
-        const response = await fetch(`/course/${courseId}/learning-analytics`);
-        if (response.ok) {
-            const data = await response.json();
-            displayAnalyticsModal(data);
-        } else {
-            showErrorMessage("Analytics unavailable. Please try again later.");
-        }
-    } catch (error) {
-        console.error('Error loading analytics:', error);
-        showErrorMessage("Failed to load analytics. Check your connection.");
-    }
 }
 
 function showErrorMessage(message) {
@@ -1109,109 +1090,6 @@ function displayNoProgress() {
 function initializeProgressCharts() {
     // Initialize any additional charts or visualizations
     console.log('Progress charts initialized');
-}
-
-// Keep all existing quiz functions (loadQuizForTaking, displayQuiz, selectOption, etc.)
-async function loadQuizForTaking(quizId) {
-    try {
-        const response = await fetch(`/quiz/${quizId}/details`);
-        const quiz = await response.json();
-        
-        if (response.ok) {
-            currentQuiz = quiz;
-            displayQuiz(quiz);
-            
-            const attemptResponse = await fetch(`/quiz/${quizId}/start`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
-            });
-            
-            const attemptData = await attemptResponse.json();
-            if (attemptResponse.ok) {
-                currentAttempt = attemptData;
-            }
-        }
-    } catch (error) {
-        console.error('Error loading quiz:', error);
-        document.getElementById('quizMessage').innerHTML = 
-            `<div class="alert alert-danger">Error loading quiz: ${error.message}</div>`;
-    }
-}
-
-function displayQuiz(quiz) {
-    const quizInterface = document.getElementById('quizInterface');
-    const quizDetails = document.getElementById('quizDetails');
-    const quizQuestions = document.getElementById('quizQuestions');
-    const quizNavigation = document.getElementById('quizNavigation');
-    
-    quizDetails.innerHTML = `
-        <div class="quiz-header p-3 bg-info text-white rounded">
-            <h5 class="mb-1">${quiz.quiz.title}</h5>
-            <p class="mb-0">${quiz.quiz.description}</p>
-            <small><i class="fas fa-question-circle me-1"></i>${quiz.quiz.questions.length} Questions</small>
-        </div>
-    `;
-    
-    userAnswers = new Array(quiz.quiz.questions.length).fill(null);
-    
-    let questionsHtml = '';
-    quiz.quiz.questions.forEach((question, index) => {
-        questionsHtml += `
-            <div class="quiz-question" data-question="${index}">
-                <h6>Question ${index + 1}:</h6>
-                <p>${question.question}</p>
-                <div class="quiz-options">
-        `;
-        
-        question.options.forEach((option, optionIndex) => {
-            questionsHtml += `
-                <div class="quiz-option" onclick="selectOption(${index}, ${optionIndex})">
-                    <input type="radio" name="question_${index}" value="${optionIndex}" id="q${index}_opt${optionIndex}">
-                    <label for="q${index}_opt${optionIndex}">${option}</label>
-                </div>
-            `;
-        });
-        
-        questionsHtml += `</div></div>`;
-    });
-    
-    quizQuestions.innerHTML = questionsHtml;
-    quizInterface.style.display = 'block';
-    quizNavigation.style.display = 'block';
-    
-    quizInterface.scrollIntoView({ behavior: 'smooth' });
-}
-
-function selectOption(questionIndex, optionIndex) {
-    userAnswers[questionIndex] = optionIndex;
-    
-    const questionDiv = document.querySelector(`[data-question="${questionIndex}"]`);
-    const options = questionDiv.querySelectorAll('.quiz-option');
-    const radioInputs = questionDiv.querySelectorAll('input[type="radio"]');
-    
-    options.forEach(opt => opt.classList.remove('selected'));
-    options[optionIndex].classList.add('selected');
-    radioInputs[optionIndex].checked = true;
-    
-    updateSubmitButton();
-}
-
-function updateSubmitButton() {
-    const submitBtn = document.getElementById('submitQuizBtn');
-    const allAnswered = userAnswers.every(answer => answer !== null);
-    
-    if (allAnswered) {
-        submitBtn.disabled = false;
-        submitBtn.classList.remove('btn-secondary');
-        submitBtn.classList.add('btn-success');
-        submitBtn.innerHTML = '<i class="fas fa-check me-2"></i>Submit Quiz';
-    } else {
-        submitBtn.disabled = true;
-        submitBtn.classList.remove('btn-success');
-        submitBtn.classList.add('btn-secondary');
-        const answered = userAnswers.filter(answer => answer !== null).length;
-        submitBtn.innerHTML = `<i class="fas fa-clock me-2"></i>Answer All Questions (${answered}/${userAnswers.length})`;
-    }
 }
 
 // Load quiz history and recommendations
