@@ -56,7 +56,8 @@ def is_production():
 # API configurations
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent"
-QUIZ_API_BASE_URL = os.environ.get('QUIZ_API_BASE_URL', 'https://chisel-app.onrender.com')
+QUIZ_API_BASE_URL = os.environ.get('QUIZ_API_BASE_URL', 'https://chisel-app.onrender.com') # This is ViktorAI
+CHISEL_API_URL = os.environ.get('CHISEL_API_URL', 'https://chisel-app.onrender.com') # Added for Chisel
 QUIZ_API_ACCESS_TOKEN = os.environ.get('QUIZ_API_ACCESS_TOKEN', '')
 
 def get_url_for(*args, **kwargs):
@@ -74,11 +75,12 @@ def get_quiz_api_headers():
 
 # Self-pinging service to keep Render instances alive
 class SelfPingService:
-    def __init__(self, app_url, quiz_api_url, narretex_url, qdrant_url):
+    def __init__(self, app_url, quiz_api_url, narretex_url, qdrant_url, chisel_url):
         self.app_url = app_url
-        self.quiz_api_url = quiz_api_url
+        self.quiz_api_url = quiz_api_url # This is ViktorAI
         self.narretex_url = narretex_url
         self.qdrant_url = qdrant_url
+        self.chisel_url = chisel_url # New
         self.running = False
         
     def ping_service(self, url, service_name):
@@ -109,9 +111,10 @@ class SelfPingService:
         
         services = [
             (self.app_url, "SkillsTown App"),
-            (self.quiz_api_url, "Quiz API"),
+            (self.quiz_api_url, "Quiz API / ViktorAI"),
             (self.narretex_url, "NarreteX API"),
-            (self.qdrant_url, "Qdrant DB")
+            (self.qdrant_url, "Qdrant DB"),
+            (self.chisel_url, "Chisel API")
         ]
         
         for url, name in services:
@@ -125,8 +128,8 @@ class SelfPingService:
             
         self.running = True
         
-        # Schedule pings every 12 minutes (well below 15-minute timeout)
-        schedule.every(12).minutes.do(self.ping_all_services)
+        # Schedule pings every 45 seconds
+        schedule.every(45).seconds.do(self.ping_all_services)
         
         def run_scheduler():
             while self.running:
@@ -856,11 +859,12 @@ def create_app(config_name=None):
     if is_production():
         global ping_service
         app_url = os.environ.get('RENDER_EXTERNAL_URL', 'https://skillstown-final.onrender.com')
-        quiz_api_url = QUIZ_API_BASE_URL
+        quiz_api_url = QUIZ_API_BASE_URL # This is ViktorAI
         narretex_url = NARRETEX_API_URL
         qdrant_url = os.environ.get('QDRANT_HOST', 'https://qdrant-vector-db-t8ao.onrender.com')
+        chisel_api_url = CHISEL_API_URL # New
         
-        ping_service = SelfPingService(app_url, quiz_api_url, narretex_url, qdrant_url)
+        ping_service = SelfPingService(app_url, quiz_api_url, narretex_url, qdrant_url, chisel_api_url)
         
         # Start pinging after a delay to ensure app is fully started
         def delayed_start():
