@@ -1819,21 +1819,58 @@ def create_app(config_name=None):
                 'improvementAreas': [],
                 'studyRecommendations': []
             }
+            # Initialize analytics dictionary
+            analytics = {
+                'learningVelocity': 0,      # Rate of score improvement
+                'consistencyScore': 0,      # Stability of scores
+                'strongestAreas': [],       # Placeholder for future use
+                'improvementAreas': [],     # Placeholder for future use
+                'studyRecommendations': []  # Placeholder for future use
+            }
             
             if recent_attempts:
                 scores = [attempt.score for attempt in recent_attempts if attempt.score is not None]
-                if len(scores) >= 2:
-                    first_score = scores[-1]
-                    last_score = scores[0]
-                    if first_score > 0 and len(scores) > 1 :
-                        analytics['learningVelocity'] = round(((last_score - first_score) / first_score) * 100)
-                    elif last_score > 0 and first_score == 0:
-                         analytics['learningVelocity'] = 100
 
-                if scores:
+                # Calculate Learning Velocity
+                # Compares the score of the oldest attempt in the fetched 'recent_attempts'
+                # with the score of the newest one.
+                # 'recent_attempts' are ordered by completion date descending (newest first).
+                if len(scores) >= 2:
+                    # oldest_score_in_recent is from the end of the list (e.g., scores[-1])
+                    # newest_score_in_recent is from the beginning of the list (e.g., scores[0])
+                    oldest_score_in_recent = scores[-1]
+                    newest_score_in_recent = scores[0]
+
+                    comment_velocity = f"Calculated from newest score ({newest_score_in_recent}) vs oldest recent score ({oldest_score_in_recent}) out of {len(scores)} attempts."
+
+                    if oldest_score_in_recent > 0:
+                        # Standard percentage change
+                        analytics['learningVelocity'] = round(((newest_score_in_recent - oldest_score_in_recent) / oldest_score_in_recent) * 100)
+                    elif newest_score_in_recent > 0:
+                        # If starting from 0, any positive score is a significant jump.
+                        # Assign a high value like 100% or based on the score itself if desired.
+                        analytics['learningVelocity'] = 100
+                    # If both are 0, velocity remains 0. If oldest is >0 and newest is 0, it will be -100%.
+                    print(f"DEBUG: Learning Velocity: {analytics['learningVelocity']}. {comment_velocity}")
+
+                # Calculate Consistency Score
+                # Based on the variance of scores in 'recent_attempts'.
+                # Lower variance = higher consistency.
+                if scores: # Ensure scores list is not empty
                     mean_score = sum(scores) / len(scores)
+
+                    # Variance: average of the squared differences from the Mean.
                     variance = sum((score - mean_score) ** 2 for score in scores) / len(scores)
-                    analytics['consistencyScore'] = max(0, round(100 - (variance / 25)))
+
+                    # Convert variance to a 0-100 consistency score.
+                    # A scaling factor (e.g., 25) is used to map typical score variances
+                    # (scores 0-100) to the 0-100 consistency range.
+                    # Max possible variance for scores 0-100 is (50-0)^2 = 2500 (e.g. for scores [0,100]).
+                    # With a scaling factor of 25, a variance of 2500 maps to 0 consistency.
+                    # A variance of 0 maps to 100 consistency.
+                    scaling_factor = 25
+                    analytics['consistencyScore'] = max(0, round(100 - (variance / scaling_factor)))
+                    print(f"DEBUG: Consistency Score: {analytics['consistencyScore']}. Mean: {mean_score:.2f}, Variance: {variance:.2f} from {len(scores)} scores.")
 
             progress_data = None
             try:
