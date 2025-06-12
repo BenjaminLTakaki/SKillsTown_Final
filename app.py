@@ -157,9 +157,16 @@ class SelfPingService:
 # Global ping service
 ping_service = None
 
+# Constants for podcast generation results/errors
+PODCAST_SUCCESS = "success" # Not strictly needed as success returns bytes
+PODCAST_ERROR_TIMEOUT = "error_timeout"
+PODCAST_ERROR_SERVICE_UNAVAILABLE = "error_service_unavailable"
+PODCAST_ERROR_OTHER = "error_other"
+
 def generate_podcast_for_course(course_name, course_description):
     """
-    Generate a podcast for a specific course using NarreteX API
+    Generate a podcast for a specific course using NarreteX API.
+    Returns audio content as bytes on success, or an error string constant on failure.
     Uses the detailed course catalog for rich content
     """
     try:
@@ -202,7 +209,7 @@ def generate_podcast_for_course(course_name, course_description):
                         "topic": course_name,
                         "document": document_content
                     },
-                    timeout=180,  # Increased timeout for Render
+                    timeout=300,  # Increased timeout for Render
                     headers={
                         'Content-Type': 'application/json',
                         'User-Agent': 'SkillsTown/1.0'
@@ -211,35 +218,45 @@ def generate_podcast_for_course(course_name, course_description):
                 
                 if response.status_code == 200:
                     print(f"✅ Podcast generated successfully on attempt {attempt + 1}")
-                    return response.content
+                    return response.content # Success: return audio bytes
                 elif response.status_code == 503:
-                    # Service temporarily unavailable, likely cold start
-                    print(f"⏳ Service cold start detected, attempt {attempt + 1}/{max_retries}")
+                    print(f"⏳ Service cold start detected (503), attempt {attempt + 1}/{max_retries}")
                     if attempt < max_retries - 1:
                         time.sleep(10 * (attempt + 1))  # Exponential backoff
                         continue
-                else:
-                    print(f"❌ Podcast generation failed: {response.status_code}")
-                    print(f"Response: {response.text}") # Make sure response exists
-                    break
-            except requests.exceptions.RequestException as e: # Catch specific request exceptions
-                print(f"ERROR: NarretEx request failed: {e}")
-                print(f"Response status code: {response.status_code if response else 'No response'}")
-                print(f"Response text: {response.text if response else 'No response text'}")
-                # Optionally, re-raise or handle differently if it's a critical error for this attempt
+                    else: # Last attempt failed with 503
+                        print("❌ All podcast generation attempts failed due to service unavailability (503).")
+                        return PODCAST_ERROR_SERVICE_UNAVAILABLE
+                else: # Other non-200 status code
+                    print(f"❌ Podcast generation failed with status: {response.status_code}")
+                    print(f"Response: {response.text}")
+                    return PODCAST_ERROR_OTHER # Non-retryable API error from NarretEx
+            except requests.exceptions.Timeout as e:
+                print(f"ERROR: NarretEx request timed out on attempt {attempt + 1}/{max_retries}: {e}")
                 if attempt < max_retries - 1:
-                    time.sleep(5 * (attempt + 1)) # Still apply backoff if retrying
+                    time.sleep(5 * (attempt + 1)) # Backoff before next retry
                     continue
-                else:
-                    break # Break if max retries reached
+                else: # Last attempt timed out
+                    print("❌ All podcast generation attempts failed due to timeout.")
+                    return PODCAST_ERROR_TIMEOUT
+            except requests.exceptions.RequestException as e: # Other request exceptions (connection error, etc.)
+                print(f"ERROR: NarretEx request failed on attempt {attempt + 1}/{max_retries}: {e}")
+                if attempt < max_retries - 1:
+                    time.sleep(5 * (attempt + 1))
+                    continue
+                else: # Last attempt failed with other request exception
+                    print("❌ All podcast generation attempts failed due to a request exception.")
+                    return PODCAST_ERROR_OTHER
         
-        print("❌ All podcast generation attempts failed")
-        return None
+        # This part should ideally not be reached if logic above is correct,
+        # but as a fallback if loop finishes without returning:
+        print("❌ All podcast generation attempts failed (unexpected loop exit).")
+        return PODCAST_ERROR_OTHER
             
-    except Exception as e:
-        print(f"❌ Error generating podcast: {e}")
+    except Exception as e: # Catch-all for unexpected errors during setup or other parts
+        print(f"❌ Unexpected error in generate_podcast_for_course: {e}")
         traceback.print_exc()
-        return None
+        return PODCAST_ERROR_OTHER # Or a more generic None if preferred for truly unexpected
 
 def get_detailed_course_info(course_name):
     """
@@ -736,23 +753,23 @@ def create_app(config_name=None):
             kap = attempt_data.get('results', {}).get('knowledgeAreaPerformance')
             if kap:
                 progress.knowledge_areas = json.dumps(kap)
-                
+
                 area_scores = []
                 for area_name, perf_data in kap.items():
                     if perf_data.get('total', 0) > 0: # Consider only areas with attempts
                         area_scores.append({
-                            'area': area_name, 
+                            'area': area_name,
                             'score': perf_data.get('percentage', 0)
                         })
-                
+
                 if area_scores:
                     area_scores.sort(key=lambda x: x['score'])
-                    
+
                     weak_areas_list = [item['area'] for item in area_scores[:3]]
                     progress.weak_areas = json.dumps(weak_areas_list)
-                    
+
                     strong_areas_list = [item['area'] for item in area_scores[-3:]]
-                    strong_areas_list.reverse() 
+                    strong_areas_list.reverse()
                     progress.strong_areas = json.dumps(strong_areas_list)
                 else: # If area_scores is empty (e.g., all areas had 0 attempts)
                     progress.weak_areas = '[]'
@@ -1501,43 +1518,50 @@ def create_app(config_name=None):
             
             # Generate podcast
             print("Calling generate_podcast_for_course...")
-            audio_data = generate_podcast_for_course(course.course_name, description)
+            result_or_audio_data = generate_podcast_for_course(course.course_name, description)
             
-            print(f"Received audio_data: {type(audio_data)}")
-            if audio_data:
-                print(f"Audio data size: {len(audio_data)} bytes")
-                print(f"Audio data preview: {audio_data[:20] if len(audio_data) >= 20 else audio_data}")
-                
-                # Check if it looks like WAV data
+            if isinstance(result_or_audio_data, bytes): # Success case
+                audio_data = result_or_audio_data
+                print(f"✅ Successfully received audio_data of type: {type(audio_data)}, size: {len(audio_data)} bytes")
                 if audio_data.startswith(b'RIFF') and b'WAVE' in audio_data[:12]:
                     print("✅ Audio data appears to be valid WAV format")
                 else:
-                    print("❌ WARNING: Audio data does not appear to be WAV format")
+                    # This might happen if NarretEx returns an error payload that isn't caught as a non-200 status
+                    print("❌ WARNING: Audio data received, but does not appear to be WAV format.")
                     print(f"First 20 bytes: {audio_data[:20]}")
-            else:
-                print("❌ ERROR: audio_data is None or empty")
-            
-            if audio_data and len(audio_data) > 0:
-                # Store the audio data in session or database for streaming
-                # For now, we'll return it directly for streaming (no attachment header)
-                print("Returning successful audio response for streaming")
+                    # Potentially treat as an error if WAV is strictly expected
+                    # For now, we'll try to stream it, client browser might fail.
+                
+                # Proceed to stream the audio data
+                print("Attempting to stream potentially valid audio data.")
                 return Response(
                     audio_data,
                     mimetype='audio/wav',
                     headers={
                         'Content-Length': str(len(audio_data)),
                         'Accept-Ranges': 'bytes',
-                        'Cache-Control': 'no-cache'
+                        'Cache-Control': 'no-cache' # Good for dynamic content
                     }
                 )
-            else:
-                print("❌ ERROR: Empty or invalid audio data")
-                flash('Podcast service is temporarily unavailable. Please try again later.', 'warning')
+            else: # Handle error cases based on string constants
+                error_type = result_or_audio_data
+                print(f"❌ Podcast generation failed with error type: {error_type}")
+                if error_type == PODCAST_ERROR_TIMEOUT:
+                    flash_message = "Podcast generation timed out. The service may be taking too long to respond. Please try again later."
+                elif error_type == PODCAST_ERROR_SERVICE_UNAVAILABLE:
+                    flash_message = "Podcast service is temporarily unavailable (e.g., cold start or maintenance). Please try again in a few moments."
+                elif error_type == PODCAST_ERROR_OTHER:
+                    flash_message = "Failed to generate podcast. The podcast service encountered an error or returned invalid data. Please try again later."
+                else: # Should not happen if constants are used correctly, but a fallback
+                    flash_message = "An unexpected issue occurred during podcast generation. Please try again."
+                
+                flash(flash_message, 'warning')
                 return redirect(get_url_for('course_detail', course_id=course_id))
-        except Exception as e:
-            print(f"❌ EXCEPTION in podcast generation: {e}")
+
+        except Exception as e: # Catch-all for unexpected errors in the route itself
+            print(f"❌ EXCEPTION in generate_course_podcast route: {e}")
             traceback.print_exc()
-            flash('Podcast service is temporarily unavailable. Please try again later.', 'warning')
+            flash('An unexpected error occurred while trying to generate the podcast. Please contact support if this issue persists.', 'danger')
             return redirect(get_url_for('course_detail', course_id=course_id))
 
     @app.route('/test-podcast')
@@ -1908,7 +1932,7 @@ def create_app(config_name=None):
             CourseQuiz.user_course_id == course_id, # Filter by the specific UserCourse link
             CourseQuizAttempt.user_id == current_user.id
         ).order_by(CourseQuizAttempt.completed_at.desc()).all()
-        
+
         attempts_data = []
         for attempt in attempts:
             attempts_data.append({
@@ -1920,7 +1944,7 @@ def create_app(config_name=None):
                 'completed_at': attempt.completed_at.isoformat() if attempt.completed_at else None,
                 'quiz_title': attempt.course_quiz.quiz_title if attempt.course_quiz else "N/A"
             })
-        
+
         # Render a new template or reuse an existing one if suitable.
         # For now, returning JSON, assuming it might be an API endpoint.
         # If it's for UI, it would be `render_template('quiz_history.html', attempts=attempts_data, course_id=course_id)`
