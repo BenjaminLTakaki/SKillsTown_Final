@@ -189,7 +189,9 @@ def generate_podcast_for_course(course_name, course_description):
         # Add retry logic for Render's cold start issues
         max_retries = 3
         for attempt in range(max_retries):
+            response = None # Initialize response here
             try:
+                print(f"DEBUG: NarretEx document_content length: {len(document_content)}")
                 # Call NarreteX instant podcast API
                 response = requests.post(
                     f"{NARRETEX_API_URL}/instant-podcast",
@@ -215,19 +217,18 @@ def generate_podcast_for_course(course_name, course_description):
                         continue
                 else:
                     print(f"❌ Podcast generation failed: {response.status_code}")
-                    print(f"Response: {response.text}")
+                    print(f"Response: {response.text}") # Make sure response exists
                     break
-                    
-            except requests.exceptions.Timeout:
-                print(f"⏰ Request timeout on attempt {attempt + 1}/{max_retries}")
+            except requests.exceptions.RequestException as e: # Catch specific request exceptions
+                print(f"ERROR: NarretEx request failed: {e}")
+                print(f"Response status code: {response.status_code if response else 'No response'}")
+                print(f"Response text: {response.text if response else 'No response text'}")
+                # Optionally, re-raise or handle differently if it's a critical error for this attempt
                 if attempt < max_retries - 1:
-                    time.sleep(5 * (attempt + 1))
+                    time.sleep(5 * (attempt + 1)) # Still apply backoff if retrying
                     continue
-            except requests.exceptions.ConnectionError:
-                print(f"🔌 Connection error on attempt {attempt + 1}/{max_retries}")
-                if attempt < max_retries - 1:
-                    time.sleep(5 * (attempt + 1))
-                    continue
+                else:
+                    break # Break if max retries reached
         
         print("❌ All podcast generation attempts failed")
         return None
@@ -291,6 +292,12 @@ def format_course_details(course_details):
         formatted += "Career Opportunities:\n"
         for career in course_details['career_paths']:
             formatted += f"- {career}\n"
+        formatted += "\n"
+
+    if 'subTopics' in course_details and course_details['subTopics']:
+        formatted += "Key Sub-Topics Covered:\n"
+        for sub_topic in course_details['subTopics']:
+            formatted += f"- {sub_topic}\n"
         formatted += "\n"
     
     return formatted
@@ -475,6 +482,7 @@ def create_app(config_name=None):
         if db_url and db_url.startswith('postgres://'):
             db_url = db_url.replace('postgres://', 'postgresql://')
         app.config['SQLALCHEMY_DATABASE_URI'] = db_url or 'sqlite:///skillstown.db'
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_recycle": 280}
 
     # Ensure upload directory exists and is writable
     upload_dir = app.config['UPLOAD_FOLDER']
@@ -720,6 +728,36 @@ def create_app(config_name=None):
             
             # Extract performance data from attempt
             score = quiz_attempt.score or 0
+
+            # Process knowledgeAreaPerformance from attempt_data
+            kap = attempt_data.get('results', {}).get('knowledgeAreaPerformance')
+            if kap:
+                progress.knowledge_areas = json.dumps(kap)
+                
+                area_scores = []
+                for area_name, perf_data in kap.items():
+                    if perf_data.get('total', 0) > 0: # Consider only areas with attempts
+                        area_scores.append({
+                            'area': area_name, 
+                            'score': perf_data.get('percentage', 0)
+                        })
+                
+                if area_scores:
+                    area_scores.sort(key=lambda x: x['score'])
+                    
+                    weak_areas_list = [item['area'] for item in area_scores[:3]]
+                    progress.weak_areas = json.dumps(weak_areas_list)
+                    
+                    strong_areas_list = [item['area'] for item in area_scores[-3:]]
+                    strong_areas_list.reverse() 
+                    progress.strong_areas = json.dumps(strong_areas_list)
+                else: # If area_scores is empty (e.g., all areas had 0 attempts)
+                    progress.weak_areas = '[]'
+                    progress.strong_areas = '[]'
+            else:
+                progress.knowledge_areas = '{}'
+                progress.weak_areas = '[]'
+                progress.strong_areas = '[]'
             
             # Update overall progress (weighted average)
             current_curve = json.loads(progress.learning_curve) if progress.learning_curve else []
@@ -1841,6 +1879,48 @@ def create_app(config_name=None):
             print(f"Error getting learning progress: {e}")
             traceback.print_exc()
             return jsonify({'error': str(e)}), 500
+
+    @app.route('/user/quiz-history/<int:course_id>')
+    @login_required
+    def user_quiz_history(course_id):
+        # Verify the user is enrolled in the course to prevent accessing others' history if needed,
+        # or simply fetch attempts directly if direct access by course_id for the user is fine.
+        # Assuming UserCourse links current_user to this course_id:
+        user_course_link = UserCourse.query.filter_by(user_id=current_user.id, id=course_id).first()
+        if not user_course_link:
+            # Or, if course_id is a global course ID, adjust query accordingly
+            # For now, assume course_id refers to UserCourse.id
+            # If course_id refers to a global course concept, this check needs adjustment
+            # or we fetch attempts based on a global course_id if that's the intent.
+            # Let's assume for now course_id IS UserCourse.id for simplicity of this route.
+            # flash('Course not found or not enrolled.', 'error')
+            # return redirect(url_for('my_courses')) # Or render a specific error page
+            # Simplification: If the intent is just "my attempts for a course I took that has this ID":
+            pass # Allow fetching attempts and let the query below handle filtering by user.
+
+        attempts = db.session.query(CourseQuizAttempt).join(
+            CourseQuiz, CourseQuizAttempt.course_quiz_id == CourseQuiz.id
+        ).filter(
+            CourseQuiz.user_course_id == course_id, # Filter by the specific UserCourse link
+            CourseQuizAttempt.user_id == current_user.id
+        ).order_by(CourseQuizAttempt.completed_at.desc()).all()
+        
+        attempts_data = []
+        for attempt in attempts:
+            attempts_data.append({
+                'id': attempt.id,
+                'attempt_api_id': attempt.attempt_api_id,
+                'score': attempt.score,
+                'total_questions': attempt.total_questions,
+                'correct_answers': attempt.correct_answers,
+                'completed_at': attempt.completed_at.isoformat() if attempt.completed_at else None,
+                'quiz_title': attempt.course_quiz.quiz_title if attempt.course_quiz else "N/A"
+            })
+        
+        # Render a new template or reuse an existing one if suitable.
+        # For now, returning JSON, assuming it might be an API endpoint.
+        # If it's for UI, it would be `render_template('quiz_history.html', attempts=attempts_data, course_id=course_id)`
+        return jsonify({'attempts': attempts_data, 'course_id': course_id})
 
     # Health check endpoint for self-pinging
     @app.route('/health')

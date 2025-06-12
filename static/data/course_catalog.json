@@ -19,6 +19,7 @@
                         "Debug Python code effectively and apply best coding practices",
                         "Create automated scripts for data manipulation and web scraping"
                     ],
+                    "subTopics": ["Introduction to Python", "Variables and Data Types", "Control Flow (If/Else, Loops)", "Functions and Modules", "Basic Data Structures (Lists, Dictionaries)"],
                     "difficulty_progression": {
                         "beginner": {
                             "topics": ["variables", "data_types", "basic_operators", "control_structures", "basic_functions"],
