@@ -186,6 +186,13 @@ def generate_podcast_for_course(course_name, course_description):
         print(document_content[:300] + "...")
         print("=" * 50)
         
+        # Prepare payload
+        payload = {
+            "topic": course_name,
+            "document": document_content
+        }
+        print(f"DEBUG: Sending payload to NarreteX: {json.dumps(payload, indent=2)}")
+
         # Add retry logic for Render's cold start issues
         max_retries = 3
         for attempt in range(max_retries):
@@ -193,10 +200,7 @@ def generate_podcast_for_course(course_name, course_description):
                 # Call NarreteX instant podcast API
                 response = requests.post(
                     f"{NARRETEX_API_URL}/instant-podcast",
-                    json={
-                        "topic": course_name,
-                        "document": document_content
-                    },
+                    json=payload, # Use the payload variable
                     timeout=180,  # Increased timeout for Render
                     headers={
                         'Content-Type': 'application/json',
@@ -327,40 +331,68 @@ def init_database():
 
 # Helper function to serialize learning progress
 def serialize_learning_progress(progress):
-    """Convert UserLearningProgress object to JSON-serializable dict"""
+    """Converts UserLearningProgress object to a JSON-serializable dict."""
     if not progress:
+        print("DEBUG: Serialize Progress: Received None for progress object.")
         return None
     
+    serialized_data = {
+        'id': None, 'user_id': None, 'course_id': None,
+        'knowledge_areas': {}, 'weak_areas': [], 'strong_areas': [],
+        'recommended_topics': [], 'learning_curve': [],
+        'overall_progress': 0, 'mastery_level': 'beginner',
+        'last_updated': None, 'masteryPercentage': 0
+    }
+    progress_id_for_logs = getattr(progress, 'id', 'Unknown')
+
     try:
-        return {
-            'id': progress.id,
-            'user_id': progress.user_id,
-            'course_id': progress.course_id,
-            'knowledge_areas': json.loads(progress.knowledge_areas) if progress.knowledge_areas else {},
-            'weak_areas': json.loads(progress.weak_areas) if progress.weak_areas else [],
-            'strong_areas': json.loads(progress.strong_areas) if progress.strong_areas else [],
-            'recommended_topics': json.loads(progress.recommended_topics) if progress.recommended_topics else [],
-            'learning_curve': json.loads(progress.learning_curve) if progress.learning_curve else [],
-            'overall_progress': progress.overall_progress or 0,
-            'mastery_level': progress.mastery_level or 'beginner',
-            'last_updated': progress.last_updated.isoformat() if progress.last_updated else None,
-            'masteryPercentage': progress.overall_progress or 0
+        print(f"DEBUG: Serialize Progress: Starting serialization for progress ID: {progress_id_for_logs}")
+
+        for attr in ['id', 'user_id', 'course_id', 'overall_progress', 'mastery_level']:
+            if hasattr(progress, attr):
+                serialized_data[attr] = getattr(progress, attr)
+
+        if serialized_data['overall_progress'] is None: serialized_data['overall_progress'] = 0
+        if serialized_data['mastery_level'] is None: serialized_data['mastery_level'] = 'beginner'
+
+        if hasattr(progress, 'last_updated') and progress.last_updated:
+            try:
+                serialized_data['last_updated'] = progress.last_updated.isoformat()
+            except Exception as e_date:
+                print(f"DEBUG: Serialize Progress: Error serializing last_updated for progress ID {progress_id_for_logs}: {e_date}")
+
+        json_fields_config = {
+            'knowledge_areas': {}, 'weak_areas': [], 'strong_areas': [],
+            'recommended_topics': [], 'learning_curve': []
         }
-    except Exception as e:
-        print(f"Error serializing learning progress: {e}")
+        for field, default_value in json_fields_config.items():
+            raw_value = getattr(progress, field, None)
+            if isinstance(raw_value, str) and raw_value.strip():
+                try:
+                    serialized_data[field] = json.loads(raw_value)
+                except json.JSONDecodeError as e_json:
+                    print(f"DEBUG: Serialize Progress: JSONDecodeError for field '{field}' in progress ID {progress_id_for_logs}. Value(start): '{raw_value[:100]}...'. Error: {e_json}")
+                    serialized_data[field] = default_value
+                except Exception as e_gen:
+                    print(f"DEBUG: Serialize Progress: Generic error for field '{field}' in progress ID {progress_id_for_logs}. Value(start): '{raw_value[:100]}...'. Error: {e_gen}")
+                    serialized_data[field] = default_value
+            else:
+                serialized_data[field] = default_value
+
+        serialized_data['masteryPercentage'] = serialized_data['overall_progress']
+
+        print(f"DEBUG: Serialize Progress: Successfully serialized progress ID: {progress_id_for_logs}")
+        return serialized_data
+
+    except Exception as e_main:
+        print(f"CRITICAL_ERROR: Serialize Progress: Unexpected error during serialization of progress ID {progress_id_for_logs}: {e_main}")
+        import traceback
+        traceback.print_exc()
         return {
-            'id': getattr(progress, 'id', None),
-            'user_id': getattr(progress, 'user_id', None),
-            'course_id': getattr(progress, 'course_id', None),
-            'knowledge_areas': {},
-            'weak_areas': [],
-            'strong_areas': [],
-            'recommended_topics': [],
-            'learning_curve': [],
-            'overall_progress': 0,
-            'mastery_level': 'beginner',
-            'last_updated': None,
-            'masteryPercentage': 0
+            'id': progress_id_for_logs, 'error': 'Critical serialization failure', 'details': str(e_main),
+            'user_id': getattr(progress, 'user_id', None), 'course_id': getattr(progress, 'course_id', None),
+            'knowledge_areas': {}, 'weak_areas': [], 'strong_areas': [], 'recommended_topics': [], 'learning_curve': [],
+            'overall_progress': 0, 'mastery_level': 'beginner', 'last_updated': None, 'masteryPercentage': 0
         }
 
 # Fallback skill extraction
@@ -1769,13 +1801,11 @@ def create_app(config_name=None):
     def get_learning_analytics(course_id):
         """Get detailed learning analytics for a course"""
         try:
-            # Get learning progress
             progress = UserLearningProgress.query.filter_by(
                 user_id=current_user.id,
                 course_id=str(course_id)
             ).first()
             
-            # Get recent quiz attempts
             recent_attempts = CourseQuizAttempt.query.filter_by(
                 user_id=current_user.id
             ).join(CourseQuiz).filter(
@@ -1790,23 +1820,34 @@ def create_app(config_name=None):
                 'studyRecommendations': []
             }
             
-            # Calculate analytics if we have data
             if recent_attempts:
                 scores = [attempt.score for attempt in recent_attempts if attempt.score is not None]
-                if len(scores) >= 3:
-                    old_avg = sum(scores[-3:]) / 3
-                    new_avg = sum(scores[:3]) / 3
-                    analytics['learningVelocity'] = round(((new_avg - old_avg) / old_avg) * 100) if old_avg > 0 else 0
-                
-                # Calculate consistency
+                if len(scores) >= 2:
+                    first_score = scores[-1]
+                    last_score = scores[0]
+                    if first_score > 0 and len(scores) > 1 :
+                        analytics['learningVelocity'] = round(((last_score - first_score) / first_score) * 100)
+                    elif last_score > 0 and first_score == 0:
+                         analytics['learningVelocity'] = 100
+
                 if scores:
                     mean_score = sum(scores) / len(scores)
                     variance = sum((score - mean_score) ** 2 for score in scores) / len(scores)
-                    analytics['consistencyScore'] = max(0, round(100 - (variance / 4)))
-            
-            # Serialize progress properly
-            progress_data = serialize_learning_progress(progress)
-            
+                    analytics['consistencyScore'] = max(0, round(100 - (variance / 25)))
+
+            progress_data = None
+            try:
+                print(f"DEBUG: Learning Analytics: Original progress object before serialization: type={type(progress)}, id={(progress.id if progress else 'None')}")
+                progress_data = serialize_learning_progress(progress)
+                print(f"DEBUG: Learning Analytics: progress_data after serialization: type={type(progress_data)}, content={json.dumps(progress_data, indent=2) if progress_data is not None else 'None'}")
+            except Exception as e_serialize:
+                print(f"ERROR: Learning Analytics: Exception during serialize_learning_progress call: {e_serialize}")
+                if progress:
+                    print(f"DEBUG: Learning Analytics: Original progress object state during exception: id={progress.id}")
+                else:
+                    print("DEBUG: Learning Analytics: Original progress object was None during exception.")
+                progress_data = {'error': 'Failed to serialize learning progress', 'details': str(e_serialize)}
+
             return jsonify({
                 'progress': progress_data,
                 'analytics': analytics,
@@ -1814,9 +1855,10 @@ def create_app(config_name=None):
             })
             
         except Exception as e:
-            print(f"Error getting learning analytics: {e}")
+            print(f"ERROR: Error in get_learning_analytics route: {e}")
+            import traceback
             traceback.print_exc()
-            return jsonify({'error': str(e)}), 500
+            return jsonify({'error': str(e), 'progress_fallback': {'error': 'Outer exception in get_learning_analytics'}}), 500
 
     # Fixed user learning progress route
     @app.route('/user/learning-progress/<course_id>')

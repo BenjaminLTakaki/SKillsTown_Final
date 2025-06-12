@@ -1095,10 +1095,10 @@ function initializeProgressCharts() {
 // Load quiz history and recommendations
 async function loadQuizHistory() {
     try {
-        const response = await fetch(`/user/quiz-history/${courseId}`);
+        const response = await fetch(`/course/${courseId}/quiz-attempts`);
         if (response.ok) {
             const data = await response.json();
-            quizHistory = data.history || [];
+            quizHistory = data.attempts || []; // Assuming the backend returns 'attempts'
             if (quizHistory.length > 0) {
                 displayQuizHistory(quizHistory, data.recommendations);
             }
